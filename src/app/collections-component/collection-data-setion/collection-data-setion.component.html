@@ -1,0 +1,54 @@
+<div class="collection-grid" *ngIf="collection">
+  <app-collection-views
+    [collection]="collection"
+    [viewId]="viewId"
+    (onViewChange)="view = $event"
+  />
+  <app-collection-table-view
+    *ngIf="view?.type === ViewTypes.Table"
+    [collection]="collection"
+    [collectionData]="collectionData"
+    [referenceOptionsMap]="referenceOptionsMap"
+    (onAddColumn)="onAddColumn.emit()"
+    (onEditColumn)="onEditColumn.emit($event)"
+    (onAddRow)="onAddRow.emit()"
+    (onEditRow)="onEditRow.emit($event)"
+    (onDeleteRow)="onDeleteRow.emit($event)"
+    (onColumnDataUpdate)="onColumnDataUpdate.emit($event)"
+    (onDeleteColumn)="onDeleteColumn.emit($event)"
+    (onMoveLeft)="onMoveLeft.emit($event)"
+    (onMoveRight)="onMoveRight.emit($event)"
+    (onSaveCollection)="onSaveCollection.emit($event)"
+  />
+
+  <app-boolean-distribution
+    [collection]="collection"
+    [view]="view"
+    [collectionData]="collectionData"
+    *ngIf="view && view.type === ViewTypes.BooleanDistribution"
+  />
+  <app-date-distribution
+    [collection]="collection"
+    [view]="view"
+    [collectionData]="collectionData"
+    *ngIf="view && view.type === ViewTypes.DateDistribution"
+  />
+  <app-number-summary
+    [collection]="collection"
+    [view]="view"
+    [collectionData]="collectionData"
+    *ngIf="view && view.type === ViewTypes.NumberSummary"
+  />
+  <app-multi-select-frequency
+    [collection]="collection"
+    [view]="view"
+    [collectionData]="collectionData"
+    *ngIf="view && view.type === ViewTypes.MultiSelectFrequency"
+  />
+  <app-select-distribution
+    [collection]="collection"
+    [view]="view"
+    [collectionData]="collectionData"
+    *ngIf="view && view.type === ViewTypes.SelectDistribution"
+  />
+</div>

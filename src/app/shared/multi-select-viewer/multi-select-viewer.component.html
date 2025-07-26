@@ -1,0 +1,65 @@
+<div class="flex items-center overflow-x-auto scrollbar-thin gap-1 pr-2">
+  <app-chip
+    *ngFor="let value of values"
+    [label]="getLabel(value)"
+    [background]="getStyle(value)?.background"
+    [color]="getStyle(value)?.color"
+    [removable]="true"
+    (remove)="removeValue(value)"
+  ></app-chip>
+
+  <!-- Add Icon -->
+  <button
+    class="flex items-center justify-center add-option-btn"
+    (click)="openModal()"
+    [title]="'Add ' + (column.name || 'Option')"
+  >
+    <i class="fas fa-plus text-xs"></i>
+  </button>
+</div>
+
+<!-- Multi-Select Modal -->
+<div
+  *ngIf="showMultiSelectModal"
+  class="multi-select-modal-overlay"
+  appClickOutside
+  (clickOutside)="closeModal()"
+>
+  <div class="multi-select-modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Select {{ column.name }}</h3>
+      <button class="modal-close-btn" (click)="closeModal()" type="button">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="options-list">
+        <label *ngFor="let opt of column.options" class="option-item">
+          <input
+            type="checkbox"
+            [checked]="isOptionSelected(opt.value)"
+            (change)="toggleOption(opt.value)"
+            class="option-checkbox"
+          />
+          <span
+            class="option-pill px-3 py-2 rounded-lg text-sm font-medium"
+            [style.background-color]="opt.background"
+            [style.color]="opt.color"
+          >
+            {{ opt.label }}
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeModal()" type="button">
+        Cancel
+      </button>
+      <button class="btn-primary" (click)="saveChanges()" type="button">
+        Done
+      </button>
+    </div>
+  </div>
+</div>

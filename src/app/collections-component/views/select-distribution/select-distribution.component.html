@@ -1,0 +1,57 @@
+<div class="p-5">
+  <div class="space-y-8 px-4 lg:px-6 xl:px-8">
+    <!-- 📊 Charts Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- 📈 Bar Chart Card -->
+      <div
+        *ngIf="viewData.bar"
+        class="bg-white rounded-xl shadow border border-gray-200 p-6 flex flex-col"
+      >
+        <app-bar-chart
+          [data]="viewData.bar"
+          [componentTitle]="view.name + ' Distribution'"
+        ></app-bar-chart>
+      </div>
+
+      <!-- 🥧 Doughnut Chart Card -->
+      <div
+        *ngIf="viewData.doughnut"
+        class="bg-white rounded-xl shadow border border-gray-200 p-6 flex flex-col"
+      >
+        <app-doughnut
+          [data]="viewData.doughnut"
+          [componentTitle]="view.name + ' Chart'"
+        ></app-doughnut>
+      </div>
+    </div>
+
+    <!-- � Line Chart Trend (if available) -->
+    <div
+      *ngIf="viewData.line && viewData.line.datasets[0].data.length > 1"
+      class="bg-white rounded-xl shadow border border-gray-200 p-6 lg:col-span-2"
+    >
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">
+        📈 {{ columnName }} Trends Over Time
+      </h3>
+      <div class="h-64">
+        <app-line-chart
+          [data]="viewData.line"
+          [componentTitle]="columnName + ' Trend'"
+        ></app-line-chart>
+      </div>
+    </div>
+
+    <!-- �📋 Table Summary -->
+    <div
+      *ngIf="viewData.tableRows && viewData.tableColumns"
+      class="bg-white rounded-xl shadow border border-gray-200 p-6 lg:col-span-2"
+    >
+      <app-table
+        [componentTitle]="view.name + ' Summary'"
+        [columns]="viewData.tableColumns"
+        [data]="viewData.tableRows"
+        [showAddButton]="false"
+      ></app-table>
+    </div>
+  </div>
+</div>

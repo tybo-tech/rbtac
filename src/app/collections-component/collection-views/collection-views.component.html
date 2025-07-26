@@ -1,0 +1,40 @@
+<div class="min-h-[85vh] h-fit border-r border-black/30 p-4 space-y-3">
+  <!-- View List -->
+  <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center">
+    <i class="fas fa-layer-group mr-2 text-[var(--accent)]"></i>
+    {{ collection.name }} <span class="text-gray-500 ml-1">Views</span>
+  </h4>
+
+  <div *ngFor="let col of views">
+    <p
+      (click)="gotoView(col)"
+      [class]="
+        'w-fit px-4 py-2 rounded-md text-sm font-semibold cursor-pointer transition ' +
+        (view?.id === col.id
+          ? 'bg-green-700 text-white'
+          : 'bg-gray-200 text-gray-700 hover:bg-gray-300')
+      "
+    >
+      <i [class]="getViewIcon(col.type) + ' mr-2'"></i>
+      {{ col.name }}
+    </p>
+  </div>
+
+  <!-- Add View Button -->
+  <button
+    *ngIf="!newView"
+    class="text-[var(--accent)] text-sm font-medium hover:underline mt-4"
+    (click)="toggleAddView()"
+  >
+    <i class="fas fa-plus mr-1"></i> Add View
+  </button>
+
+  <!-- View Modal -->
+  <app-view
+    *ngIf="newView"
+    [collection]="collection"
+    [view]="newView"
+    (onSubmit)="addNewView($event)"
+    (onClose)="newView = undefined"
+  ></app-view>
+</div>

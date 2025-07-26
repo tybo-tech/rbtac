@@ -1,0 +1,91 @@
+<!-- Collection Canvas Container -->
+<div
+  class="collection-canvas"
+  role="main"
+  aria-label="Collections Management Interface"
+>
+  <!-- Header Section -->
+  <header class="collection-header sticky top-0 z-10 bg-gray-800 text-white">
+    <div class="header-content">
+      <!-- Company Selector -->
+      <div
+        class="company-selector"
+        role="button"
+        tabindex="0"
+        aria-label="Select company"
+      >
+        <i class="company-icon fa fa-building" aria-hidden="true"></i>
+        <span class="company-name">ESD Centre</span>
+        <i class="dropdown-icon fa fa-chevron-down" aria-hidden="true"></i>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="collection-navigation" aria-label="Collection navigation">
+        <app-collection-menu />
+      </nav>
+    </div>
+    <!-- Collection Tabs -->
+    <section
+      class="collection-tabs-section"
+      aria-label="Collection tabs"
+      *ngIf="collection"
+    >
+      <app-collection-tabs
+        [collections]="collections"
+        [collection]="collection"
+        (onSelectCollection)="switchCollection($event)"
+        (onAddCollection)="ux.toggleAddCollectionModal()"
+        (onEditCollection)="showEditCollectionModal = true"
+      />
+    </section>
+
+    <!-- Collection Filters -->
+    <app-collection-filters />
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="collection-content" *ngIf="collection">
+    <!-- Collection Data Section -->
+    <section class="collection-data-section" aria-label="Collection data">
+      <app-collection-data-setion
+        [collection]="collection"
+        [viewId]="viewId"
+        [collectionData]="collectionData"
+        [referenceOptionsMap]="referenceOptionsMap"
+        (onAddColumn)="ux.toggleAddColumnModal()"
+        (onEditColumn)="ux.toggleAddColumnModal($event)"
+        (onAddRow)="addNewRow()"
+        (onDeleteRow)="deleteRow($event)"
+        (onColumnDataUpdate)="onColumnDataUpdate($event)"
+        (onDeleteColumn)="deleteColumn($event)"
+        (onMoveLeft)="moveColumnLeft($event)"
+        (onMoveRight)="moveColumnRight($event)"
+        (onSaveCollection)="saveChanges()"
+      />
+    </section>
+
+    <app-collection-create
+      *ngIf="ux.showAddCollectionModal"
+      (close)="ux.toggleAddCollectionModal()"
+      (onCloseModal)="ux.toggleAddCollectionModal()"
+      (onSubmit)="onCollectionCreated($event)"
+    />
+
+    <app-collection-column
+      *ngIf="ux.showColumnModal && ux.column"
+      [collections]="collections"
+      [column]="ux.column"
+      [currentCollectionName]="collection.name || ''"
+      (close)="ux.toggleAddColumnModal()"
+      (onCloseModal)="ux.toggleAddColumnModal()"
+      (onSubmit)="onColumnCreated($event)"
+    />
+
+    <app-edit-collection
+      *ngIf="collection && showEditCollectionModal"
+      [collection]="collection"
+      (onCloseModal)="showEditCollectionModal = false"
+      (onSubmit)="saveChanges(); showEditCollectionModal = false"
+    />
+  </main>
+</div>

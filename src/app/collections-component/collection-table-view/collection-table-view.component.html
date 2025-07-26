@@ -1,0 +1,230 @@
+<table *ngIf="collectionData && collection" class="collection">
+  <tr>
+    <th *ngFor="let col of collection.columns; let colIndex = index">
+      <div class="header-content flex items-center justify-between relative">
+        <div class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            name=""
+            id=""
+            *ngIf="colIndex === 0"
+            [(ngModel)]="selectAll"
+            class="row-checkbox"
+          />
+          <span class="header-title">
+            <i
+              *ngIf="col.isPrimary"
+              class="fas fa-lock text-blue-500"
+              title="Primary Column"
+            ></i>
+
+            {{ col.name }}</span
+          >
+        </div>
+        <i
+          class="dropdown-icon fa fa-chevron-down"
+          [title]="'Edit [' + col.name + '] column'"
+          style="margin-left: 0.5rem; font-size: 0.6rem; cursor: pointer"
+          (click)="col.showMenu = true"
+          aria-hidden="true"
+        ></i>
+        <div class="absolute top-full right-0 z-50 mt-1" *ngIf="col.showMenu">
+          <app-collection-column-menu
+            [column]="col"
+            (onEditColumn)="onEditColumn.emit(col)"
+            (onDeleteColumn)="onDeleteColumn.emit(col)"
+            (onMoveLeft)="onMoveLeft.emit(col)"
+            (onMoveRight)="onMoveRight.emit(col)"
+            (onCloseModal)="col.showMenu = false; onSaveCollection.emit()"
+          />
+        </div>
+      </div>
+    </th>
+
+    <!-- Add Column Button -->
+    <th class="add-column-header">
+      <button class="add-column-btn" (click)="onAddColumn.emit()">
+        <i class="fas fa-plus"></i> Add Column
+      </button>
+    </th>
+  </tr>
+
+  <tr *ngFor="let row of collectionData; let rowIndex = index">
+    <td *ngFor="let col of collection.columns; let colIndex = index">
+      <div class="cell-content flex items-center">
+        <input
+          type="checkbox"
+          name=""
+          id=""
+          *ngIf="colIndex === 0"
+          [(ngModel)]="row.selected"
+          class="row-checkbox"
+        />
+
+        <!-- Dynamic cell rendering based on column type -->
+        <ng-container [ngSwitch]="col.type">
+          <!-- TEXT -->
+          <input
+            *ngSwitchCase="'text'"
+            type="text"
+            [(ngModel)]="row.data[col.id]"
+            (change)="onUpdateCell(row)"
+            class="cell-input"
+            [attr.placeholder]="'Enter ' + col.name"
+          />
+
+          <!-- TEXTAREA -->
+          <textarea
+            *ngSwitchCase="'textarea'"
+            [(ngModel)]="row.data[col.id]"
+            (change)="onUpdateCell(row)"
+            class="cell-input"
+            [attr.placeholder]="'Enter ' + col.name"
+            rows="2"
+          ></textarea>
+
+          <!-- NUMBER -->
+          <input
+            *ngSwitchCase="'number'"
+            type="number"
+            [(ngModel)]="row.data[col.id]"
+            (change)="onUpdateCell(row)"
+            class="cell-input"
+            [attr.placeholder]="'Enter ' + col.name"
+          />
+
+          <!-- EMAIL -->
+          <input
+            *ngSwitchCase="'email'"
+            type="email"
+            [(ngModel)]="row.data[col.id]"
+            (change)="onUpdateCell(row)"
+            class="cell-input"
+            placeholder="Enter email"
+          />
+
+          <!-- URL -->
+          <input
+            *ngSwitchCase="'url'"
+            type="url"
+            [(ngModel)]="row.data[col.id]"
+            (change)="onUpdateCell(row)"
+            class="cell-input"
+            placeholder="Enter URL"
+          />
+
+          <!-- DATE -->
+          <input
+            *ngSwitchCase="'date'"
+            type="date"
+            [(ngModel)]="row.data[col.id]"
+            (change)="onUpdateCell(row)"
+            class="cell-input"
+          />
+
+          <!-- AUTO -->
+          <input
+            *ngSwitchCase="'auto-sequence'"
+            type="text"
+            disabled
+            placeholder="Auto-generated"
+            [(ngModel)]="row.data[col.id]"
+            class="cell-input"
+          />
+
+          <!-- BOOLEAN -->
+          <input
+            *ngSwitchCase="'boolean'"
+            type="checkbox"
+            [(ngModel)]="row.data[col.id]"
+            (change)="onUpdateCell(row)"
+            class="cell-checkbox"
+          />
+
+          <!-- MINIMAL SINGLE SELECT -->
+          <select
+            [(ngModel)]="row.data[col.id]"
+            (change)="onUpdateCell(row)"
+            *ngSwitchCase="'select'"
+            style="padding: 10px 4px"
+            class="cell-input text-xs font-medium px-2 py-1 rounded"
+            [style.background-color]="
+              getOptionStyle(col, row.data[col.id])?.background
+            "
+            [style.color]="getOptionStyle(col, row.data[col.id])?.color"
+          >
+            <option [ngValue]="undefined" class="text-gray-400 italic">
+              Select option
+            </option>
+            <option *ngFor="let opt of col.options" [ngValue]="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+
+          <!-- MULTI-SELECT -->
+          <div *ngSwitchCase="'multi-select'" class="multi-select-container">
+            <app-multi-select-viewer
+              [column]="col"
+              [values]="row.data[col.id] || []"
+              (valuesChange)="updateMultiSelectValues(row, col, $event)"
+            />
+          </div>
+
+          <!-- REFERENCE -->
+          <!-- SWITCH CASE for 'reference' -->
+          <app-reference-field
+            *ngSwitchCase="'reference'"
+            [column]="col"
+            [value]="row.data[col.id]"
+            [options]="getReferenceOptions(col)"
+            (valueChange)="onReferenceValueChange(row, col, $event)"
+          ></app-reference-field>
+
+          <!-- <select
+            *ngSwitchCase="'reference'"
+            [(ngModel)]="row.data[col.id]"
+            (change)="onUpdateCell(row)"
+            class="cell-input"
+          >
+            <option [ngValue]="undefined">Select reference</option>
+            <option
+              *ngFor="let item of getReferenceOptions(col)"
+              [ngValue]="item.id"
+            >
+              {{ item.name || "Untitled" }}
+            </option>
+          </select> -->
+
+          <!-- FALLBACK for unknown types -->
+          <input
+            *ngSwitchDefault
+            type="text"
+            [(ngModel)]="row.data[col.id]"
+            (change)="onUpdateCell(row)"
+            class="cell-input"
+            [attr.placeholder]="'Enter ' + col.name"
+          />
+        </ng-container>
+      </div>
+    </td>
+
+    <!-- Actions Column -->
+    <td class="actions-column">
+      <!-- <button class="action-btn" (click)="onEditRow.emit(row)">
+        <i class="fas fa-edit"></i>
+      </button> -->
+      <button class="action-btn" (click)="onDeleteRow.emit(row)">
+        <i class="fas fa-trash"></i>
+      </button>
+    </td>
+  </tr>
+
+  <!-- Add new row button -->
+  <tr>
+    <td [attr.colspan]="collection.columns.length + 1" class="add-row-cell">
+      <button class="add-row-btn" (click)="onAddRow.emit()">
+        <i class="fas fa-plus"></i> Add Row
+      </button>
+    </td>
+  </tr>
+</table>

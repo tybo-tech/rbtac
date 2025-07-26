@@ -1,0 +1,139 @@
+<!-- Dashboard Header -->
+<header class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+  <div class="mb-4 lg:mb-0">
+    <h1 class="text-3xl font-bold text-[var(--white)] mb-2">
+      {{ getCurrentTimeGreeting() }}, {{ userName }}
+    </h1>
+    <p class="text-[var(--gray-light)] text-lg">
+      {{ userRole }} • Your incubation hub overview
+    </p>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="text-sm text-[var(--gray-light)]">
+      Last updated: {{ currentDate }}
+    </div>
+  </div>
+</header>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <div 
+    *ngFor="let stat of statsCards" 
+    class="stat-card bg-[var(--cloud)] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 group"
+  >
+    <div class="flex items-center justify-between mb-4">
+      <div class="bg-[var(--primary)] text-[var(--accent)] p-3 rounded-xl group-hover:scale-105 transition-transform">
+        <i [class]="stat.icon + ' text-2xl'"></i>
+      </div>
+      <div 
+        *ngIf="stat.trend"
+        class="text-sm font-medium px-2 py-1 rounded-full"
+        [class]="stat.trend.isPositive ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'"
+      >
+        {{ formatTrend(stat.trend) }}
+      </div>
+    </div>
+    <div class="space-y-1">
+      <div class="text-3xl font-bold text-[var(--white)]">{{ stat.value }}</div>
+      <div class="text-sm text-[var(--gray-light)]">{{ stat.label }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Progress Charts and Analytics -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+  <div 
+    *ngFor="let chart of progressCharts" 
+    class="bg-[var(--cloud)] rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300"
+  >
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h3 class="text-xl font-bold text-[var(--white)] mb-2">{{ chart.title }}</h3>
+        <p class="text-sm text-[var(--gray-light)]">{{ chart.description }}</p>
+      </div>
+    </div>
+    
+    <!-- Progress Chart -->
+    <div *ngIf="chart.type === 'progress' && chart.data" class="flex items-center justify-center">
+      <div class="flex items-center gap-8">
+        <div class="relative progress-circle">
+          <div class="w-32 h-32 rounded-full border-8 border-[var(--primary)] flex items-center justify-center">
+            <div class="w-24 h-24 rounded-full border-4 border-[var(--accent)] flex items-center justify-center font-bold text-2xl text-[var(--accent)]">
+              {{ chart.data.percentage }}%
+            </div>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <p class="text-sm text-[var(--gray-light)] mb-1">Amount Used</p>
+            <p class="text-2xl font-bold text-[var(--white)]">{{ chart.data.used }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-[var(--gray-light)] mb-1">Total Available</p>
+            <p class="text-lg font-semibold text-[var(--gray-light)]">{{ chart.data.total }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Chart Placeholder -->
+    <div *ngIf="chart.type === 'chart'" class="flex items-center justify-center h-32 bg-[var(--primary)] rounded-xl">
+      <div class="text-center">
+        <i class="fas fa-chart-line text-4xl text-[var(--accent)] mb-2"></i>
+        <p class="text-[var(--gray-light)] text-sm">Chart visualization coming soon</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Schedule and Recent Activity -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+  <!-- Upcoming Training Sessions -->
+  <div class="bg-[var(--cloud)] rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-xl font-bold text-[var(--white)]">Upcoming Training Sessions</h3>
+      <i class="fas fa-graduation-cap text-[var(--accent)] text-xl"></i>
+    </div>
+    <div class="space-y-4">
+      <div 
+        *ngFor="let session of scheduleItems" 
+        class="schedule-item flex items-center gap-4 p-4 bg-[var(--primary)] rounded-xl hover:bg-opacity-80 transition-all cursor-pointer"
+      >
+        <div class="bg-[var(--accent)] text-[var(--black)] p-2 rounded-lg text-center min-w-[60px]">
+          <div class="text-xs font-medium">{{ session.date.split(' ')[0] }}</div>
+          <div class="text-sm font-bold">{{ session.date.split(' ')[1] }}</div>
+        </div>
+        <div class="flex-1">
+          <h4 class="font-semibold text-[var(--white)] mb-1">{{ session.title }}</h4>
+          <p class="text-sm text-[var(--gray-light)]">{{ session.time }}</p>
+        </div>
+        <i class="fas fa-chevron-right text-[var(--gray-light)]"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Room Bookings -->
+  <div class="bg-[var(--cloud)] rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-xl font-bold text-[var(--white)]">Recent Room Bookings</h3>
+      <i class="fas fa-door-open text-[var(--accent)] text-xl"></i>
+    </div>
+    <div class="space-y-4">
+      <div 
+        *ngFor="let booking of recentBookings" 
+        class="schedule-item flex items-center gap-4 p-4 bg-[var(--primary)] rounded-xl hover:bg-opacity-80 transition-all cursor-pointer"
+      >
+        <div class="bg-[var(--accent)] text-[var(--black)] p-3 rounded-lg">
+          <i class="fas fa-user text-sm"></i>
+        </div>
+        <div class="flex-1">
+          <h4 class="font-semibold text-[var(--white)] mb-1">{{ booking.participant }}</h4>
+          <p class="text-sm text-[var(--gray-light)]">{{ booking.room }} • {{ booking.date }} at {{ booking.time }}</p>
+        </div>
+        <div class="text-right">
+          <div class="text-xs text-[var(--gray-light)]">{{ booking.title }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

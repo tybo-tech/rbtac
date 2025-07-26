@@ -1,0 +1,29 @@
+:host {
+  .tabs {
+    padding: 0 1rem;
+    background: linear-gradient(135deg, #3f3f3f 0%, #313030 100%);
+    color: #ffffff;
+    .tab {
+      padding: 0.2rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(228, 228, 228, 0.863);
+      border-right: 1px solid rgba(158, 158, 158, 0.863);
+      text-transform: capitalize;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      &.active {
+        background-color: var(--white);
+        color: rgb(51, 51, 51);
+      }
+      &:hover {
+        background-color: rgba(236, 236, 236, 0.322);
+        color: rgb(255, 255, 255);
+      }
+      i {
+        font-size: 0.5rem;
+        margin-left: 0.25rem;
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+<section class="py-16 bg-[var(--primary)] text-[var(--white)]">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-10 text-[var(--accent)]">
+      What Our Clients Say
+    </h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div
+        *ngFor="let t of testimonials"
+        class="bg-[var(--black)]/80 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center hover:shadow-xl transition"
+      >
+        <img
+          [src]="t.image"
+          alt="{{ t.name }}"
+          class="w-20 h-20 rounded-full object-cover border-4 border-[var(--accent)] mb-5"
+        />
+        <p class="italic mb-6 text-[var(--gray-light)]">
+          "{{ t.quote }}"
+        </p>
+        <div class="font-semibold text-[var(--white)]">{{ t.name }}</div>
+        <div class="text-sm text-[var(--accent)]">
+          {{ t.role }} <span *ngIf="t.company">• {{ t.company }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

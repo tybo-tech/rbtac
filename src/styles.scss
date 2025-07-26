@@ -1,0 +1,284 @@
+@forward "tailwindcss";
+:root {
+  // Staic Colors
+  --primary: #181818; /* Deep charcoal for main bg */
+  --accent: #4a90e2; /* That glowing gold/orange for CTAs */
+  --white: #fff;
+  --gray-light: #bfbfbf;
+  --gray: #8b8b8b;
+  --black: #000;
+  --text-main: #fff; /* Use white or #eaeaea for main text */
+  --workwear-orange: #ff7700;
+  --success: #2ecc71;
+  --cloud: #222; /* For cards/secondary backgrounds */
+  --input-bg: #2a2940; /* For cards/secondary backgrounds */
+  --input-border: #2e2c44; /* For cards/secondary backgrounds */
+
+  /* Core Colors */
+  --color-background: #f5f5f5; /* Soft off-white */
+  --color-surface: #002bb9; /* Clean white for cards/panels */
+  --color-surface-inverse: #9e9e9e; /* Used for text on the surface */
+  --color-border: #dcdcdc; /* Gentle borders */
+  --color-text: #1f1f1f; /* Deep gray text */
+  --color-muted: #6c757d; /* Subtle muted text */
+  --color-overlay: rgba(0, 0, 0, 0.4); /* Theme-controlled overlay */
+  /* Branding & Accent */
+  --color-primary: #ffae00; /* Vibrant gold/orange */
+  --color-primary-dark: #e68a00; /* Darker shade for hover/focus */
+  --color-primary-inverse: #ffffff; /* Inverse primary for dark text on primary */
+  --color-secondary: #dfdfdf; /* Bold orange for highlights */
+  --color-secondary-inverse: #202020; /* Inverse secondary for dark text on secondary */
+
+  /* States & Utility */
+  --color-success: #28a745;
+  --color-error: #dc3545;
+  --color-warning: #ffc107;
+  --color-info: #17a2b8;
+
+  /* Neutral Base */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Forms */
+  --color-input-bg: #f6f5f5;
+  --color-input-border: #d0d0d0;
+}
+
+[data-theme="dark"] {
+  /* Core Colors */
+  --color-background: #181818; /* Dark background */
+  --color-surface: #222; /* For cards, navs, panels */
+  --color-border: #2e2c44; /* Border/input outlines */
+  --color-text: #eaeaea; /* Main text color */
+  --color-muted: #bfbfbf; /* Subtle/secondary text */
+
+  /* Branding & Accent */
+  --color-primary: #ffae00; /* Accent gold/orange */
+  --color-secondary: #ff7700; /* Workwear orange */
+
+  /* States & Utility */
+  --color-success: #2ecc71;
+  --color-error: #e74c3c;
+  --color-warning: #f39c12;
+  --color-info: #3498db;
+
+  /* Neutral Base */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Forms */
+  --color-input-bg: #2a2940;
+  --color-input-border: #2e2c44;
+}
+
+html,
+body {
+  font-family: "Inter", sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: "Montserrat", sans-serif;
+}
+a,
+button {
+  cursor: pointer !important;
+}
+
+input,
+select,
+textarea,
+.input {
+  background-color: var(--color-input-bg);
+  border: 1px solid var(--color-input-border);
+  color: var(--color-text);
+  border-radius: 0.25rem; /* 4px */
+  padding: 0.2rem; /* 8px */
+  height: fit-content;
+  font-size: 0.75rem;
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  &::placeholder {
+    color: rgb(187, 186, 186);
+    font-size: 0.65rem;
+    font-style: italic;
+  }
+
+  //checkbox
+  &[type="checkbox"] {
+    width: fit-content;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+  }
+}
+button {
+  font-size: 0.75rem;
+  padding: 0.3rem 1rem; /* 8px 16px */
+  border-radius: 0.25rem; /* 4px */
+  font-weight: 500;
+}
+label {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  display: block;
+  margin-bottom: 0.25rem; /* 4px */
+}
+
+.overlay {
+  background: rgba(10, 10, 10, 0.391);
+  // blur
+  backdrop-filter: blur(5px);
+  z-index: 9000000000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+  &.hidden {
+    display: none;
+  }
+  &.visible {
+    display: flex;
+  }
+}
+
+.section-overlay,
+.bg-opacity-50 {
+  background-color: rgba(44, 44, 44, 0.527) !important;
+  z-index: 10000;
+}
+
+.float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: white;
+  color: var(--color-primary-inverse);
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  width: 400px;
+  height: fit-content;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 192px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+}
+
+input[type="color"] {
+  padding: 0 !important;
+  height: 30px !important;
+}
+@layer utilities {
+  /* 🔄 Wiggle Rotation */
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: rotate(-3deg);
+    }
+    50% {
+      transform: rotate(3deg);
+    }
+  }
+
+  .animate-wiggle {
+    animation: wiggle 1.5s ease-in-out infinite;
+  }
+
+  /* 🎈 Soft Bounce */
+  @keyframes soft-bounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+  }
+
+  .animate-soft-bounce {
+    animation: soft-bounce 3s ease-in-out infinite;
+  }
+
+  /* 🌊 Float */
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* ⬇️ Slide Down */
+  @keyframes slideDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-1rem);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.5s ease-out forwards;
+  }
+
+  /* ➡️ Slide from Right */
+  @keyframes slideFromRight {
+    0% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .slide-from-right {
+    animation: slideFromRight 0.4s ease-out;
+  }
+
+  /* ⬅️ Slide from Left */
+  @keyframes slideFromLeft {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  .slide-from-left {
+    animation: slideFromLeft 0.4s ease-out;
+  }
+
+  /* ✨ Fade In */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+}

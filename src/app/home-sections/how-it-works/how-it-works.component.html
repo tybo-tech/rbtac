@@ -1,0 +1,25 @@
+<section class="py-20 bg-[var(--primary)] text-[var(--white)]">
+  <div class="max-w-6xl mx-auto px-4 text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4 text-[var(--accent)]">
+      How VentureFlow Works
+    </h2>
+    <p class="text-[var(--gray-light)] text-base md:text-lg mb-12 max-w-3xl mx-auto">
+      Whether you're running an incubator, accelerator, or training program — VentureFlow streamlines your operations from onboarding to outcomes.
+    </p>
+
+    <div class="grid gap-8 md:grid-cols-3">
+      <div
+        *ngFor="let step of steps"
+        class="flex flex-col items-center bg-[var(--cloud)] p-6 rounded-xl shadow-sm hover:shadow-md transition text-center"
+      >
+        <i class="fas text-3xl text-[var(--accent)] mb-4" [ngClass]="step.icon"></i>
+        <h3 class="font-semibold text-lg mb-2 text-[var(--white)]">
+          {{ step.title }}
+        </h3>
+        <p class="text-sm text-[var(--gray-light)]">
+          {{ step.desc }}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

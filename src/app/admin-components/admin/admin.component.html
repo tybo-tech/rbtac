@@ -1,0 +1,54 @@
+<!-- <section class="min-h-screen bg-[var(--primary)] text-[var(--white)]">
+  <div class="h-screen w-full grid md:grid-cols-[240px_1fr]">
+    <aside
+      class="h-full border-r border-gray-800 bg-[var(--primary)] p-4 flex flex-col"
+    >
+      <div class="mb-4">
+        <h2
+          class="text-lg font-semibold text-[var(--accent)] pb-2 border-b border-[var(--gray-light)] border-opacity-20"
+        >
+          VentureFlow
+        </h2>
+      </div>
+
+      <nav class="flex flex-col gap-0.5 text-sm flex-1">
+        <div *ngIf="isLoading" class="space-y-1">
+          <div
+            class="animate-pulse bg-[var(--gray-light)] bg-opacity-20 h-8 rounded-md"
+          ></div>
+          <div
+            class="animate-pulse bg-[var(--gray-light)] bg-opacity-20 h-8 rounded-md"
+          ></div>
+          <div
+            class="animate-pulse bg-[var(--gray-light)] bg-opacity-20 h-8 rounded-md"
+          ></div>
+        </div>
+
+        <div *ngIf="!isLoading" class="space-y-0.5">
+          <a
+            *ngFor="let item of allNavItems"
+            [routerLink]="item.route"
+            [routerLinkActiveOptions]="{ exact: item.type === 'fixed' }"
+            routerLinkActive="bg-[var(--accent)] text-black"
+            class="group flex items-center transition-all duration-200 py-1 px-3 rounded-md hover:bg-[var(--accent)] hover:bg-opacity-10 hover:text-[var(--accent)]"
+          >
+            <span
+              class="w-6 h-6 rounded-md bg-gray-800 flex items-center justify-center mr-3 text-[var(--accent)] text-xs"
+            >
+              <i [class]="item.icon"></i>
+            </span>
+            <span class="flex-1 font-medium text-xs">{{ item.label }}</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="p-8 overflow-y-auto">
+      <router-outlet />
+    </main>
+  </div>
+</section> -->
+
+<section class="min-h-screen bg-[var(--primary)] text-[var(--white)]">
+  <router-outlet />
+</section>

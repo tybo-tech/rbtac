@@ -1,0 +1,11 @@
+<div class="float fade-in" appClickOutside (clickOutside)="onCloseModal.emit()">
+  <div class="collection-create">
+    <app-dynamic-form
+      formTitle="New Collection"
+      submitLabel="Create Collection"
+      subtitle="Define the structure and fields for your new collection."
+      [formGroups]="formGroups"
+      (submitted)="onSubmit.emit($event)"
+    />
+  </div>
+</div>

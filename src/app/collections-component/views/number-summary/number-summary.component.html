@@ -1,0 +1,55 @@
+<div class="p-5">
+  <div class="space-y-8 px-4 lg:px-6 xl:px-8">
+    <!-- 📊 Number Summary Header -->
+    <div class="bg-white rounded-xl shadow border border-gray-200 p-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">
+        {{ columnName }} Summary
+      </h2>
+
+      <!-- 📈 Numbers Chart -->
+      <div *ngIf="viewData.numberSummary && viewData.numberSummary.length > 0">
+        <app-numbers-chart [items]="viewData.numberSummary">
+        </app-numbers-chart>
+      </div>
+
+      <!-- 📭 No Data Message -->
+      <div
+        *ngIf="!viewData.numberSummary || viewData.numberSummary.length === 0"
+        class="text-center py-8 text-gray-500"
+      >
+        <div class="text-lg">📊</div>
+        <p class="mt-2">No numeric data available for analysis</p>
+        <p class="text-sm mt-1">Make sure this field contains valid numbers</p>
+      </div>
+    </div>
+    <!-- 📈 Line Chart Trend -->
+    <div 
+      *ngIf="viewData.line && viewData.line.datasets[0].data.length > 0"
+      class="bg-white rounded-xl shadow border border-gray-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">
+        📈 {{ columnName }} Trend Over Time
+      </h3>
+      <div class="h-64">
+        <app-line-chart 
+          [data]="viewData.line"
+          [componentTitle]="columnName + ' Trend'">
+        </app-line-chart>
+      </div>
+    </div>
+
+    <!-- 📋 Additional Info -->
+    <div
+      *ngIf="viewData.numberSummary && viewData.numberSummary.length > 0"
+      class="bg-blue-50 rounded-xl border border-blue-200 p-6"
+    >
+      <h3 class="text-lg font-medium text-blue-900 mb-2">
+        💡 About This Analysis
+      </h3>
+      <p class="text-blue-700 text-sm">
+        This summary shows statistical metrics for the
+        <strong>{{ columnName }}</strong> field across all records. The analysis
+        includes count, sum, average, minimum, maximum, and median values.
+      </p>
+    </div>
+  </div>
+</div>

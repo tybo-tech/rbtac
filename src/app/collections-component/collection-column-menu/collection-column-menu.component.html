@@ -1,0 +1,41 @@
+<!-- collection-column-menu.component.html -->
+<div
+  appClickOutside
+  (clickOutside)="onCloseModal.emit()"
+  class="absolute z-50 top-full right-0 mt-1 w-40 bg-white shadow-lg border border-gray-200 rounded-md text-xs text-gray-700"
+>
+  <ul class="py-1">
+    <li>
+      <button
+        (click)="onEditColumn.emit(column); onCloseModal.emit()"
+        class="w-full px-3 py-2 text-left hover:bg-gray-100"
+      >
+        <i class="fas fa-edit mr-2"></i> Edit Column
+      </button>
+    </li>
+    <li>
+      <button
+        (click)="delete()"
+        class="w-full px-3 py-2 text-left hover:bg-gray-100 text-red-600"
+      >
+        <i class="fas fa-trash-alt mr-2"></i> Delete Column
+      </button>
+    </li>
+    <li>
+      <button
+        (click)="onMoveLeft.emit(column)"
+        class="w-full px-3 py-2 text-left hover:bg-gray-100"
+      >
+        <i class="fas fa-arrow-left mr-2"></i> Move Left
+      </button>
+    </li>
+    <li>
+      <button
+        (click)="onMoveRight.emit(column)"
+        class="w-full px-3 py-2 text-left hover:bg-gray-100"
+      >
+        <i class="fas fa-arrow-right mr-2"></i> Move Right
+      </button>
+    </li>
+  </ul>
+</div>

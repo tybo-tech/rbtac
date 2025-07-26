@@ -1,0 +1,90 @@
+<footer
+  class="bg-[var(--primary)] text-[var(--gray-light)] pt-14 pb-8 border-t border-[var(--cloud)]"
+>
+  <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-10 items-start">
+    <!-- Brand + Tagline -->
+    <div class="col-span-2 md:col-span-1 flex flex-col gap-3">
+      <div class="flex items-center gap-3 mb-2">
+        <!-- <img src="assets/logo.png" alt="Viviid Logo" class="h-10 w-10 object-contain rounded-lg bg-[var(--cloud)] p-1" /> -->
+        <span class="text-2xl font-bold text-[var(--white)] tracking-wider">{{
+          brand
+        }}</span>
+      </div>
+      <span class="text-[var(--accent)] font-medium">{{ tagline }}</span>
+      <p class="text-xs mt-3">
+        {{longDescription}}
+      </p>
+      <!-- Social Icons -->
+      <div class="flex gap-3 mt-4">
+        <a
+          *ngFor="let s of socials"
+          [href]="s.href"
+          target="_blank"
+          rel="noopener"
+          class="hover:text-[var(--accent)] transition text-lg"
+        >
+          <i class="fab" [ngClass]="s.icon"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div>
+      <h4 class="text-[var(--white)] font-bold mb-3">Navigation</h4>
+      <ul class="space-y-2">
+        <li *ngFor="let link of navLinks">
+          <a
+            [routerLink]="link.href"
+            class="hover:text-[var(--accent)] transition"
+            >{{ link.label }}</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Quick Links -->
+    <div>
+      <h4 class="text-[var(--white)] font-bold mb-3">Quick Links</h4>
+      <ul class="space-y-2">
+        <li *ngFor="let link of quickLinks">
+          <a
+            [routerLink]="link.href"
+            class="hover:text-[var(--accent)] transition"
+            >{{ link.label }}</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Contact Info -->
+    <!-- Contact Info -->
+    <div>
+      <h4 class="text-[var(--white)] font-bold mb-3">Contact</h4>
+      <ul class="space-y-3">
+        <li *ngFor="let c of contacts" class="flex items-center gap-3">
+          <i class="fa-solid" [ngClass]="c.icon"></i>
+          <span *ngIf="c.type !== 'address'">
+            <a
+              *ngIf="c.type === 'email'"
+              [href]="'mailto:' + c.value"
+              class="hover:text-[var(--accent)] transition"
+              >{{ c.value }}</a
+            >
+            <a
+              *ngIf="c.type === 'phone'"
+              [href]="'tel:' + c.value"
+              class="hover:text-[var(--accent)] transition"
+              >{{ c.value }}</a
+            >
+          </span>
+          <span *ngIf="c.type === 'address'">{{ c.value }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Bottom Row -->
+  <div class="mt-12 text-xs text-center text-[var(--gray-light)] opacity-70">
+    &copy; {{ brand }} {{ year }}. All rights reserved.
+  </div>
+</footer>

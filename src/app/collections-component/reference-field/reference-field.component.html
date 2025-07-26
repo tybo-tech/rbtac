@@ -1,0 +1,29 @@
+<div class="flex items-center gap-2">
+  <!-- Selected Value Display -->
+  <div
+    class="px-2 py-1 text-sm rounded bg-gray-100 text-gray-800 cursor-pointer hover:bg-gray-200 tag"
+    (click)="openPicker()"
+  >
+    {{ displayText }}
+  </div>
+
+  <!-- Clear Button -->
+  <button
+    class="text-xs text-red-500 hover:underline"
+    *ngIf="selectedOptions.length"
+    (click)="clear()"
+    title="Clear selection"
+  >
+    ✕
+  </button>
+</div>
+
+<!-- Reference Picker Modal (lazy load or inline for now) -->
+<app-reference-picker
+  *ngIf="isPickerOpen"
+  [column]="column"
+  [options]="options"
+  [selected]="value"
+  (confirm)="handleSelection($event)"
+  (cancel)="isPickerOpen = false"
+></app-reference-picker>

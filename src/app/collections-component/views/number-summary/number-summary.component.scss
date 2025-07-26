@@ -1,0 +1,43 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.collection-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  height: 100%;
+}
+
+// Custom styling for the numbers chart
+::ng-deep app-numbers-chart {
+  .grid {
+    gap: 1.5rem;
+  }
+  
+  .cursor-pointer {
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+// Info box styling
+.bg-blue-50 {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #3B82F6;
+    border-radius: 0 2px 2px 0;
+  }
+}

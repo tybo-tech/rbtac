@@ -1,0 +1,11 @@
+:host {
+  a {
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.75rem !important;
+    &.active {
+      background: rgb(13, 9, 51);
+      color: white;
+    }
+  }
+}

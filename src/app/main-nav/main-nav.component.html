@@ -1,0 +1,92 @@
+<nav class="bg-[var(--primary)] text-[var(--white)] sticky top-0 z-50 shadow">
+  <div class="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
+    <!-- Logo -->
+    <a routerLink="/" class="flex items-center gap-3">
+      <img
+        [src]="logo"
+        [alt]="brand + ' Logo'"
+        class="h-auto w-36 rounded p-1"
+      />
+    </a>
+
+    <!-- Desktop Nav -->
+    <ul class="hidden md:flex items-center gap-4">
+      <li *ngFor="let item of navItems">
+        <a
+          [routerLink]="item.link"
+          class="px-3 py-2 font-semibold hover:text-[var(--accent)] transition"
+          routerLinkActive="text-[var(--accent)]"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeMobileMenu()"
+        >
+          {{ item.name }}
+        </a>
+      </li>
+
+      <li>
+        <a
+          *ngIf="!isAuthenticated"
+          routerLink="/register"
+          class="ml-2 bg-[var(--accent)] text-[var(--black)] font-semibold px-5 py-2 rounded-lg hover:scale-105 transition"
+        >
+          Start Free Trial
+        </a>
+
+        <a
+          *ngIf="isAuthenticated"
+          routerLink="/projects"
+          class="ml-2 bg-[var(--accent)] text-[var(--black)] font-semibold px-5 py-2 rounded-lg hover:scale-105 transition"
+        >
+          My Dashboard
+        </a>
+      </li>
+    </ul>
+
+    <!-- Mobile Hamburger -->
+    <button
+      class="md:hidden flex items-center justify-center rounded focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+      (click)="toggleMobileMenu()"
+      aria-label="Toggle menu"
+    >
+      <i class="fas fa-bars text-2xl"></i>
+    </button>
+  </div>
+
+  <!-- Mobile Dropdown -->
+  <div
+    class="md:hidden bg-[var(--primary)] border-t border-[var(--cloud)] transition-all duration-300"
+    *ngIf="showMobileMenu"
+  >
+    <ul class="flex flex-col px-6 py-3 gap-2">
+      <li *ngFor="let item of navItems">
+        <a
+          [routerLink]="item.link"
+          class="py-2 font-semibold hover:text-[var(--accent)] transition"
+          routerLinkActive="text-[var(--accent)]"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeMobileMenu()"
+        >
+          {{ item.name }}
+        </a>
+      </li>
+      <li>
+        <a
+          *ngIf="!isAuthenticated"
+          routerLink="/register"
+          class="mt-2 bg-[var(--accent)] text-[var(--black)] font-semibold px-4 py-2 rounded-lg text-center"
+          (click)="closeMobileMenu()"
+        >
+          Get Started
+        </a>
+        <a
+          *ngIf="isAuthenticated"
+          routerLink="/projects"
+          class="mt-2 bg-[var(--accent)] text-[var(--black)] font-semibold px-4 py-2 rounded-lg text-center"
+          (click)="closeMobileMenu()"
+        >
+          My Dashboard
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>

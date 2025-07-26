@@ -1,0 +1,175 @@
+:host {
+  color: rgb(51, 51, 51);
+  table.collection {
+    max-width: 100%;
+
+    th,
+    td {
+      font-weight: 400;
+      padding: 0.5rem 0.4rem;
+      font-size: 0.75rem;
+      text-transform: capitalize;
+      background: rgba(80, 80, 80, 0.1);
+      border-bottom: 2px solid rgb(234, 234, 234);
+      border-right: 1px solid rgba(65, 64, 64, 0.137);
+      max-width: 200px;
+      text-align: left;
+      overflow: auto;
+
+      .header-content {
+        .header-title {
+          font-weight: 500;
+          color: #374151;
+        }
+
+        .dropdown-icon {
+          color: #9ca3af;
+          transition: color 0.15s ease;
+
+          &:hover {
+            color: #6b7280;
+          }
+        }
+      }
+    }
+    th {
+      overflow: visible;
+    }
+    td {
+      background: white;
+      padding: 0;
+
+      .cell-content {
+        display: flex;
+        align-items: center;
+
+        .cell-input {
+          width: 100%;
+          height: 100%;
+          padding: 0.5rem;
+          font-size: 0.75rem;
+          border: none;
+          background: transparent;
+          color: inherit;
+          outline: none;
+          margin: 0 !important;
+
+          &[type="checkbox"] {
+            width: auto;
+            margin: 0 auto;
+            cursor: pointer;
+          }
+        }
+
+        .row-checkbox {
+          margin-right: 0.1rem;
+          margin-left: 0.5rem;
+          cursor: pointer;
+          width: fit-content;
+        }
+      }
+    }
+
+    .add-column-header {
+      .add-column-btn {
+        background: none;
+        border: 1px solid #d1d5db;
+        color: #6b7280;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        font-size: 0.75rem;
+        transition: all 0.15s ease;
+
+        &:hover {
+          background: #f9fafb;
+          border-color: #9ca3af;
+          color: #374151;
+        }
+      }
+    }
+
+    .actions-column {
+      .action-btn {
+        background: none;
+        border: none;
+        color: #6b7280;
+        padding: 0.25rem;
+        margin: 0 0.125rem;
+        border-radius: 0.25rem;
+        opacity: 0;
+        cursor: pointer;
+        transition: color 0.15s ease;
+        transition: 0.15s ease;
+
+        &:hover {
+          color: #374151;
+          background: #f3f4f6;
+        }
+      }
+
+      &:hover {
+        .action-btn {
+          opacity: 1;
+        }
+      }
+    }
+
+    .add-row-cell {
+      // text-align: center;
+      padding: 0.5rem 0.2rem;
+
+      .add-row-btn {
+        background: none;
+        border: 1px dashed #d1d5db;
+        color: #6b7280;
+        padding: 0.2rem 1rem;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: all 0.15s ease;
+        margin: 0;
+
+        &:hover {
+          background: #f9fafb;
+          border-color: #9ca3af;
+          color: #374151;
+        }
+      }
+    }
+  }
+
+  // Global input/select styles
+  input,
+  select {
+    box-shadow: none;
+    // checkbox specific styles
+    &[type="checkbox"] {
+      width: auto;
+      margin: 0 auto;
+      cursor: pointer;
+    }
+  }
+
+  // Multi-select container (minimal since logic moved to component)
+  .multi-select-container {
+    padding: 0.25rem;
+  }
+
+  // Textarea specific styling
+  textarea.cell-input {
+    resize: vertical;
+    min-height: 2rem;
+  }
+
+  // Select specific styling
+  select.cell-input {
+    cursor: pointer;
+    border-radius: 0;
+    height: 100%;
+
+    option {
+      padding: 0.25rem;
+    }
+  }
+}

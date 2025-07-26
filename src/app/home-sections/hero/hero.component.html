@@ -1,0 +1,41 @@
+<div class="relative bg-[color:var(--black)] text-[color:var(--white)] overflow-hidden">
+  <div class="max-w-4xl mx-auto px-6 py-24 text-center flex flex-col items-center">
+    <!-- Headline -->
+    <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
+      Empowering <span class="text-[color:var(--accent)]">Growth</span> & Impact
+    </h1>
+
+    <!-- Subheadline -->
+    <p class="text-lg md:text-xl text-[color:var(--gray-light)] mb-8 max-w-2xl">
+      VentureFlow helps incubators, accelerators, and development hubs manage training, grant funding,
+      mentorship, and entrepreneur progress — all in one modern platform.
+    </p>
+
+    <!-- Call to Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        routerLink="/register"
+        class="bg-[color:var(--accent)] hover:bg-[color:var(--black)] hover:text-[color:var(--accent)] text-[color:var(--black)] transition font-semibold px-8 py-3 rounded-lg shadow text-center"
+      >
+        Start Free Trial
+      </a>
+      <a
+        routerLink="/features"
+        class="bg-transparent hover:bg-[color:var(--accent)] hover:text-[color:var(--black)] transition text-[color:var(--accent)] font-semibold px-8 py-3 rounded-lg border border-[color:var(--accent)] text-center"
+      >
+        See Features
+      </a>
+    </div>
+
+    <!-- Image -->
+    <div class="mt-16 relative w-full">
+      <img
+        src="hero.webp"
+        alt="VentureFlow Platform Preview"
+        class="w-full object-contain drop-shadow-xl"
+      />
+      <!-- Glow effect -->
+      <div class="absolute top-[-50px] left-1/2 transform -translate-x-1/2 w-40 h-40 bg-[color:var(--accent)] rounded-full blur-2xl opacity-20 pointer-events-none"></div>
+    </div>
+  </div>
+</div>

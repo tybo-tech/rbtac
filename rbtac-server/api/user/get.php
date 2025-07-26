@@ -1,0 +1,16 @@
+<?php
+include_once '../../config/Database.php';
+include_once '../../models/UserCrud.php';
+$type = $_GET['type'] ?? '';
+try {
+    $connection = new Database();
+    $db = $connection->connect();
+    $userCrud = new UserCrud($db);
+    
+    $response = $userCrud->getUserById($_GET['id'], $_GET['website_id']);
+
+    echo json_encode($response);
+} catch (Exception $e) {
+    echo json_encode(array("message" => "Error: " . $e->getMessage()));
+}
+?>

@@ -1,0 +1,9 @@
+<div class="flex toast-container" [ngClass]="{ show: !!message }">
+  <div class="toast-body">
+    <i class="mr-0-5" [ngClass]="classes" (click)="closeToast()"></i>
+    {{ message }}
+  </div>
+  <div class="toast-header">
+    <i class="bi bi-x-lg" (click)="closeToast()"></i>
+  </div>
+</div>

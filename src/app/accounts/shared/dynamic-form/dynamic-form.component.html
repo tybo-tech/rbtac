@@ -1,0 +1,151 @@
+<div
+  class="text-[var(--text-main)]"
+>
+  <!-- Header Section -->
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h5 class="font-bold text-black">{{ formTitle }}</h5>
+      <p class="text-sm text-[var(--gray-light)] mt-1" *ngIf="subtitle">
+        {{ subtitle }}
+      </p>
+    </div>
+    <button
+      *ngIf="showBack"
+      type="button"
+      (click)="goBack()"
+      class="inline-flex items-center gap-2 text-sm font-medium text-[var(--gray-light)] hover:text-black transition"
+    >
+      <i class="fas fa-arrow-left"></i>
+      Back
+    </button>
+  </div>
+
+  <!-- Form Start -->
+  <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6">
+    <ng-container *ngFor="let group of formGroups">
+      <!-- Optional Title -->
+      <h2 *ngIf="group.title" class="text-lg font-semibold mb-2 text-black">
+        {{ group.title }}
+      </h2>
+      <p
+        *ngIf="group.description"
+        class="text-sm text-[var(--gray)] mb-4"
+      >
+        {{ group.description }}
+      </p>
+      <div class="grid gap-3" [ngClass]="group.grid">
+        <ng-container *ngFor="let input of group.inputs">
+          <!-- Input Field -->
+          <div
+            *ngIf="
+              [
+                'text',
+                'color',
+                'email',
+                'password',
+                'number',
+                'tel',
+                'url',
+                'search'
+              ].includes(input.type)
+            "
+          >
+            <label
+              class="block text-sm font-medium text-[var(--gray-light)] mb-1"
+            >
+              {{ input.label }}
+              <span *ngIf="input.required" class="text-red-400">*</span>
+            </label>
+            <input
+              [type]="input.type"
+              [placeholder]="input.placeholder || ''"
+              [formControlName]="input.key"
+              [readonly]="input.readonly || false"
+              class="w-full rounded-lg bg-[var(--input-bg)] border border-[var(--input-border)] px-4 py-1 text-black placeholder-[var(--gray)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+            />
+          </div>
+
+          <!-- Select -->
+          <div *ngIf="input.type === 'select'">
+            <label
+              class="block text-sm font-medium text-[var(--gray-light)] mb-1"
+            >
+              {{ input.label }}
+              <span *ngIf="input.required" class="text-red-400">*</span>
+            </label>
+            <select
+              [formControlName]="input.key"
+              class="w-full rounded-lg bg-[var(--input-bg)] border border-[var(--input-border)] px-4 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+            >
+              <option *ngFor="let opt of input.options" [value]="opt.value">
+                {{ opt.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Textarea -->
+          <div *ngIf="input.type === 'textarea'">
+            <label
+              class="block text-sm font-medium text-[var(--gray-light)] mb-1"
+            >
+              {{ input.label }}
+              <span *ngIf="input.required" class="text-red-400">*</span>
+            </label>
+            <textarea
+              [formControlName]="input.key"
+              [placeholder]="input.placeholder || ''"
+              rows="4"
+              class="w-full rounded-lg bg-[var(--input-bg)] border border-[var(--input-border)] px-4 py-2 text-black placeholder-[var(--gray)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+            ></textarea>
+          </div>
+
+          <!-- Image Upload -->
+          <div *ngIf="input.type === 'image'">
+            <label
+              class="block text-sm font-medium text-[var(--gray-light)] mb-1"
+            >
+              {{ input.label }}
+              <span *ngIf="input.required" class="text-red-400">*</span>
+            </label>
+            <app-upload-input
+              [imageKey]="input.key"
+              [formGroup]="form"
+              [parentItem]="form.value"
+              [formControlName]="input.key"
+            ></app-upload-input>
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <!-- Form Buttons -->
+    <div class="pt-1 flex flex-col sm:flex-row justify-end gap-4">
+      <button
+        *ngIf="cancelLabel"
+        type="button"
+        (click)="cancel()"
+        class="px-5 py-2 rounded-lg bg-gray-600 hover:bg-gray-500 text-black transition"
+      >
+        {{ cancelLabel }}
+      </button>
+      <button
+        [ngClass]="submitClass"
+        type="submit"
+        [disabled]="form.invalid"
+        class="px-6 py-2 rounded-lg bg-[var(--accent)] text-black font-semibold hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {{ submitLabel || "Save" }}
+      </button>
+    </div>
+
+    <!-- Redirect -->
+    <div *ngIf="redirect?.url && redirect?.label" class="mt-6 text-center">
+      <a
+        [routerLink]="redirect.url"
+        class="text-sm text-[var(--accent)] hover:underline"
+      >
+        {{ redirect.label }}
+      </a>
+    </div>
+  </form>
+</div>

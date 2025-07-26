@@ -1,0 +1,25 @@
+<section class="py-16 bg-[var(--black)] text-[var(--white)]">
+  <div class="max-w-3xl mx-auto px-4 flex flex-col items-center text-center">
+    <h2 class="text-3xl font-bold mb-3 text-[var(--accent)]">{{ ctaHeading }}</h2>
+    <p class="mb-8 text-[var(--gray-light)] text-lg">{{ ctaSubheading }}</p>
+    <div class="flex flex-col md:flex-row gap-4">
+      <a
+        *ngFor="let action of actions"
+        [routerLink]="action.href"
+        class="flex items-center gap-2 px-8 py-3 rounded-lg font-semibold shadow-lg transition
+          text-lg
+          border border-[var(--accent)]
+          hover:scale-105
+          hover:bg-[var(--accent)]
+          hover:text-[var(--black)]"
+        [ngClass]="{
+          'bg-[var(--accent)] text-[var(--black)]': action.variant === 'accent',
+          'bg-[var(--primary)] text-[var(--white)]': action.variant === 'primary'
+        }"
+      >
+        <i class="fas" [ngClass]="action.icon"></i>
+        {{ action.label }}
+      </a>
+    </div>
+  </div>
+</section>

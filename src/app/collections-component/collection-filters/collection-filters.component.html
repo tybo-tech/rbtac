@@ -1,0 +1,14 @@
+<div class="filters flex items-center gap-5">
+  <div
+    class="filter"
+    *ngFor="let filter of filterMenu"
+    (click)="onFilterClick(filter.name)"
+    tabindex="0"
+    role="button"
+    (keydown.enter)="onFilterClick(filter.name)"
+    (keydown.space)="onFilterClick(filter.name)"
+  >
+    <i class="{{ filter.icon }}" aria-hidden="true"></i>
+    <span>{{ filter.name }}</span>
+  </div>
+</div>

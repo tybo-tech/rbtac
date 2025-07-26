@@ -1,0 +1,10 @@
+:host {
+  color: #323232;
+  padding: 0;
+  display: block;
+  .collection-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    border-top: 1px solid rgba(0, 0, 0, 0.295);
+  }
+}

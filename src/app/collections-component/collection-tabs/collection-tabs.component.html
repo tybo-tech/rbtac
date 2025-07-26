@@ -1,0 +1,22 @@
+<div class="tabs flex items-center">
+  <div
+    class="tab"
+    *ngFor="let item of collections"
+    (click)="onSelectCollection.emit(item)"
+    [ngClass]="{ active: item.id === collection?.id }"
+  >
+    {{ item.name }}
+    <i
+      (click)="onEditCollection.emit(item)"
+      class="dropdown-icon fa fa-chevron-down"
+      *ngIf="item.id === collection?.id"
+      aria-hidden="true"
+    ></i>
+  </div>
+
+  <!-- Add New Collection -->
+  <div class="tab add-collection" (click)="onAddCollection.emit()">
+    <span>Add Collection</span>
+    <i class="fa fa-plus" aria-hidden="true"></i>
+  </div>
+</div>
