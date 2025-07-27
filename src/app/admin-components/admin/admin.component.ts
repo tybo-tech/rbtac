@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { LoginService } from '../../../services/LoginService ';
 import { Users } from '../../../models/User';
 import { ICollection } from '../../../models/ICollection';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 
 interface NavItem {
   icon: string;
@@ -14,7 +15,7 @@ interface NavItem {
 
 @Component({
   selector: 'app-admin',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, NgFor, NgIf, RouterLink, RouterLinkActive],
   templateUrl: './admin.component.html',
 })
 export class AdminComponent implements OnInit {
@@ -24,6 +25,42 @@ export class AdminComponent implements OnInit {
       icon: 'fas fa-chart-line',
       label: 'Dashboard',
       route: '/admin',
+      type: 'fixed',
+    },
+    {
+      icon: 'fas fa-building',
+      label: 'Companies',
+      route: '/admin/companies',
+      type: 'fixed',
+    },
+    {
+      icon: 'fas fa-briefcase',
+      label: 'Programs',
+      route: '/admin/programs',
+      type: 'fixed',
+    },
+    {
+      icon: 'fas fa-users',
+      label: 'Users',
+      route: '/admin/users',
+      type: 'fixed',
+    },
+    {
+      icon: 'fas fa-cog',
+      label: 'Settings',
+      route: '/admin/settings',
+      type: 'fixed',
+    },
+    {
+      icon: 'fas fa-envelope',
+      label: 'Email Templates',
+      route: '/admin/email-templates',
+      type: 'fixed',
+    },
+    {
+      icon: 'fas fa-file-alt',
+      label: 'Collections',
+      route: '/admin/collections',
       type: 'fixed',
     },
   ];
@@ -39,14 +76,11 @@ export class AdminComponent implements OnInit {
   isLoading = false;
   showAddCollectionModal = false;
 
-  constructor(
-    private loginService: LoginService
-  ) {
+  constructor(private loginService: LoginService) {
     this.user = this.loginService.userValue;
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   // Get website ID as number
   get websiteId(): number {

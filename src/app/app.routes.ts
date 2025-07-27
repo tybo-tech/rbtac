@@ -8,6 +8,9 @@ import { HomeComponent } from './home/home.component';
 import { ForgotPasswordComponent } from './accounts/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './accounts/reset-password/reset-password.component';
 import { CollectionCanvasComponent } from './collections-component/collection-canvas/collection-canvas.component';
+import { CompaniesComponent } from './admin-components/companies/companies/companies.component';
+import { UsersComponent } from './admin-components/users/users/users.component';
+import { ProgramsComponent } from './admin-components/programs/programs/programs.component';
 
 export const routes: Routes = [
   {
@@ -44,6 +47,18 @@ export const routes: Routes = [
       {
         path: '',
         component: OverviewComponent,
+      },
+      {
+        path: 'companies',
+        component: CompaniesComponent,
+      },
+      {
+        path: 'users',
+        component: UsersComponent,
+      },
+      {
+        path: 'programs',
+        component: ProgramsComponent,
       },
       {
         path: 'collections',

@@ -1,0 +1,63 @@
+<div class="flex flex-wrap gap-4 items-center justify-between p-4 bg-[var(--cloud)] border-b border-[var(--input-border)] rounded-t-2xl text-sm">
+  <!-- Left: Search & Filters -->
+  <div class="flex flex-wrap gap-3 items-center">
+    <!-- 🔍 Search -->
+    <div class="relative">
+      <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--gray-light)] text-xs"></i>
+      <input
+        *ngIf="showSearch"
+        type="text"
+        [(ngModel)]="search"
+        (input)="emitChange()"
+        placeholder="Search..."
+        class="pl-9 pr-3 py-2 rounded-md bg-[var(--input-bg)] text-[var(--color-text)] border border-[var(--input-border)] placeholder:text-xs placeholder:italic placeholder:text-[var(--gray-light)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+      />
+    </div>
+
+    <!-- 🎯 Filters -->
+    <div *ngFor="let f of filters" class="flex items-center gap-2">
+      <label class="text-xs text-[var(--gray-light)]">{{ f.label }}</label>
+      <select
+        [(ngModel)]="activeFilters[f.key]"
+        (change)="emitChange()"
+        class="text-sm px-3 py-2 rounded-md bg-[var(--input-bg)] text-[var(--color-text)] border border-[var(--input-border)]"
+      >
+        <option value="">All</option>
+        <option *ngFor="let opt of f.options" [value]="opt">{{ opt }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Right: Sort + Add -->
+  <div class="flex gap-3 items-center">
+    <!-- Sort -->
+    <div class="flex items-center gap-2">
+      <select
+        *ngIf="sortOptions.length"
+        [(ngModel)]="sortBy"
+        (change)="emitChange()"
+        class="text-sm px-3 py-2 rounded-md bg-[var(--input-bg)] text-[var(--color-text)] border border-[var(--input-border)]"
+      >
+        <option value="">Sort by</option>
+        <option *ngFor="let option of sortOptions" [value]="option">{{ option }}</option>
+      </select>
+
+      <button
+        (click)="sortDirection = sortDirection === 'asc' ? 'desc' : 'asc'; emitChange()"
+        class="flex items-center gap-1 text-[var(--accent)] text-xs font-semibold hover:underline transition"
+      >
+        <i class="fas" [ngClass]="sortDirection === 'asc' ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+        {{ sortDirection === 'asc' ? 'Asc' : 'Desc' }}
+      </button>
+    </div>
+
+    <!-- ➕ Add Button -->
+    <button
+      *ngIf="showAdd"
+      class="bg-[var(--accent)] text-[var(--black)] font-semibold px-4 py-2 rounded-md shadow hover:bg-opacity-90 transition hover:-translate-y-1"
+      (click)="onAdd()"
+    >
+      <i class="fas fa-plus mr-2"></i> Add
+    </button>
+  </div>
+</div>
