@@ -1,5 +1,6 @@
 <app-table
-  [columns]="columns"
+  *ngIf="table"
+  [table]="table"
   [data]="list"
   (edit)="editCompany($event)"
   (delete)="deleteCompany($event)"

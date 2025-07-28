@@ -46,10 +46,10 @@ export interface ColumnOption {
   background?: string;
 }
 
-export interface ICollectionData {
+export interface ICollectionData<T = any> {
   id: number;
   collection_id: number;
-  data: any;
+  data: T;
   created_at?: string;
   updated_at?: string;
 

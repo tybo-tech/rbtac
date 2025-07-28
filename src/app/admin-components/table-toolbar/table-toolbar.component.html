@@ -1,63 +1,105 @@
-<div class="flex flex-wrap gap-4 items-center justify-between p-4 bg-[var(--cloud)] border-b border-[var(--input-border)] rounded-t-2xl text-sm">
-  <!-- Left: Search & Filters -->
-  <div class="flex flex-wrap gap-3 items-center">
-    <!-- 🔍 Search -->
+<!-- table-toolbar.component.html -->
+<div class="flex items-center justify-between px-4 py-2 bg-[var(--dark-header)] border-b border-[var(--table-border)] sticky top-0 z-10">
+  <!-- Left: View Selector -->
+  <div class="flex items-center space-x-2">
     <div class="relative">
-      <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--gray-light)] text-xs"></i>
-      <input
-        *ngIf="showSearch"
-        type="text"
-        [(ngModel)]="search"
-        (input)="emitChange()"
-        placeholder="Search..."
-        class="pl-9 pr-3 py-2 rounded-md bg-[var(--input-bg)] text-[var(--color-text)] border border-[var(--input-border)] placeholder:text-xs placeholder:italic placeholder:text-[var(--gray-light)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-      />
-    </div>
-
-    <!-- 🎯 Filters -->
-    <div *ngFor="let f of filters" class="flex items-center gap-2">
-      <label class="text-xs text-[var(--gray-light)]">{{ f.label }}</label>
-      <select
-        [(ngModel)]="activeFilters[f.key]"
-        (change)="emitChange()"
-        class="text-sm px-3 py-2 rounded-md bg-[var(--input-bg)] text-[var(--color-text)] border border-[var(--input-border)]"
+      <button
+        class="flex items-center px-3 py-1.5 text-sm font-medium rounded hover:bg-[var(--dark-hover)] transition-colors text-[var(--text-light)]"
+        (click)="viewMenuOpen = !viewMenuOpen"
       >
-        <option value="">All</option>
-        <option *ngFor="let opt of f.options" [value]="opt">{{ opt }}</option>
-      </select>
+        <i [ngClass]="viewIcons[currentView]" class="mr-2 text-[var(--text-muted)]"></i>
+        <span>{{ viewLabels[currentView] }}</span>
+        <i [ngClass]="faChevronDown" class="ml-2 text-xs text-[var(--text-muted)]"></i>
+      </button>
+
+      <!-- View Dropdown -->
+      <div
+        *ngIf="viewMenuOpen"
+        class="absolute z-50 mt-1 w-48 bg-[var(--dark-header)] rounded-md shadow-lg border border-[var(--table-border)]"
+      >
+        <div class="py-1">
+          <button
+            *ngFor="let view of views"
+            class="flex items-center w-full px-4 py-2 text-sm text-[var(--text-light)] hover:bg-[var(--dark-hover)]"
+            (click)="changeView(view)"
+          >
+            <i [ngClass]="viewIcons[view]" class="mr-3 text-[var(--text-muted)]"></i>
+            {{ viewLabels[view] }}
+          </button>
+        </div>
+        <div class="border-t border-[var(--table-border)]">
+          <button class="flex items-center w-full px-4 py-2 text-sm text-[var(--text-light)] hover:bg-[var(--dark-hover)]">
+            <i [ngClass]="faPlus" class="mr-3 text-[var(--text-muted)]"></i>
+            Add view
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Right: Sort + Add -->
-  <div class="flex gap-3 items-center">
-    <!-- Sort -->
-    <div class="flex items-center gap-2">
-      <select
-        *ngIf="sortOptions.length"
-        [(ngModel)]="sortBy"
-        (change)="emitChange()"
-        class="text-sm px-3 py-2 rounded-md bg-[var(--input-bg)] text-[var(--color-text)] border border-[var(--input-border)]"
-      >
-        <option value="">Sort by</option>
-        <option *ngFor="let option of sortOptions" [value]="option">{{ option }}</option>
-      </select>
-
+  <!-- Right: Action Icons -->
+  <div class="flex items-center space-x-3">
+    <!-- Search -->
+    <div class="relative">
       <button
-        (click)="sortDirection = sortDirection === 'asc' ? 'desc' : 'asc'; emitChange()"
-        class="flex items-center gap-1 text-[var(--accent)] text-xs font-semibold hover:underline transition"
+        *ngIf="!isSearchVisible"
+        class="p-2 text-[var(--text-muted)] hover:text-[var(--text-light)] hover:bg-[var(--dark-hover)] rounded-full transition-colors"
+        (click)="toggleSearch()"
       >
-        <i class="fas" [ngClass]="sortDirection === 'asc' ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
-        {{ sortDirection === 'asc' ? 'Asc' : 'Desc' }}
+        <i [ngClass]="faSearch"></i>
       </button>
+
+      <div
+        *ngIf="isSearchVisible"
+        class="absolute right-0 top-0 flex items-center bg-[var(--dark-header)] rounded-full shadow-sm border border-[var(--table-border)]"
+        style="width: 200px;"
+      >
+        <input
+          type="text"
+          [(ngModel)]="search"
+          (input)="onSearchChange()"
+          placeholder="Search..."
+          class="flex-1 px-3 py-1.5 text-sm border-none focus:ring-0 rounded-l-full bg-transparent text-[var(--text-light)] placeholder-[var(--text-muted)]"
+          autofocus
+        >
+        <button
+          class="p-2 text-[var(--text-muted)] hover:text-[var(--text-light)]"
+          (click)="toggleSearch()"
+        >
+          <i [ngClass]="faTimes"></i>
+        </button>
+      </div>
     </div>
 
-    <!-- ➕ Add Button -->
+    <!-- Filter -->
     <button
-      *ngIf="showAdd"
-      class="bg-[var(--accent)] text-[var(--black)] font-semibold px-4 py-2 rounded-md shadow hover:bg-opacity-90 transition hover:-translate-y-1"
-      (click)="onAdd()"
+      class="p-2 text-[var(--text-muted)] hover:text-[var(--text-light)] hover:bg-[var(--dark-hover)] rounded-full transition-colors"
+      (click)="triggerAction('filter')"
     >
-      <i class="fas fa-plus mr-2"></i> Add
+      <i [ngClass]="faFilter"></i>
+    </button>
+
+    <!-- Sort -->
+    <button
+      class="p-2 text-[var(--text-muted)] hover:text-[var(--text-light)] hover:bg-[var(--dark-hover)] rounded-full transition-colors"
+      (click)="triggerAction('sort')"
+    >
+      <i [ngClass]="faSort"></i>
+    </button>
+
+    <!-- More Options -->
+    <button
+      class="p-2 text-[var(--text-muted)] hover:text-[var(--text-light)] hover:bg-[var(--dark-hover)] rounded-full transition-colors"
+      (click)="triggerAction('share')"
+    >
+      <i [ngClass]="faSlidersH"></i>
     </button>
   </div>
 </div>
+
+<app-column-configurator
+  *ngIf="showColumnConfigurator && table"
+  [view]="table"
+  (close)="showColumnConfigurator = false"
+  (changed)="onColumnChange()"
+/>

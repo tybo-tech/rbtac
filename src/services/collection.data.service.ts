@@ -11,21 +11,23 @@ import { Constants } from './service';
 @Injectable({
   providedIn: 'root',
 })
-export class CollectionDataService {
+export class CollectionDataService<T = any> {
   private apiUrl = `${Constants.ApiBase}/collection-data`;
 
   constructor(private http: HttpClient) {}
 
   // Get all data entries for a specific collection
-  getDataByCollectionId(collectionId: number): Observable<ICollectionData[]> {
+  getDataByCollectionId(
+    collectionId: number
+  ): Observable<ICollectionData<T>[]> {
     const url = `${this.apiUrl}/list.php?collectionId=${collectionId}`;
-    return this.http.get<ICollectionData[]>(url);
+    return this.http.get<ICollectionData<T>[]>(url);
   }
 
   // Get a data entry by ID
-  getDataById(id: number): Observable<ICollectionData> {
+  getDataById(id: number): Observable<ICollectionData<T>> {
     const url = `${this.apiUrl}/get.php?id=${id}`;
-    return this.http.get<ICollectionData>(url);
+    return this.http.get<ICollectionData<T>>(url);
   }
 
   getReferenceOptions(requests: IReferenceRequest[]) {
@@ -34,21 +36,21 @@ export class CollectionDataService {
   }
 
   // Add a new data entry
-  addData(data: ICollectionData): Observable<ICollectionData> {
+  addData(data: ICollectionData<T>): Observable<ICollectionData<T>> {
     const url = `${this.apiUrl}/save.php`;
-    return this.http.post<ICollectionData>(url, data);
+    return this.http.post<ICollectionData<T>>(url, data);
   }
 
   // Update a data entry
-  updateData(data: ICollectionData): Observable<ICollectionData> {
+  updateData(data: ICollectionData<T>): Observable<ICollectionData<T>> {
     const url = `${this.apiUrl}/save.php`;
-    return this.http.put<ICollectionData>(url, data);
+    return this.http.put<ICollectionData<T>>(url, data);
   }
 
   //save-many.php
-  saveMany(data: ICollectionData[]): Observable<ICollectionData[]> {
+  saveMany(data: ICollectionData<T>[]): Observable<ICollectionData<T>[]> {
     const url = `${this.apiUrl}/save-many.php`;
-    return this.http.post<ICollectionData[]>(url, data);
+    return this.http.post<ICollectionData<T>[]>(url, data);
   }
 
   // Delete a data entry by ID
@@ -63,7 +65,7 @@ export class CollectionDataService {
     return this.http.delete(url);
   }
 
-  init(collection_id: number, data: any): ICollectionData {
+  init(collection_id: number, data: any): ICollectionData<T> {
     return {
       id: 0,
       collection_id,
@@ -85,5 +87,33 @@ export class CollectionDataService {
         console.error('Error deleting column from rows', error);
       },
     });
+  }
+  // Get all rows with a specific parent_id
+  getByParentId(parentId: string): Observable<ICollectionData<T>[]> {
+    const url = `${
+      this.apiUrl
+    }/getByParentId.php?parent_id=${encodeURIComponent(parentId)}`;
+    return this.http.get<ICollectionData<T>[]>(url);
+  }
+
+  // Get all rows for a collection (regardless of parent)
+  getAllByCollection(collectionId: string): Observable<ICollectionData<T>[]> {
+    const url = `${
+      this.apiUrl
+    }/getAllByCollection.php?collection_id=${encodeURIComponent(collectionId)}`;
+    return this.http.get<ICollectionData<T>[]>(url);
+  }
+
+  // Get all rows matching collectionId and parentId
+  getByCollectionAndParent(
+    collectionId: string,
+    parentId: string
+  ): Observable<ICollectionData<T>[]> {
+    const url = `${
+      this.apiUrl
+    }/getByCollectionAndParent.php?collection_id=${encodeURIComponent(
+      collectionId
+    )}&parent_id=${encodeURIComponent(parentId)}`;
+    return this.http.get<ICollectionData<T>[]>(url);
   }
 }

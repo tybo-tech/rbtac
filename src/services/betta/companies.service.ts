@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ICompany } from '../../models/schema';
 import { Constants } from '../service';
+import { TableFilter } from '../../models/TableColumn';
 
 
 @Injectable({ providedIn: 'root' })
@@ -34,4 +35,11 @@ export class CompanyService {
   delete(id: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/delete.php`, { id });
   }
+
+  getWithFilters(filters: TableFilter[] = []): Observable<ICompany[]> {
+  return this.http.post<ICompany[]>(`${this.apiUrl}/list.dynamic.php`, {
+    filters,
+  });
+}
+
 }

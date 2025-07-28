@@ -9,12 +9,12 @@ class CollectionDataMutation
     }
 
     // Add a new data entry
-    public function add($collectionId, $data)
+    public function add($collectionId, $data, $parentId = null)
     {
         $data = $this->sanitizeDataBeforeSave($data);
-        $query = "INSERT INTO collection_data (collection_id, data) VALUES (?, ?)";
+        $query = "INSERT INTO collection_data (collection_id, parent_id, data) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($query);
-        $stmt->execute([$collectionId, json_encode($data)]);
+        $stmt->execute([$collectionId, $parentId, json_encode($data)]);
         return $stmt->rowCount() ?
             $this->getById($this->conn->lastInsertId())
             : false;
@@ -29,6 +29,8 @@ class CollectionDataMutation
         $stmt->execute([json_encode($data), $id]);
         return $this->getById($id);
     }
+
+    // Get by ID
     public function getById($id)
     {
         $query = "SELECT * FROM collection_data WHERE id = ?";
@@ -40,7 +42,8 @@ class CollectionDataMutation
         }
         return $item;
     }
-    // Update multiple records
+
+    // Update many
     public function updateMany($ids, $data)
     {
         $data = $this->sanitizeDataBeforeSave($data);
@@ -50,7 +53,7 @@ class CollectionDataMutation
         return $stmt->rowCount();
     }
 
-    // Delete a data entry by ID
+    // Delete one
     public function remove($id)
     {
         $query = "DELETE FROM collection_data WHERE id = ?";
@@ -58,7 +61,7 @@ class CollectionDataMutation
         return $stmt->execute([$id]);
     }
 
-    // Delete all data entries for a specific collection
+    // Delete all by collection
     public function removeByCollectionId($collectionId)
     {
         $query = "DELETE FROM collection_data WHERE collection_id = ?";

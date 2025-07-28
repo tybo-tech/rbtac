@@ -1,5 +1,5 @@
 <?php
-// api/companies/get.php
+// api/collection-data/get.php
 include_once '../../config/Database.php';
 include_once '../../models/CollectionDataQuery.php';
 

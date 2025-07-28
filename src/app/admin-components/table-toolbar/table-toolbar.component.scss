@@ -1,0 +1,56 @@
+/* table-toolbar.component.scss */
+:host {
+  display: block;
+  background: var(--dark-header);
+  border-radius: 8px 8px 0 0;
+}
+
+/* Dark theme variables */
+:root {
+  --dark-header: #1e293b;
+  --dark-border: #334155;
+  --dark-hover: #334155;
+  --text-light: #f8fafc;
+  --text-muted: #94a3b8;
+}
+
+/* Animation for dropdown */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* View selector button */
+.view-selector {
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--dark-hover);
+  }
+}
+
+/* Action buttons */
+.action-btn {
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: var(--dark-hover);
+  }
+}
+
+/* Input focus state */
+input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.5);
+}
