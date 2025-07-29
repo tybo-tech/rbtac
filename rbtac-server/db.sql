@@ -3527,15 +3527,34 @@ CREATE TABLE `interviews` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `mentorship_templates`
+--
+
+CREATE TABLE `mentorship_templates` (
+  `id` int NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text,
+  `program_type` varchar(100) DEFAULT 'baseline',
+  `version` varchar(50) DEFAULT '1.0',
+  `is_active` tinyint(1) DEFAULT '1',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `mentorship_categories`
 --
 
 CREATE TABLE `mentorship_categories` (
   `id` int NOT NULL,
   `template_id` int NOT NULL,
-  `parent_id` int DEFAULT NULL,
   `name` varchar(255) NOT NULL,
-  `sort_order` int DEFAULT '0'
+  `description` text,
+  `order_index` int DEFAULT '0',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -3546,31 +3565,34 @@ CREATE TABLE `mentorship_categories` (
 
 CREATE TABLE `mentorship_questions` (
   `id` int NOT NULL,
-  `template_id` int NOT NULL,
-  `category_id` int DEFAULT NULL,
-  `question_text` text NOT NULL,
-  `question_type` enum('text','textarea','number','boolean','dropdown','date') NOT NULL,
-  `is_required` tinyint(1) DEFAULT '0',
+  `category_id` int NOT NULL,
+  `question_key` varchar(255) NOT NULL,
+  `label` varchar(500) NOT NULL,
+  `type` enum('text','number','date','dropdown','textarea','list','task','calculated','boolean') NOT NULL,
   `options` json DEFAULT NULL,
-  `calculation` json DEFAULT NULL,
-  `trigger_task` tinyint(1) DEFAULT '0',
-  `sort_order` int DEFAULT '0'
+  `items` json DEFAULT NULL,
+  `calculated` text DEFAULT NULL,
+  `due_date` date DEFAULT NULL,
+  `is_required` tinyint(1) DEFAULT '0',
+  `placeholder` varchar(255) DEFAULT NULL,
+  `validation_rules` json DEFAULT NULL,
+  `order_index` int DEFAULT '0',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `mentorship_responses`
+-- Table structure for table `mentorship_task_triggers`
 --
 
-CREATE TABLE `mentorship_responses` (
+CREATE TABLE `mentorship_task_triggers` (
   `id` int NOT NULL,
-  `session_id` int NOT NULL,
   `question_id` int NOT NULL,
-  `response_text` text,
-  `numeric_value` decimal(15,2) DEFAULT NULL,
-  `date_value` date DEFAULT NULL,
-  `boolean_value` tinyint(1) DEFAULT NULL,
+  `trigger_condition` varchar(500) NOT NULL,
+  `task_description` text NOT NULL,
+  `priority` enum('low','medium','high') DEFAULT 'medium',
+  `due_days_offset` int DEFAULT '7',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -3585,8 +3607,28 @@ CREATE TABLE `mentorship_sessions` (
   `company_id` int NOT NULL,
   `template_id` int NOT NULL,
   `session_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `status` enum('scheduled','in_progress','completed','reviewed') DEFAULT 'scheduled',
+  `completion_percentage` decimal(5,2) DEFAULT '0.00',
   `notes` text,
-  `created_by` int DEFAULT NULL
+  `created_by` int DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mentorship_responses`
+--
+
+CREATE TABLE `mentorship_responses` (
+  `id` int NOT NULL,
+  `session_id` int NOT NULL,
+  `question_id` int NOT NULL,
+  `response_value` json NOT NULL,
+  `completion_status` enum('pending','completed','skipped') DEFAULT 'pending',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -3603,9 +3645,32 @@ CREATE TABLE `mentorship_tasks` (
   `task_title` varchar(255) NOT NULL,
   `task_description` text,
   `assigned_to` int DEFAULT NULL,
-  `status` enum('pending','in_progress','done') DEFAULT 'pending',
+  `status` enum('pending','in_progress','done','cancelled') DEFAULT 'pending',
+  `priority` enum('low','medium','high') DEFAULT 'medium',
   `due_date` date DEFAULT NULL,
-  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+  `completed_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mentorship_triggered_tasks`
+--
+
+CREATE TABLE `mentorship_triggered_tasks` (
+  `id` int NOT NULL,
+  `session_id` int NOT NULL,
+  `trigger_id` int NOT NULL,
+  `task_description` text NOT NULL,
+  `status` enum('pending','in_progress','completed','cancelled') DEFAULT 'pending',
+  `priority` enum('low','medium','high') DEFAULT 'medium',
+  `assigned_to` int DEFAULT NULL,
+  `due_date` date DEFAULT NULL,
+  `completed_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------

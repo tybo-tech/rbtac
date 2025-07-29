@@ -69,6 +69,33 @@ export const routes: Routes = [
       {
         path: 'mentorship',
         component: MentorshipComponent,
+        children: [
+          {
+            path: '',
+            redirectTo: 'overview',
+            pathMatch: 'full'
+          },
+          {
+            path: 'overview',
+            loadComponent: () => import('./admin-components/mentorship/components/mentorship-overview/mentorship-overview.component').then(m => m.MentorshipOverviewComponent)
+          },
+          {
+            path: 'templates',
+            loadComponent: () => import('./admin-components/mentorship/components/mentorship-template/mentorship-template.component').then(m => m.MentorshipTemplateComponent)
+          },
+          {
+            path: 'sessions',
+            loadComponent: () => import('./admin-components/mentorship/components/mentorship-session/mentorship-session.component').then(m => m.MentorshipSessionComponent)
+          },
+          {
+            path: 'tasks',
+            loadComponent: () => import('./admin-components/mentorship/components/mentorship-task/mentorship-task.component').then(m => m.MentorshipTaskComponent)
+          },
+          {
+            path: 'analytics',
+            loadComponent: () => import('./admin-components/mentorship/components/mentorship-analytics/mentorship-analytics.component').then(m => m.MentorshipAnalyticsComponent)
+          }
+        ]
       },
       {
         path: 'collections',

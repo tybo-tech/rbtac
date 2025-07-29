@@ -1,0 +1,379 @@
+{
+  "info": {
+    "name": "RBTAC Mentorship System API",
+    "description": "Test collection for the mentorship system APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Templates",
+      "item": [
+        {
+          "name": "Get All Templates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/mentorship/templates.php",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "templates.php"]
+            }
+          }
+        },
+        {
+          "name": "Get Template by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/mentorship/templates.php?id=1",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "templates.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Baseline Template",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Baseline – Entrepreneur Information\",\n  \"description\": \"Captures baseline business info, goals, and strategic vision for new entrepreneurs in the mindset shift program.\",\n  \"program_type\": \"baseline\",\n  \"version\": \"1.0\",\n  \"is_active\": true,\n  \"categories\": [\n    {\n      \"name\": \"Entrepreneur Info\",\n      \"description\": \"Basic business and entrepreneur information\",\n      \"order\": 0,\n      \"questions\": [\n        {\n          \"key\": \"business_name\",\n          \"label\": \"Business Name\",\n          \"type\": \"text\",\n          \"is_required\": true,\n          \"order\": 0\n        },\n        {\n          \"key\": \"entrepreneur_name\",\n          \"label\": \"Entrepreneur Name\",\n          \"type\": \"text\",\n          \"is_required\": true,\n          \"order\": 1\n        }\n      ]\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mentorship/templates.php",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "templates.php"]
+            }
+          }
+        },
+        {
+          "name": "Seed Baseline Template",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mentorship/templates.php?action=seed_baseline",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "templates.php"],
+              "query": [
+                {
+                  "key": "action",
+                  "value": "seed_baseline"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "Get All Sessions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/mentorship/sessions.php",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "sessions.php"]
+            }
+          }
+        },
+        {
+          "name": "Get Sessions by Company",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/mentorship/sessions.php?company_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "sessions.php"],
+              "query": [
+                {
+                  "key": "company_id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Session with Responses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/mentorship/sessions.php?id=1",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "sessions.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company_id\": 1,\n  \"template_id\": 1,\n  \"session_date\": \"2024-01-15 10:00:00\",\n  \"status\": \"in_progress\",\n  \"notes\": \"Initial baseline assessment\",\n  \"created_by\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mentorship/sessions.php",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "sessions.php"]
+            }
+          }
+        },
+        {
+          "name": "Save Session Responses",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_id\": 1,\n  \"responses\": {\n    \"business_name\": \"Acme Corp\",\n    \"entrepreneur_name\": \"John Doe\",\n    \"sales_ability\": 8,\n    \"marketing_ability\": 6\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mentorship/sessions.php?action=save_responses",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "sessions.php"],
+              "query": [
+                {
+                  "key": "action",
+                  "value": "save_responses"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Companies",
+      "item": [
+        {
+          "name": "Search Companies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/companies/list.php?search=acme",
+              "host": ["{{base_url}}"],
+              "path": ["companies", "list.php"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "acme"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Company Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/companies/read.php?id=1",
+              "host": ["{{base_url}}"],
+              "path": ["companies", "read.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "Get Tasks by Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/mentorship/tasks.php?session_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "tasks.php"],
+              "query": [
+                {
+                  "key": "session_id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Task Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"completed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mentorship/tasks.php?id=1",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "tasks.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Responses",
+      "item": [
+        {
+          "name": "Save Individual Response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_id\": 1,\n  \"question_id\": 1,\n  \"question_key\": \"business_name\",\n  \"response_value\": \"Acme Corporation\",\n  \"response_text\": \"Acme Corporation\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mentorship/responses.php",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "responses.php"]
+            }
+          }
+        },
+        {
+          "name": "Save Multiple Responses",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"responses\": [\n    {\n      \"session_id\": 1,\n      \"question_id\": 1,\n      \"question_key\": \"business_name\",\n      \"response_value\": \"Acme Corporation\"\n    },\n    {\n      \"session_id\": 1,\n      \"question_id\": 2,\n      \"question_key\": \"entrepreneur_name\",\n      \"response_value\": \"John Doe\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mentorship/responses.php?action=batch",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "responses.php"],
+              "query": [
+                {
+                  "key": "action",
+                  "value": "batch"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Get Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/mentorship/analytics.php",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "analytics.php"]
+            }
+          }
+        },
+        {
+          "name": "Get Company Progress",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/mentorship/analytics.php?company_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["mentorship", "analytics.php"],
+              "query": [
+                {
+                  "key": "company_id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

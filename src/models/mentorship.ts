@@ -1,91 +1,98 @@
+// --- Template Structure ---
+
 export interface IMentorshipTemplate {
   id?: number;
-  title: string;
-  name?: string; // Alias for title for compatibility
-  description?: string;
-  category?: string;
-  category_name?: string; // For join results
-  is_active?: boolean;
-  question_count?: number; // For aggregated results
-  session_count?: number; // For aggregated results
+  name: string;
+  description: string;
+  program_type: string; // e.g., 'baseline', 'financial_turnaround', 'growth_strategy'
+  version: string;
+  is_active: boolean;
   created_at?: string;
   updated_at?: string;
-  categories?: IMentorshipCategory[];
-  questions?: IMentorshipQuestion[];
+  categories: IMentorshipCategory[];
+  question_count?: number;
+  session_count?: number;
 }
 
 export interface IMentorshipCategory {
   id?: number;
   template_id: number;
-  parent_id?: number;
   name: string;
-  sort_order: number;
-  children?: IMentorshipCategory[];
+  description?: string;
+  order: number;
+  questions: IMentorshipQuestion[];
 }
 
 export interface IMentorshipQuestion {
   id?: number;
-  template_id: number;
-  category_id?: number;
-  question_text: string;
-  question_type: 'text' | 'textarea' | 'number' | 'boolean' | 'dropdown' | 'date';
-  is_required: boolean;
-  options?: string[] | any;
-  calculation?: any;
-  trigger_task: boolean;
-  sort_order: number;
+  category_id: number;
+  key: string;
+  label: string;
+  type: 'text' | 'number' | 'date' | 'dropdown' | 'textarea' | 'list' | 'task' | 'calculated' | 'boolean';
+  options?: string[];
+  items?: string[];
+  calculated?: string;
+  due_date?: string;
+  triggers?: ITaskTrigger[];
+  required?: boolean;
+  placeholder?: string;
+  validation?: {
+    min?: number;
+    max?: number;
+    pattern?: string;
+  };
 }
 
-export interface IExtendedMentorshipQuestion extends IMentorshipQuestion {
-  optionsText?: string;
+export interface ITaskTrigger {
+  id?: number;
+  question_id: number;
+  condition: string;
+  createTask: string;
+  priority?: 'low' | 'medium' | 'high';
+  assignee?: string;
+  due_days?: number;
 }
+
+
+// --- Session & Response Structure ---
 
 export interface IMentorshipSession {
   id?: number;
   company_id: number;
   template_id: number;
   session_date: string;
-  scheduled_at?: string; // For scheduled sessions
-  status?: 'scheduled' | 'in_progress' | 'completed';
+  scheduled_at?: string;
+  status?: 'scheduled' | 'in_progress' | 'completed' | 'reviewed';
   completion_percentage?: number;
-  task_count?: number;
   notes?: string;
   created_by?: number;
   company_name?: string;
-  template_name?: string; // For join results
-  template_title?: string;
-  mentor_name?: string; // For join results
+  template_name?: string;
+  mentor_name?: string;
   created_by_name?: string;
-  responses?: IMentorshipResponse[];
+  responses?: { [key: string]: any }; // Key-value pairs of question responses (key is question.key)
   tasks?: IMentorshipTask[];
+  triggered_tasks?: ITriggeredTask[];
 }
 
-export interface IMentorshipResponse {
+// This represents a response to a single question, useful for DB storage but maybe not for frontend state
+export interface IMentorshipQuestionResponse {
   id?: number;
   session_id: number;
   question_id: number;
-  response_text?: string;
-  numeric_value?: number;
-  date_value?: string;
-  boolean_value?: boolean;
+  response_value: any; // Can be string, number, boolean, string[]
   created_at?: string;
-  question_text?: string;
-  question_type?: string;
-  options?: any;
-  is_required?: boolean;
 }
 
 export interface IMentorshipTask {
   id?: number;
   session_id: number;
-  question_id?: number;
+  question_id?: number; // The question that triggered this task
   company_id: number;
   task_title: string;
-  title?: string; // Alias for task_title
   task_description?: string;
-  description?: string; // Alias for task_description
   assigned_to?: number;
-  status: 'pending' | 'in_progress' | 'done';
+  status: 'pending' | 'in_progress' | 'done' | 'cancelled';
   priority?: 'low' | 'medium' | 'high';
   due_date?: string;
   created_at?: string;
@@ -96,9 +103,16 @@ export interface IMentorshipTask {
   template_title?: string;
 }
 
+// This is a task that was automatically created by a trigger
+export interface ITriggeredTask extends IMentorshipTask {
+    trigger_condition: string;
+}
+
+
+// --- Analytics & API ---
+
 export interface IMentorshipStatistics {
   total_sessions?: number;
-  totalSessions?: number; // Alias
   activeSessions?: number;
   completedSessions?: number;
   unique_companies?: number;
@@ -106,16 +120,27 @@ export interface IMentorshipStatistics {
   avg_age_minutes?: number;
   total_tasks?: number;
   pending_tasks?: number;
-  pendingTasks?: number; // Alias
   in_progress_tasks?: number;
   completed_tasks?: number;
   overdue_tasks?: number;
-  overdueTasks?: number; // Alias
   averageProgress?: number;
   total_responses?: number;
   unique_questions?: number;
   numeric_responses?: number;
   avg_numeric_value?: number;
+}
+
+// --- Response Structure ---
+
+export interface IMentorshipResponse {
+  id?: number;
+  session_id: number;
+  question_id: number;
+  question_key: string;
+  response_value: any;
+  response_text?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface IApiResponse<T> {
