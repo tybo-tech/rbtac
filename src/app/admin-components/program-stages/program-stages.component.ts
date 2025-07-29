@@ -17,6 +17,12 @@ import { StageCompaniesComponent } from './components/stage-companies/stage-comp
 import { StatisticsModalComponent } from './components/statistics-modal/statistics-modal.component';
 import { CompanyDetailsModalComponent } from './components/company-details-modal/company-details-modal.component';
 
+// Import action modal components
+import { CreateStageModalComponent } from './components/create-stage-modal/create-stage-modal.component';
+import { StageTemplatesModalComponent } from './components/stage-templates-modal/stage-templates-modal.component';
+import { BulkActionsModalComponent } from './components/bulk-actions-modal/bulk-actions-modal.component';
+import { AnalyticsModalComponent } from './components/analytics-modal/analytics-modal.component';
+
 @Component({
   selector: 'app-program-stages',
   standalone: true,
@@ -27,7 +33,11 @@ import { CompanyDetailsModalComponent } from './components/company-details-modal
     StagePipelineComponent,
     StageCompaniesComponent,
     StatisticsModalComponent,
-    CompanyDetailsModalComponent
+    CompanyDetailsModalComponent,
+    CreateStageModalComponent,
+    StageTemplatesModalComponent,
+    BulkActionsModalComponent,
+    AnalyticsModalComponent
   ],
   template: `
     <!-- Enhanced Program Stages Management with Beautiful Dark Theme -->
@@ -122,6 +132,38 @@ import { CompanyDetailsModalComponent } from './components/company-details-modal
         (viewHistory)="viewCompanyHistory($event)">
       </app-company-details-modal>
 
+      <!-- Header Action Modals -->
+      <app-create-stage-modal
+        [visible]="showCreateStageModal"
+        [program]="program"
+        [existingStages]="stages"
+        (close)="showCreateStageModal = false"
+        (stageCreated)="onStageCreated($event)">
+      </app-create-stage-modal>
+
+      <app-stage-templates-modal
+        [visible]="showTemplatesModal"
+        [program]="program"
+        (close)="showTemplatesModal = false"
+        (templateApplied)="onTemplateApplied($event)">
+      </app-stage-templates-modal>
+
+      <app-bulk-actions-modal
+        [visible]="showBulkActionsModal"
+        [stages]="stages"
+        [companies]="companies"
+        (close)="showBulkActionsModal = false"
+        (actionCompleted)="onBulkActionCompleted($event)">
+      </app-bulk-actions-modal>
+
+      <app-analytics-modal
+        [visible]="showAnalyticsModal"
+        [program]="program"
+        [stages]="stages"
+        [companies]="companies"
+        (close)="showAnalyticsModal = false">
+      </app-analytics-modal>
+
     </div>
   `,
   styleUrl: './program-stages.component.scss'
@@ -147,6 +189,12 @@ export class ProgramStagesComponent implements OnInit, OnDestroy {
   // Statistics
   showingStatistics = false;
   stageStatistics: any = null;
+
+  // Header Action Modals
+  showCreateStageModal = false;
+  showTemplatesModal = false;
+  showBulkActionsModal = false;
+  showAnalyticsModal = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -378,19 +426,19 @@ export class ProgramStagesComponent implements OnInit, OnDestroy {
 
   // Modal Actions (placeholders for future implementation)
   openCreateStageModal(): void {
-    console.log('Opening create stage modal');
+    this.showCreateStageModal = true;
   }
 
   openStageTemplatesModal(): void {
-    console.log('Opening stage templates modal');
+    this.showTemplatesModal = true;
   }
 
   openBulkActionsModal(): void {
-    console.log('Opening bulk actions modal');
+    this.showBulkActionsModal = true;
   }
 
   openAnalyticsModal(): void {
-    console.log('Opening analytics modal');
+    this.showAnalyticsModal = true;
   }
 
   // Stage Management Actions (placeholders for future implementation)
@@ -451,5 +499,24 @@ export class ProgramStagesComponent implements OnInit, OnDestroy {
 
   viewCompanyHistory(companyId: number): void {
     console.log('Viewing company history for ID:', companyId);
+  }
+
+  // Modal Event Handlers
+  onStageCreated(stage: IProgramStage): void {
+    console.log('Stage created:', stage);
+    this.showCreateStageModal = false;
+    this.loadProgramData(); // Refresh data
+  }
+
+  onTemplateApplied(stages: IProgramStage[]): void {
+    console.log('Template applied:', stages);
+    this.showTemplatesModal = false;
+    this.loadProgramData(); // Refresh data
+  }
+
+  onBulkActionCompleted(result: any): void {
+    console.log('Bulk action completed:', result);
+    this.showBulkActionsModal = false;
+    this.loadProgramData(); // Refresh data
   }
 }
