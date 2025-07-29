@@ -38,7 +38,7 @@ interface SelectableStage extends IProgramStage {
             <div *ngFor="let action of bulkActions"
                  (click)="selectAction(action)"
                  class="p-4 bg-gray-700 rounded-lg hover:bg-gray-650 transition-all duration-200 cursor-pointer border-2 border-transparent hover:border-purple-500">
-              
+
               <div class="flex items-center mb-3">
                 <div class="rounded-full w-12 h-12 flex items-center justify-center text-white font-bold text-lg mr-4"
                      [style.background-color]="action.color">
@@ -114,7 +114,7 @@ interface SelectableStage extends IProgramStage {
             <div *ngIf="selectedSourceStage && selectedTargetStage" class="bg-gray-700 rounded-lg p-4">
               <h5 class="font-medium text-white mb-2">Preview</h5>
               <p class="text-gray-300 text-sm">
-                This will advance <strong>{{ getCompaniesInStage(selectedSourceStage.id!).length }} companies</strong> 
+                This will advance <strong>{{ getCompaniesInStage(selectedSourceStage.id!).length }} companies</strong>
                 from <strong>{{ selectedSourceStage.title }}</strong> to <strong>{{ selectedTargetStage.title }}</strong>.
               </p>
             </div>
@@ -174,7 +174,7 @@ interface SelectableStage extends IProgramStage {
                 <label class="block text-gray-300 text-sm font-medium mb-3">Select Stages to Update</label>
                 <div class="space-y-2 max-h-60 overflow-y-auto">
                   <label *ngFor="let stage of stages" class="flex items-center p-2 hover:bg-gray-700 rounded cursor-pointer">
-                    <input type="checkbox" 
+                    <input type="checkbox"
                            [checked]="selectedStageIds.has(stage.id!)"
                            (change)="toggleStageSelection(stage.id!, $event)"
                            name="stage_{{ stage.id }}"
@@ -224,7 +224,7 @@ export class BulkActionsModalComponent {
   selectedTargetStage: IProgramStage | null = null;
   stageOrder: IProgramStage[] = [];
   selectedStageIds: Set<number> = new Set();
-  
+
   bulkUpdateData = {
     stage_color: '',
     status: ''
@@ -302,8 +302,8 @@ export class BulkActionsModalComponent {
   }
 
   getAdvancementTargets(sourceStage: IProgramStage): IProgramStage[] {
-    return this.stages.filter(stage => 
-      stage.id !== sourceStage.id && 
+    return this.stages.filter(stage =>
+      stage.id !== sourceStage.id &&
       (stage.stage_order || 0) > (sourceStage.stage_order || 0)
     );
   }
@@ -343,7 +343,7 @@ export class BulkActionsModalComponent {
     if (!this.selectedAction || !this.canExecuteAction()) return;
 
     const requiresConfirmation = this.selectedAction.requiresConfirmation;
-    
+
     if (requiresConfirmation && !confirm(`Are you sure you want to execute "${this.selectedAction.name}"?`)) {
       return;
     }
@@ -413,7 +413,7 @@ export class BulkActionsModalComponent {
 
   private archiveEmptyStages() {
     const emptyStages = this.stages.filter(stage => this.getCompaniesInStage(stage.id!).length === 0);
-    
+
     this.bulkUpdateStages.emit({
       stages: emptyStages,
       updates: { status: 'archived' }

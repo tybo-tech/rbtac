@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: Jul 29, 2025 at 01:46 AM
+-- Generation Time: Jul 29, 2025 at 03:06 AM
 -- Server version: 8.0.43
 -- PHP Version: 8.2.27
 
@@ -3527,6 +3527,105 @@ CREATE TABLE `interviews` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `mentorship_categories`
+--
+
+CREATE TABLE `mentorship_categories` (
+  `id` int NOT NULL,
+  `template_id` int NOT NULL,
+  `parent_id` int DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `sort_order` int DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mentorship_questions`
+--
+
+CREATE TABLE `mentorship_questions` (
+  `id` int NOT NULL,
+  `template_id` int NOT NULL,
+  `category_id` int DEFAULT NULL,
+  `question_text` text NOT NULL,
+  `question_type` enum('text','textarea','number','boolean','dropdown','date') NOT NULL,
+  `is_required` tinyint(1) DEFAULT '0',
+  `options` json DEFAULT NULL,
+  `calculation` json DEFAULT NULL,
+  `trigger_task` tinyint(1) DEFAULT '0',
+  `sort_order` int DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mentorship_responses`
+--
+
+CREATE TABLE `mentorship_responses` (
+  `id` int NOT NULL,
+  `session_id` int NOT NULL,
+  `question_id` int NOT NULL,
+  `response_text` text,
+  `numeric_value` decimal(15,2) DEFAULT NULL,
+  `date_value` date DEFAULT NULL,
+  `boolean_value` tinyint(1) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mentorship_sessions`
+--
+
+CREATE TABLE `mentorship_sessions` (
+  `id` int NOT NULL,
+  `company_id` int NOT NULL,
+  `template_id` int NOT NULL,
+  `session_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `notes` text,
+  `created_by` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mentorship_tasks`
+--
+
+CREATE TABLE `mentorship_tasks` (
+  `id` int NOT NULL,
+  `session_id` int NOT NULL,
+  `question_id` int DEFAULT NULL,
+  `company_id` int NOT NULL,
+  `task_title` varchar(255) NOT NULL,
+  `task_description` text,
+  `assigned_to` int DEFAULT NULL,
+  `status` enum('pending','in_progress','done') DEFAULT 'pending',
+  `due_date` date DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mentorship_templates`
+--
+
+CREATE TABLE `mentorship_templates` (
+  `id` int NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text,
+  `category` varchar(100) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `products`
 --
 
@@ -3759,11 +3858,12 @@ CREATE TABLE `program_stages` (
 --
 
 INSERT INTO `program_stages` (`id`, `program_id`, `title`, `description`, `stage_order`, `created_at`, `updated_at`, `requirements`, `expected_duration_days`, `min_duration_days`, `max_duration_days`, `auto_advance_criteria`, `stage_color`, `stage_icon`, `is_milestone`, `approval_required`, `notification_settings`, `status`) VALUES
-(1, 1, 'Application Review', '', 1, '2025-07-29 01:43:47', '2025-07-29 01:43:47', NULL, 14, 7, 90, NULL, '#EF4444', 'document', 0, 0, NULL, 'active'),
-(2, 1, 'Due Diligence', '', 2, '2025-07-29 01:43:47', '2025-07-29 01:43:47', NULL, 21, 7, 90, NULL, '#F97316', 'document', 0, 0, NULL, 'active'),
-(3, 1, 'Program Entry', '', 3, '2025-07-29 01:43:47', '2025-07-29 01:43:47', NULL, 7, 7, 90, NULL, '#EAB308', 'document', 0, 0, NULL, 'active'),
-(4, 1, 'Development', '', 4, '2025-07-29 01:43:47', '2025-07-29 01:43:47', NULL, 90, 7, 90, NULL, '#3B82F6', 'document', 0, 0, NULL, 'active'),
-(5, 1, 'Graduation', '', 5, '2025-07-29 01:43:47', '2025-07-29 01:43:47', NULL, 30, 7, 90, NULL, '#10B981', 'document', 0, 0, NULL, 'active');
+(1, 1, 'Application Review', '', 1, '2025-07-29 01:43:47', '2025-07-29 01:58:36', NULL, 14, 7, 90, NULL, '#EF4444', 'clipboard-check', 0, 0, NULL, 'active'),
+(2, 1, 'Due Diligence', '', 2, '2025-07-29 01:43:47', '2025-07-29 01:58:36', NULL, 21, 7, 90, NULL, '#F97316', 'search', 0, 0, NULL, 'active'),
+(3, 1, 'Program Entry', '', 3, '2025-07-29 01:43:47', '2025-07-29 01:58:36', NULL, 7, 7, 90, NULL, '#EAB308', 'sign-in-alt', 0, 0, NULL, 'active'),
+(4, 1, 'Development', '', 4, '2025-07-29 01:43:47', '2025-07-29 01:58:36', NULL, 90, 7, 90, NULL, '#3B82F6', 'code', 0, 0, NULL, 'active'),
+(5, 1, 'Graduation', '', 5, '2025-07-29 01:43:47', '2025-07-29 01:58:36', NULL, 30, 7, 90, NULL, '#10B981', 'graduation-cap', 0, 0, NULL, 'active'),
+(6, 1, 'Advanced Development', '', 6, '2025-07-29 01:59:22', '2025-07-29 01:59:22', NULL, 90, 7, 90, NULL, '#3B82F6', 'code', 0, 0, NULL, 'active');
 
 -- --------------------------------------------------------
 
@@ -5557,6 +5657,53 @@ ALTER TABLE `interviews`
   ADD KEY `program_stage_id` (`program_stage_id`);
 
 --
+-- Indexes for table `mentorship_categories`
+--
+ALTER TABLE `mentorship_categories`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `template_id` (`template_id`),
+  ADD KEY `parent_id` (`parent_id`);
+
+--
+-- Indexes for table `mentorship_questions`
+--
+ALTER TABLE `mentorship_questions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `template_id` (`template_id`),
+  ADD KEY `category_id` (`category_id`);
+
+--
+-- Indexes for table `mentorship_responses`
+--
+ALTER TABLE `mentorship_responses`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `session_id` (`session_id`),
+  ADD KEY `question_id` (`question_id`);
+
+--
+-- Indexes for table `mentorship_sessions`
+--
+ALTER TABLE `mentorship_sessions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `company_id` (`company_id`),
+  ADD KEY `template_id` (`template_id`);
+
+--
+-- Indexes for table `mentorship_tasks`
+--
+ALTER TABLE `mentorship_tasks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `session_id` (`session_id`),
+  ADD KEY `question_id` (`question_id`),
+  ADD KEY `company_id` (`company_id`);
+
+--
+-- Indexes for table `mentorship_templates`
+--
+ALTER TABLE `mentorship_templates`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `products`
 --
 ALTER TABLE `products`
@@ -5694,6 +5841,42 @@ ALTER TABLE `interviews`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `mentorship_categories`
+--
+ALTER TABLE `mentorship_categories`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mentorship_questions`
+--
+ALTER TABLE `mentorship_questions`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mentorship_responses`
+--
+ALTER TABLE `mentorship_responses`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mentorship_sessions`
+--
+ALTER TABLE `mentorship_sessions`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mentorship_tasks`
+--
+ALTER TABLE `mentorship_tasks`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mentorship_templates`
+--
+ALTER TABLE `mentorship_templates`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
@@ -5715,7 +5898,7 @@ ALTER TABLE `programs`
 -- AUTO_INCREMENT for table `program_stages`
 --
 ALTER TABLE `program_stages`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `reasons`
@@ -5799,6 +5982,42 @@ ALTER TABLE `interviews`
   ADD CONSTRAINT `interviews_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`),
   ADD CONSTRAINT `interviews_ibfk_2` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`),
   ADD CONSTRAINT `interviews_ibfk_3` FOREIGN KEY (`program_stage_id`) REFERENCES `program_stages` (`id`);
+
+--
+-- Constraints for table `mentorship_categories`
+--
+ALTER TABLE `mentorship_categories`
+  ADD CONSTRAINT `mentorship_categories_ibfk_1` FOREIGN KEY (`template_id`) REFERENCES `mentorship_templates` (`id`),
+  ADD CONSTRAINT `mentorship_categories_ibfk_2` FOREIGN KEY (`parent_id`) REFERENCES `mentorship_categories` (`id`);
+
+--
+-- Constraints for table `mentorship_questions`
+--
+ALTER TABLE `mentorship_questions`
+  ADD CONSTRAINT `mentorship_questions_ibfk_1` FOREIGN KEY (`template_id`) REFERENCES `mentorship_templates` (`id`),
+  ADD CONSTRAINT `mentorship_questions_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `mentorship_categories` (`id`);
+
+--
+-- Constraints for table `mentorship_responses`
+--
+ALTER TABLE `mentorship_responses`
+  ADD CONSTRAINT `mentorship_responses_ibfk_1` FOREIGN KEY (`session_id`) REFERENCES `mentorship_sessions` (`id`),
+  ADD CONSTRAINT `mentorship_responses_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `mentorship_questions` (`id`);
+
+--
+-- Constraints for table `mentorship_sessions`
+--
+ALTER TABLE `mentorship_sessions`
+  ADD CONSTRAINT `mentorship_sessions_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`),
+  ADD CONSTRAINT `mentorship_sessions_ibfk_2` FOREIGN KEY (`template_id`) REFERENCES `mentorship_templates` (`id`);
+
+--
+-- Constraints for table `mentorship_tasks`
+--
+ALTER TABLE `mentorship_tasks`
+  ADD CONSTRAINT `mentorship_tasks_ibfk_1` FOREIGN KEY (`session_id`) REFERENCES `mentorship_sessions` (`id`),
+  ADD CONSTRAINT `mentorship_tasks_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `mentorship_questions` (`id`),
+  ADD CONSTRAINT `mentorship_tasks_ibfk_3` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`);
 
 --
 -- Constraints for table `products`

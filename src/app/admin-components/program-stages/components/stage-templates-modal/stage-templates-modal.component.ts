@@ -41,10 +41,10 @@ interface StageTemplate {
 
           <!-- Templates Grid -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div *ngFor="let template of getFilteredTemplates()" 
+            <div *ngFor="let template of getFilteredTemplates()"
                  class="bg-gray-700 rounded-xl p-6 hover:bg-gray-650 transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-blue-500"
                  (click)="selectTemplate(template)">
-              
+
               <!-- Template Header -->
               <div class="flex items-center mb-4">
                 <div class="rounded-full w-12 h-12 flex items-center justify-center text-white font-bold text-lg mr-4"
@@ -70,11 +70,11 @@ interface StageTemplate {
 
               <!-- Stage Preview -->
               <div class="mt-4 flex flex-wrap gap-1">
-                <span *ngFor="let stage of template.stages.slice(0, 3)" 
+                <span *ngFor="let stage of template.stages.slice(0, 3)"
                       class="bg-gray-600 text-gray-300 px-2 py-1 rounded text-xs">
                   {{ stage.title }}
                 </span>
-                <span *ngIf="template.stages.length > 3" 
+                <span *ngIf="template.stages.length > 3"
                       class="bg-gray-600 text-gray-300 px-2 py-1 rounded text-xs">
                   +{{ template.stages.length - 3 }} more
                 </span>
@@ -112,7 +112,7 @@ interface StageTemplate {
           <!-- Stages Preview -->
           <h4 class="text-lg font-semibold text-white mb-4">Stages ({{ selectedTemplate.stages.length }})</h4>
           <div class="space-y-3 mb-6">
-            <div *ngFor="let stage of selectedTemplate.stages; let i = index" 
+            <div *ngFor="let stage of selectedTemplate.stages; let i = index"
                  class="flex items-center p-4 bg-gray-700 rounded-lg">
               <div class="rounded-full w-8 h-8 flex items-center justify-center text-white font-bold text-sm mr-4"
                    [style.background-color]="stage.stage_color">

@@ -75,7 +75,7 @@ interface ProgramAnalytics {
                 <i class="fas fa-table mr-2 text-blue-400"></i>
                 Stage Performance
               </h4>
-              
+
               <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                   <thead>
@@ -121,14 +121,14 @@ interface ProgramAnalytics {
                 <i class="fas fa-filter mr-2 text-green-400"></i>
                 Conversion Funnel
               </h4>
-              
+
               <div class="space-y-3">
                 <div *ngFor="let stage of analytics.stageAnalytics; let i = index" class="relative">
                   <div class="flex items-center justify-between mb-1">
                     <span class="text-white text-sm font-medium">{{ stage.stageName }}</span>
                     <span class="text-gray-300 text-sm">{{ stage.companyCount }} companies</span>
                   </div>
-                  
+
                   <div class="relative">
                     <div class="w-full bg-gray-600 rounded-full h-6">
                       <div class="h-6 rounded-full transition-all duration-300 flex items-center justify-center text-white text-xs font-semibold"
@@ -137,15 +137,15 @@ interface ProgramAnalytics {
                         {{ getFunnelWidth(i) }}%
                       </div>
                     </div>
-                    
+
                     <!-- Conversion Rate Arrow -->
-                    <div *ngIf="i < analytics.stageAnalytics.length - 1" 
+                    <div *ngIf="i < analytics.stageAnalytics.length - 1"
                          class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-gray-400 text-xs">
                       <i class="fas fa-arrow-down"></i>
                       <span class="ml-1">{{ analytics.conversionRates[i] }}%</span>
                     </div>
                   </div>
-                  
+
                   <div class="h-8"></div> <!-- Spacer for arrow -->
                 </div>
               </div>
@@ -160,7 +160,7 @@ interface ProgramAnalytics {
                 <i class="fas fa-lightbulb mr-2 text-yellow-400"></i>
                 Key Insights
               </h4>
-              
+
               <div class="space-y-4">
                 <div *ngFor="let insight of getInsights()" class="flex items-start p-3 bg-gray-600 rounded-lg">
                   <div class="rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm"
@@ -181,7 +181,7 @@ interface ProgramAnalytics {
                 <i class="fas fa-tasks mr-2 text-purple-400"></i>
                 Recommendations
               </h4>
-              
+
               <div class="space-y-4">
                 <div *ngFor="let recommendation of getRecommendations()" class="flex items-start p-3 bg-gray-600 rounded-lg">
                   <div class="rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm"
@@ -207,7 +207,7 @@ interface ProgramAnalytics {
               <i class="fas fa-chart-area mr-2 text-indigo-400"></i>
               Historical Trends
             </h4>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="bg-gray-600 rounded-lg p-4 h-64 flex items-center justify-center">
                 <div class="text-center">
@@ -216,7 +216,7 @@ interface ProgramAnalytics {
                   <p class="text-gray-500 text-sm">Chart visualization would be implemented here</p>
                 </div>
               </div>
-              
+
               <div class="bg-gray-600 rounded-lg p-4 h-64 flex items-center justify-center">
                 <div class="text-center">
                   <i class="fas fa-chart-bar text-gray-400 text-4xl mb-2"></i>
@@ -266,7 +266,7 @@ export class AnalyticsModalComponent {
       const companiesInStage = this.getCompaniesInStage(stage.id!);
       const avgDays = this.calculateAvgDaysInStage(stage.id!);
       const completionRate = this.calculateStageCompletionRate(stage.id!);
-      
+
       return {
         stageId: stage.id!,
         stageName: stage.title,
@@ -279,7 +279,7 @@ export class AnalyticsModalComponent {
     });
 
     const conversionRates = this.calculateConversionRates();
-    const bottleneckStage = stageAnalytics.reduce((prev, current) => 
+    const bottleneckStage = stageAnalytics.reduce((prev, current) =>
       prev.bottleneckScore > current.bottleneckScore ? prev : current
     );
 
@@ -329,31 +329,31 @@ export class AnalyticsModalComponent {
     const expectedDays = stage.expected_duration_days || 30;
     const delayFactor = avgDays / expectedDays;
     const volumeFactor = companiesInStage / this.companies.length;
-    
+
     return Math.round((delayFactor + volumeFactor) * 50);
   }
 
   private calculateConversionRates(): number[] {
     const rates: number[] = [];
-    
+
     for (let i = 0; i < this.stages.length - 1; i++) {
       const currentStageCompanies = this.getCompaniesInStage(this.stages[i].id!).length;
       const nextStageCompanies = this.getCompaniesInStage(this.stages[i + 1].id!).length;
-      
+
       if (currentStageCompanies > 0) {
         rates.push(Math.round((nextStageCompanies / currentStageCompanies) * 100));
       } else {
         rates.push(0);
       }
     }
-    
+
     return rates;
   }
 
   private calculateAvgPipelineDuration(): number {
     // Calculate average time from first to last stage
     if (this.companies.length === 0) return 0;
-    
+
     const totalDays = this.companies.reduce((sum, company) => {
       const entryDate = new Date(company.stage_entered_at);
       const now = new Date();
@@ -366,7 +366,7 @@ export class AnalyticsModalComponent {
 
   private calculateOverallCompletionRate(): number {
     if (this.companies.length === 0) return 0;
-    
+
     const lastStageId = this.stages[this.stages.length - 1]?.id;
     if (!lastStageId) return 0;
 
@@ -408,12 +408,12 @@ export class AnalyticsModalComponent {
     if (!this.analytics) return [];
 
     const insights = [];
-    
+
     // Find bottleneck
-    const bottleneck = this.analytics.stageAnalytics.reduce((prev, current) => 
+    const bottleneck = this.analytics.stageAnalytics.reduce((prev, current) =>
       prev.bottleneckScore > current.bottleneckScore ? prev : current
     );
-    
+
     insights.push({
       title: 'Bottleneck Identified',
       description: `${bottleneck.stageName} is causing delays with ${bottleneck.avgDaysInStage} average days`,
@@ -422,10 +422,10 @@ export class AnalyticsModalComponent {
     });
 
     // Find best performing stage
-    const bestStage = this.analytics.stageAnalytics.reduce((prev, current) => 
+    const bestStage = this.analytics.stageAnalytics.reduce((prev, current) =>
       prev.completionRate > current.completionRate ? prev : current
     );
-    
+
     insights.push({
       title: 'Best Performing Stage',
       description: `${bestStage.stageName} has the highest completion rate at ${bestStage.completionRate}%`,
@@ -457,12 +457,12 @@ export class AnalyticsModalComponent {
     if (!this.analytics) return [];
 
     const recommendations = [];
-    
+
     // Bottleneck recommendations
-    const bottleneck = this.analytics.stageAnalytics.reduce((prev, current) => 
+    const bottleneck = this.analytics.stageAnalytics.reduce((prev, current) =>
       prev.bottleneckScore > current.bottleneckScore ? prev : current
     );
-    
+
     if (bottleneck.bottleneckScore > 70) {
       recommendations.push({
         title: 'Address Bottleneck',

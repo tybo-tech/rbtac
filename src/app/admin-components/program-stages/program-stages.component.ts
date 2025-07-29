@@ -42,7 +42,7 @@ import { AnalyticsModalComponent } from './components/analytics-modal/analytics-
   template: `
     <!-- Enhanced Program Stages Management with Beautiful Dark Theme -->
     <div class="min-h-screen bg-gray-900 text-white">
-      
+
       <!-- Program Header -->
       <app-program-header
         [program]="program"
@@ -73,7 +73,7 @@ import { AnalyticsModalComponent } from './components/analytics-modal/analytics-
 
         <!-- Main Content -->
         <div *ngIf="!loading && !error">
-          
+
           <!-- Program Overview Cards -->
           <app-program-overview-cards
             [stages]="stages"

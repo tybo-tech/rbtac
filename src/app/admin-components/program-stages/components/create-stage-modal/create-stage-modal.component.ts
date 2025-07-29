@@ -25,8 +25,8 @@ import { IProgram, IProgramStage } from '../../../../../models/schema';
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label class="block text-gray-300 text-sm font-medium mb-2">Stage Title *</label>
-                <input type="text" 
-                       [(ngModel)]="stageData.title" 
+                <input type="text"
+                       [(ngModel)]="stageData.title"
                        name="title"
                        required
                        maxlength="100"
@@ -36,8 +36,8 @@ import { IProgram, IProgramStage } from '../../../../../models/schema';
 
               <div>
                 <label class="block text-gray-300 text-sm font-medium mb-2">Stage Order</label>
-                <input type="number" 
-                       [(ngModel)]="stageData.stage_order" 
+                <input type="number"
+                       [(ngModel)]="stageData.stage_order"
                        name="stage_order"
                        min="1"
                        class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -48,7 +48,7 @@ import { IProgram, IProgramStage } from '../../../../../models/schema';
             <!-- Description -->
             <div>
               <label class="block text-gray-300 text-sm font-medium mb-2">Description</label>
-              <textarea [(ngModel)]="stageData.description" 
+              <textarea [(ngModel)]="stageData.description"
                         name="description"
                         rows="3"
                         maxlength="500"
@@ -61,12 +61,12 @@ import { IProgram, IProgramStage } from '../../../../../models/schema';
               <div>
                 <label class="block text-gray-300 text-sm font-medium mb-2">Stage Color</label>
                 <div class="flex space-x-2">
-                  <input type="color" 
-                         [(ngModel)]="stageData.stage_color" 
+                  <input type="color"
+                         [(ngModel)]="stageData.stage_color"
                          name="stage_color"
                          class="w-12 h-10 bg-gray-700 border border-gray-600 rounded cursor-pointer">
-                  <input type="text" 
-                         [(ngModel)]="stageData.stage_color" 
+                  <input type="text"
+                         [(ngModel)]="stageData.stage_color"
                          name="stage_color_text"
                          pattern="^#[0-9A-Fa-f]{6}$"
                          class="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -76,7 +76,7 @@ import { IProgram, IProgramStage } from '../../../../../models/schema';
 
               <div>
                 <label class="block text-gray-300 text-sm font-medium mb-2">FontAwesome Icon</label>
-                <select [(ngModel)]="stageData.stage_icon" 
+                <select [(ngModel)]="stageData.stage_icon"
                         name="stage_icon"
                         class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                   <option value="clipboard-list">📋 clipboard-list (Default)</option>
@@ -99,8 +99,8 @@ import { IProgram, IProgramStage } from '../../../../../models/schema';
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label class="block text-gray-300 text-sm font-medium mb-2">Expected Duration (days)</label>
-                <input type="number" 
-                       [(ngModel)]="stageData.expected_duration_days" 
+                <input type="number"
+                       [(ngModel)]="stageData.expected_duration_days"
                        name="expected_duration_days"
                        min="1"
                        max="365"
@@ -110,8 +110,8 @@ import { IProgram, IProgramStage } from '../../../../../models/schema';
 
               <div>
                 <label class="block text-gray-300 text-sm font-medium mb-2">Maximum Duration (days)</label>
-                <input type="number" 
-                       [(ngModel)]="stageData.max_duration_days" 
+                <input type="number"
+                       [(ngModel)]="stageData.max_duration_days"
                        name="max_duration_days"
                        min="1"
                        max="365"
@@ -123,11 +123,11 @@ import { IProgram, IProgramStage } from '../../../../../models/schema';
             <!-- Stage Options -->
             <div class="space-y-4">
               <h4 class="text-lg font-semibold text-white border-b border-gray-600 pb-2">Stage Options</h4>
-              
+
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <label class="flex items-center space-x-3 p-3 bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-650 transition-colors">
-                  <input type="checkbox" 
-                         [(ngModel)]="stageData.is_milestone" 
+                  <input type="checkbox"
+                         [(ngModel)]="stageData.is_milestone"
                          name="is_milestone"
                          class="text-blue-500 focus:ring-blue-500 border-gray-600 bg-gray-700">
                   <div>
@@ -137,8 +137,8 @@ import { IProgram, IProgramStage } from '../../../../../models/schema';
                 </label>
 
                 <label class="flex items-center space-x-3 p-3 bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-650 transition-colors">
-                  <input type="checkbox" 
-                         [(ngModel)]="stageData.approval_required" 
+                  <input type="checkbox"
+                         [(ngModel)]="stageData.approval_required"
                          name="approval_required"
                          class="text-blue-500 focus:ring-blue-500 border-gray-600 bg-gray-700">
                   <div>
@@ -171,7 +171,7 @@ import { IProgram, IProgramStage } from '../../../../../models/schema';
 
           <!-- Actions -->
           <div class="flex space-x-3 mt-8 pt-6 border-t border-gray-700">
-            <button type="submit" 
+            <button type="submit"
                     [disabled]="!stageForm.form.valid || isSubmitting"
                     class="bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center">
               <i class="fas fa-save mr-2" *ngIf="!isSubmitting"></i>
@@ -179,13 +179,13 @@ import { IProgram, IProgramStage } from '../../../../../models/schema';
               {{ isSubmitting ? 'Creating...' : 'Create Stage' }}
             </button>
 
-            <button type="button" 
+            <button type="button"
                     (click)="close.emit()"
                     class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
               Cancel
             </button>
 
-            <button type="button" 
+            <button type="button"
                     (click)="resetForm()"
                     class="bg-orange-600 hover:bg-orange-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
               <i class="fas fa-undo mr-2"></i>Reset
