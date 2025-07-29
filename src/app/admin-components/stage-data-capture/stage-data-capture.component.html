@@ -1,0 +1,334 @@
+<div class="stage-data-capture p-6 bg-white rounded-lg shadow-sm">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h3 class="text-xl font-bold text-gray-900">
+        {{ company.name }} - Stage Data Capture
+      </h3>
+      <p class="text-gray-600 mt-1" *ngIf="currentStage">
+        <strong>Current Stage:</strong> {{ currentStage.stage_title }}
+      </p>
+    </div>
+
+    <button
+      (click)="loadCurrentStage()"
+      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+      [disabled]="loading"
+    >
+      <span class="flex items-center">
+        <svg class="w-4 h-4 mr-2" [class.animate-spin]="loading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Refresh
+      </span>
+    </button>
+  </div>
+
+  <!-- No Stage Message -->
+  <div *ngIf="!currentStage && !loading" class="text-center py-8">
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+      <svg class="w-12 h-12 text-yellow-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z" />
+      </svg>
+      <h3 class="text-lg font-semibold text-yellow-800 mb-2">No Active Stage</h3>
+      <p class="text-yellow-700">This company is not currently assigned to any stage in this program.</p>
+    </div>
+  </div>
+
+  <!-- Stage Data Tabs -->
+  <div *ngIf="currentStage && !loading">
+    <!-- Tab Navigation -->
+    <div class="border-b border-gray-200 mb-6">
+      <nav class="-mb-px flex space-x-8">
+        <button
+          *ngIf="shouldShowDocuments()"
+          (click)="setActiveTab('documents')"
+          class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+          [class.border-blue-500]="activeTab === 'documents'"
+          [class.text-blue-600]="activeTab === 'documents'"
+          [class.border-transparent]="activeTab !== 'documents'"
+          [class.text-gray-500]="activeTab !== 'documents'"
+        >
+          📄 Documents ({{ stageDocuments.length }})
+        </button>
+
+        <button
+          *ngIf="shouldShowRevenues()"
+          (click)="setActiveTab('revenues')"
+          class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+          [class.border-blue-500]="activeTab === 'revenues'"
+          [class.text-blue-600]="activeTab === 'revenues'"
+          [class.border-transparent]="activeTab !== 'revenues'"
+          [class.text-gray-500]="activeTab !== 'revenues'"
+        >
+          💰 Revenues ({{ stageRevenues.length }})
+        </button>
+
+        <button
+          *ngIf="shouldShowInterviews()"
+          (click)="setActiveTab('interviews')"
+          class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+          [class.border-blue-500]="activeTab === 'interviews'"
+          [class.text-blue-600]="activeTab === 'interviews'"
+          [class.border-transparent]="activeTab !== 'interviews'"
+          [class.text-gray-500]="activeTab !== 'interviews'"
+        >
+          🎤 Interviews
+        </button>
+      </nav>
+    </div>
+
+    <!-- Documents Tab -->
+    <div *ngIf="activeTab === 'documents' && shouldShowDocuments()">
+      <!-- Upload Form -->
+      <div class="bg-gray-50 p-4 rounded-lg mb-6">
+        <h4 class="font-semibold text-gray-900 mb-3">Upload New Document</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Document Name</label>
+            <input
+              type="text"
+              [(ngModel)]="newDocument.name"
+              placeholder="e.g., Bank Statement, ID Copy"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Document URL</label>
+            <input
+              type="url"
+              [(ngModel)]="newDocument.url"
+              placeholder="https://..."
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Upload Date</label>
+            <input
+              type="date"
+              [(ngModel)]="newDocument.date_uploaded"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        <div class="flex justify-end mt-4">
+          <button
+            (click)="uploadDocument()"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            [disabled]="loading || !newDocument.name || !newDocument.url"
+          >
+            Upload Document
+          </button>
+        </div>
+      </div>
+
+      <!-- Documents List -->
+      <div class="space-y-3">
+        <div *ngFor="let doc of stageDocuments" class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+          <div class="flex items-center space-x-3">
+            <span class="text-2xl">{{ getFileIcon(doc.name || '') }}</span>
+            <div>
+              <h5 class="font-medium text-gray-900">{{ doc.name }}</h5>
+              <p class="text-sm text-gray-600">
+                Uploaded: {{ formatDate(doc.date_uploaded || doc.created_at || '') }}
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <a
+              [href]="doc.url"
+              target="_blank"
+              class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded hover:bg-blue-200 transition-colors"
+            >
+              View
+            </a>
+            <button
+              (click)="deleteDocument(doc.id!)"
+              class="px-3 py-1 bg-red-100 text-red-800 text-sm rounded hover:bg-red-200 transition-colors"
+              [disabled]="loading"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="stageDocuments.length === 0" class="text-center py-8 text-gray-500">
+          <svg class="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <p>No documents uploaded for this stage yet.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenues Tab -->
+    <div *ngIf="activeTab === 'revenues' && shouldShowRevenues()">
+      <!-- Add Revenue Form -->
+      <div class="bg-gray-50 p-4 rounded-lg mb-6">
+        <h4 class="font-semibold text-gray-900 mb-3">Add Revenue Record</h4>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Month</label>
+            <select
+              [(ngModel)]="newRevenue.month"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option [ngValue]="1">January</option>
+              <option [ngValue]="2">February</option>
+              <option [ngValue]="3">March</option>
+              <option [ngValue]="4">April</option>
+              <option [ngValue]="5">May</option>
+              <option [ngValue]="6">June</option>
+              <option [ngValue]="7">July</option>
+              <option [ngValue]="8">August</option>
+              <option [ngValue]="9">September</option>
+              <option [ngValue]="10">October</option>
+              <option [ngValue]="11">November</option>
+              <option [ngValue]="12">December</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
+            <input
+              type="number"
+              [(ngModel)]="newRevenue.year"
+              min="2020"
+              max="2030"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Revenue Amount</label>
+            <input
+              type="number"
+              [(ngModel)]="newRevenue.revenue_amount"
+              step="0.01"
+              min="0"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Opening Balance</label>
+            <input
+              type="number"
+              [(ngModel)]="newRevenue.opening_balance"
+              step="0.01"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Closing Balance</label>
+            <input
+              type="number"
+              [(ngModel)]="newRevenue.closing_balance"
+              step="0.01"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        <div class="flex justify-end mt-4">
+          <button
+            (click)="addRevenue()"
+            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            [disabled]="loading"
+          >
+            Add Revenue
+          </button>
+        </div>
+      </div>
+
+      <!-- Revenues List -->
+      <div class="space-y-3">
+        <div *ngFor="let revenue of stageRevenues" class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+          <div class="flex-1">
+            <h5 class="font-medium text-gray-900">
+              {{ getMonthName(revenue.month || 0) }} {{ revenue.year }}
+            </h5>
+            <div class="grid grid-cols-3 gap-4 mt-2 text-sm">
+              <div>
+                <span class="text-gray-600">Revenue:</span>
+                <span class="font-medium text-green-600 ml-1">
+                  {{ formatCurrency(revenue.revenue_amount || 0) }}
+                </span>
+              </div>
+              <div>
+                <span class="text-gray-600">Opening:</span>
+                <span class="font-medium ml-1">
+                  {{ formatCurrency(revenue.opening_balance || 0) }}
+                </span>
+              </div>
+              <div>
+                <span class="text-gray-600">Closing:</span>
+                <span class="font-medium ml-1">
+                  {{ formatCurrency(revenue.closing_balance || 0) }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <button
+            (click)="deleteRevenue(revenue.id!)"
+            class="px-3 py-1 bg-red-100 text-red-800 text-sm rounded hover:bg-red-200 transition-colors ml-4"
+            [disabled]="loading"
+          >
+            Delete
+          </button>
+        </div>
+
+        <div *ngIf="stageRevenues.length === 0" class="text-center py-8 text-gray-500">
+          <svg class="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+          </svg>
+          <p>No revenue records added for this stage yet.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interviews Tab -->
+    <div *ngIf="activeTab === 'interviews' && shouldShowInterviews()">
+      <div class="text-center py-8 text-gray-500">
+        <svg class="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+        </svg>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">Interview Management</h3>
+        <p>Interview scheduling and evaluation features coming soon.</p>
+      </div>
+    </div>
+
+    <!-- Stage Requirements Info -->
+    <div class="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+      <h4 class="font-semibold text-blue-900 mb-2">Stage Requirements</h4>
+      <p class="text-blue-800 text-sm mb-2">
+        For the <strong>{{ currentStage.stage_title }}</strong> stage, the following data types are required:
+      </p>
+      <div class="flex flex-wrap gap-2">
+        <span *ngFor="let req of getStageTypeRequirements()"
+              class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+          {{ req.replace('_', ' ') | titlecase }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div *ngIf="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <div class="flex items-center">
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Processing...
+      </div>
+    </div>
+  </div>
+</div>

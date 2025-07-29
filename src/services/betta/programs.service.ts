@@ -9,7 +9,9 @@ import { Constants } from '../service';
 export class ProgramService {
   private apiUrl = `${Constants.ApiBase}/programs`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('ProgramService apiUrl:', this.apiUrl);
+  }
 
   getAll(): Observable<IProgram[]> {
     return this.http.get<IProgram[]>(`${this.apiUrl}/list.php`);

@@ -30,6 +30,10 @@ export class CompanyRevenueService {
     return this.http.get<ICompanyRevenue[]>(`${this.apiUrl}/list.php?company_id=${companyId}&year=${year}`);
   }
 
+  getByStage(companyId: number, programStageId: number): Observable<ICompanyRevenue[]> {
+    return this.http.get<ICompanyRevenue[]>(`${this.apiUrl}/list.php?company_id=${companyId}&program_stage_id=${programStageId}`);
+  }
+
   add(item: ICompanyRevenue): Observable<ICompanyRevenue> {
     return this.http.post<ICompanyRevenue>(`${this.apiUrl}/save.php`, item);
   }

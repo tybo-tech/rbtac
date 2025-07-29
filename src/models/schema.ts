@@ -219,4 +219,78 @@ export interface ICompanyReason {
   reason?: IReason;
 }
 
+export interface IProgramStage {
+  id?: number;
+  program_id: number;
+  title: string;
+  description?: string;
+  stage_order?: number;
+  created_at?: string;
+  updated_at?: string;
+  program_name?: string;
+}
+
+export interface ICompanyProgramStage {
+  id?: number;
+  company_id: number;
+  program_id: number;
+  program_stage_id: number;
+  entered_at?: string;
+  completed_at?: string;
+  is_current?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  company_name?: string;
+  program_name?: string;
+  stage_title?: string;
+  stage_order?: number;
+  stage_description?: string;
+}
+
+export interface IStageTransition {
+  action: 'advance' | 'move_to' | 'create';
+  company_id: number;
+  program_id: number;
+  target_stage_id?: number;
+  program_stage_id?: number;
+  user_id?: number;
+}
+
+export interface IStageStatistics {
+  stage_id: number;
+  stage_title: string;
+  stage_order: number;
+  company_count: number;
+  current_companies: number;
+  completed_companies: number;
+}
+
+export interface ICompanyStageView {
+  company_id: number;
+  company_name: string;
+  sector?: string;
+  current_stage_record_id?: number;
+  current_stage_id?: number;
+  current_stage_title?: string;
+  current_stage_order?: number;
+  stage_entered_at?: string;
+  stage_completed_at?: string;
+  program_joined_at?: string;
+}
+
+// Initialize objects
+export const initProgramStage: IProgramStage = {
+  program_id: 0,
+  title: '',
+  description: '',
+  stage_order: 1
+};
+
+export const initCompanyProgramStage: ICompanyProgramStage = {
+  company_id: 0,
+  program_id: 0,
+  program_stage_id: 0,
+  is_current: true
+};
+
 

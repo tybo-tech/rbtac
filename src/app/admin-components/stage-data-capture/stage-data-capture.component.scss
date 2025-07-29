@@ -1,0 +1,132 @@
+.stage-data-capture {
+  /* Component-specific styles */
+}
+
+/* Tab navigation improvements */
+.tab-navigation {
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tab-button {
+  position: relative;
+  transition: all 0.2s ease-in-out;
+}
+
+.tab-button:hover {
+  color: #3b82f6;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #3b82f6;
+  border-radius: 1px;
+}
+
+/* Form styling */
+.form-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+/* Document and revenue cards */
+.data-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.data-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+/* File icon styling */
+.file-icon {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+}
+
+/* Revenue grid */
+.revenue-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .revenue-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Currency formatting */
+.currency-positive {
+  color: #059669;
+}
+
+.currency-negative {
+  color: #dc2626;
+}
+
+.currency-neutral {
+  color: #6b7280;
+}
+
+/* Loading states */
+.loading-overlay {
+  backdrop-filter: blur(2px);
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty states */
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.empty-state svg {
+  margin: 0 auto 1rem;
+}
+
+/* Requirements info */
+.requirements-info {
+  background: linear-gradient(to right, #dbeafe, #bfdbfe);
+}
+
+.requirement-tag {
+  background-color: #dbeafe;
+  color: #1e40af;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}

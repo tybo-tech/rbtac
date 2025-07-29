@@ -6,8 +6,8 @@ export const Constants = {
     Manager: 'Manager',
   },
   // ApiBase: 'https://rbttacesd.co.za/api/api/',
-  // ApiBase: 'http://localhost:8080/api/',
-  ApiBase: 'https://v2.rbttacesd.co.za/api/api/',
+  ApiBase: 'http://localhost:8080/api/',
+  // ApiBase: 'https://v2.rbttacesd.co.za/api/api/',
   Facilities: [
     'Hotdesk',
     'Meeting Room',

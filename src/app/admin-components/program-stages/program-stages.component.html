@@ -1,0 +1,193 @@
+<div class="program-stages-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-content">
+      <h1 class="page-title">Stage Management</h1>
+      <div class="program-info" *ngIf="program">
+        <h2>{{ program.name }}</h2>
+        <p class="program-description">{{ program.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading program data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-container">
+    <div class="error-content">
+      <p>{{ error }}</p>
+      <button class="btn btn-primary" (click)="loadProgramData()">Retry</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && !error" class="main-content">
+    <!-- Program Overview Cards -->
+    <div class="overview-cards">
+      <div class="overview-card">
+        <div class="card-content">
+          <div class="card-value">
+            <strong>{{ stages.length }}</strong> Total Stages
+          </div>
+        </div>
+      </div>
+      <div class="overview-card">
+        <div class="card-content">
+          <div class="card-value">
+            <strong>{{ companies.length }}</strong> Companies
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stages Grid -->
+    <div class="stages-grid">
+      <div
+        class="stage-card"
+        *ngFor="let stage of stages; let i = index"
+        [class.active]="selectedStage?.id === stage.id"
+        (click)="selectStage(stage)"
+      >
+        <div class="stage-header">
+          <h3>{{ stage.title }}</h3>
+          <span class="stage-order">Step {{ i + 1 }}</span>
+        </div>
+        <div class="stage-description">
+          {{ stage.description }}
+        </div>
+        <div class="stage-metrics">
+          <span class="company-count">
+            {{ stage.id ? getCompaniesInStage(stage.id).length : 0 }} companies
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage Management Section -->
+    <div class="stage-content" *ngIf="selectedStage">
+      <div class="stage-manager-section">
+        <h3>Companies in {{ selectedStage.title }}</h3>
+        <div class="companies-list">
+          <div
+            class="company-item"
+            *ngFor="let company of getCompaniesInStage(selectedStage.id!)"
+            [class.selected]="selectedCompanies.includes(company.company_id)"
+            (click)="toggleCompanySelection(company.company_id)"
+          >
+            <div class="company-info">
+              <h4>{{ company.company_name }}</h4>
+              <p>{{ company.sector }}</p>
+              <small>Entered: {{ company.stage_entered_at | date }}</small>
+            </div>
+            <div class="company-actions">
+              <button
+                class="btn btn-sm btn-primary"
+                (click)="viewCompanyDetails(company); $event.stopPropagation()"
+              >
+                View Details
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions" *ngIf="selectedStage">
+      <button
+        class="btn btn-secondary"
+        (click)="advanceSelectedCompanies()"
+        [disabled]="selectedCompanies.length === 0"
+      >
+        Advance Selected Companies ({{ selectedCompanies.length }})
+      </button>
+
+      <button
+        class="btn btn-info"
+        (click)="showStageStatistics()"
+      >
+        View Statistics
+      </button>
+
+      <button
+        class="btn btn-success"
+        (click)="exportStageData()"
+      >
+        Export Data
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistics Modal -->
+  <div class="modal-overlay" *ngIf="showingStatistics" (click)="hideStatistics()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Stage Statistics</h3>
+        <button class="close-btn" (click)="hideStatistics()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="statistics-grid" *ngIf="stageStatistics">
+          <div class="stat-item">
+            <div class="stat-label">Total Companies</div>
+            <div class="stat-value">{{ stageStatistics.totalCompanies }}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Average Days in Stage</div>
+            <div class="stat-value">{{ stageStatistics.averageDaysInStage }}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Completion Rate</div>
+            <div class="stat-value">{{ stageStatistics.completionRate }}%</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Active Companies</div>
+            <div class="stat-value">{{ stageStatistics.activeCompanies }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Company Details Modal -->
+  <div class="modal-overlay" *ngIf="selectedCompanyForDetails" (click)="closeCompanyDetails()">
+    <div class="modal-content large-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ selectedCompanyForDetails.company_name }}</h3>
+        <button class="close-btn" (click)="closeCompanyDetails()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="company-details">
+          <div class="detail-row">
+            <label>Sector:</label>
+            <span>{{ selectedCompanyForDetails.sector }}</span>
+          </div>
+          <div class="detail-row">
+            <label>Current Stage:</label>
+            <span>{{ selectedCompanyForDetails.current_stage_title }}</span>
+          </div>
+          <div class="detail-row">
+            <label>Stage Entry Date:</label>
+            <span>{{ selectedCompanyForDetails.stage_entered_at | date }}</span>
+          </div>
+          <div class="detail-row">
+            <label>Days in Current Stage:</label>
+            <span>{{ selectedCompanyForDetails.stage_entered_at ? calculateDaysInStage(selectedCompanyForDetails.stage_entered_at) : 0 }}</span>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button
+            class="btn btn-primary"
+            (click)="advanceSingleCompany(selectedCompanyForDetails.company_id)"
+            *ngIf="selectedCompanyForDetails.current_stage_id && canAdvanceToNextStage(selectedCompanyForDetails.current_stage_id)"
+          >
+            Advance to Next Stage
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

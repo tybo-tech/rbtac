@@ -1,0 +1,59 @@
+.stage-manager {
+  /* Component-specific styles can be added here */
+}
+
+/* Custom scrollbar for the table */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Improved modal backdrop blur */
+.modal-backdrop {
+  backdrop-filter: blur(2px);
+}
+
+/* Animation for stage transitions */
+.stage-transition {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Badge hover effects */
+.stage-badge:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Loading state for table rows */
+.table-row-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .stage-manager {
+    padding: 1rem;
+  }
+
+  .stage-statistics {
+    grid-template-columns: 1fr;
+  }
+
+  .company-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
