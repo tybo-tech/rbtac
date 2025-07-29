@@ -251,4 +251,126 @@ export class ProgramStagesComponent implements OnInit, OnDestroy {
         }
       });
   }
+
+  // Enhanced UI Methods for New Features
+  trackByStageId(index: number, stage: IProgramStage): number | undefined {
+    return stage.id;
+  }
+
+  trackByCompanyId(index: number, company: ICompanyStageView): number {
+    return company.company_id;
+  }
+
+  calculateAverageStageTime(): number {
+    if (this.companies.length === 0) return 0;
+    
+    const totalDays = this.companies.reduce((sum, company) => {
+      const entryDate = company.stage_entered_at;
+      return sum + (entryDate ? this.calculateDaysInStage(entryDate) : 0);
+    }, 0);
+    
+    return Math.round(totalDays / this.companies.length);
+  }
+
+  calculateCompletionRate(): number {
+    if (this.stages.length === 0 || this.companies.length === 0) return 0;
+    
+    const lastStageId = this.stages[this.stages.length - 1]?.id;
+    if (!lastStageId) return 0;
+    
+    const completedCompanies = this.companies.filter(c => c.current_stage_id === lastStageId).length;
+    return Math.round((completedCompanies / this.companies.length) * 100);
+  }
+
+  getStageCompletionRate(stageId: number): number {
+    const companiesInStage = this.getCompaniesInStage(stageId);
+    if (companiesInStage.length === 0) return 0;
+    
+    // For demo purposes, calculate based on stage progress or time spent
+    const completedCount = companiesInStage.filter(c => 
+      c.stage_progress_percentage && c.stage_progress_percentage >= 100
+    ).length;
+    
+    return Math.round((completedCount / companiesInStage.length) * 100);
+  }
+
+  // Modal Actions
+  openCreateStageModal(): void {
+    // TODO: Implement create stage modal
+    console.log('Opening create stage modal');
+  }
+
+  openStageTemplatesModal(): void {
+    // TODO: Implement stage templates modal
+    console.log('Opening stage templates modal');
+  }
+
+  openBulkActionsModal(): void {
+    // TODO: Implement bulk actions modal
+    console.log('Opening bulk actions modal');
+  }
+
+  openAnalyticsModal(): void {
+    // TODO: Implement analytics modal
+    console.log('Opening analytics modal');
+  }
+
+  // Stage Management Actions
+  editStage(stage: IProgramStage): void {
+    // TODO: Implement edit stage functionality
+    console.log('Editing stage:', stage);
+  }
+
+  deleteStage(stage: IProgramStage): void {
+    if (confirm(`Are you sure you want to delete the stage "${stage.title}"?`)) {
+      // TODO: Implement delete stage functionality
+      console.log('Deleting stage:', stage);
+    }
+  }
+
+  viewStageDetails(stage: IProgramStage): void {
+    // TODO: Implement stage details view
+    console.log('Viewing stage details:', stage);
+  }
+
+  bulkAdvanceFromStage(stage: IProgramStage): void {
+    if (!stage.id) return;
+    
+    const companies = this.getCompaniesInStage(stage.id);
+    if (companies.length === 0) {
+      alert('No companies in this stage to advance.');
+      return;
+    }
+
+    if (confirm(`Advance all ${companies.length} companies from "${stage.title}" to the next stage?`)) {
+      const nextStage = this.getNextStage(stage);
+      if (!nextStage) {
+        alert('No next stage available for advancement.');
+        return;
+      }
+
+      const advancePromises = companies.map(company =>
+        this.companyStageService.advanceToNextStage(company.company_id, stage.id!)
+      );
+
+      Promise.all(advancePromises).then(() => {
+        this.loadProgramData();
+        alert(`Successfully advanced ${companies.length} companies to "${nextStage.title}".`);
+      }).catch(error => {
+        console.error('Error in bulk advance:', error);
+        alert('Error advancing some companies. Please try again.');
+      });
+    }
+  }
+
+  // Company Management Actions
+  editCompanyStageInfo(company: ICompanyStageView): void {
+    // TODO: Implement edit company stage info
+    console.log('Editing company stage info:', company);
+  }
+
+  viewCompanyHistory(companyId: number): void {
+    // TODO: Implement company history view
+    console.log('Viewing company history for ID:', companyId);
+  }
 }

@@ -228,6 +228,18 @@ export interface IProgramStage {
   created_at?: string;
   updated_at?: string;
   program_name?: string;
+  // Enhanced fields for better UX
+  expected_duration_days?: number;
+  min_duration_days?: number;
+  max_duration_days?: number;
+  stage_color?: string;
+  stage_icon?: string;
+  is_milestone?: boolean;
+  approval_required?: boolean;
+  status?: 'active' | 'inactive' | 'archived';
+  requirements?: any;
+  auto_advance_criteria?: any;
+  notification_settings?: any;
 }
 
 export interface ICompanyProgramStage {
@@ -273,9 +285,16 @@ export interface ICompanyStageView {
   current_stage_id?: number;
   current_stage_title?: string;
   current_stage_order?: number;
-  stage_entered_at?: string;
+  stage_entered_at: string;
   stage_completed_at?: string;
   program_joined_at?: string;
+  // Enhanced fields for better UX
+  stage_progress_percentage?: number;
+  priority_level?: 'low' | 'medium' | 'high' | 'urgent';
+  notes?: string;
+  assigned_mentor_id?: number;
+  expected_completion_date?: string;
+  blocked_reason?: string;
 }
 
 // Initialize objects
