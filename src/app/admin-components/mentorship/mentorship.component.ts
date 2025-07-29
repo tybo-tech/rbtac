@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 // Import sub-components
+import { MentorshipOverviewComponent } from './components/mentorship-overview/mentorship-overview.component';
 import { MentorshipTemplateComponent } from './components/mentorship-template/mentorship-template.component';
 import { MentorshipSessionComponent } from './components/mentorship-session/mentorship-session.component';
 import { MentorshipTaskComponent } from './components/mentorship-task/mentorship-task.component';
@@ -14,6 +15,7 @@ import { MentorshipAnalyticsComponent } from './components/mentorship-analytics/
   imports: [
     CommonModule,
     FormsModule,
+    MentorshipOverviewComponent,
     MentorshipTemplateComponent,
     MentorshipSessionComponent,
     MentorshipTaskComponent,
@@ -63,6 +65,11 @@ import { MentorshipAnalyticsComponent } from './components/mentorship-analytics/
       <!-- Tab Content -->
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+        <!-- Overview Tab -->
+        <div *ngIf="activeTab() === 'overview'" class="space-y-6">
+          <app-mentorship-overview></app-mentorship-overview>
+        </div>
+
         <!-- Templates Tab -->
         <div *ngIf="activeTab() === 'templates'" class="space-y-6">
           <app-mentorship-template
@@ -96,10 +103,11 @@ import { MentorshipAnalyticsComponent } from './components/mentorship-analytics/
 })
 export class MentorshipComponent implements OnInit {
   // Active tab signal
-  activeTab = signal<string>('templates');
+  activeTab = signal<string>('overview');
 
   // Component state
   tabs = [
+    { id: 'overview', label: 'Overview', count: 0 },
     { id: 'templates', label: 'Templates', count: 0 },
     { id: 'sessions', label: 'Sessions', count: 0 },
     { id: 'tasks', label: 'Tasks', count: 0 },
