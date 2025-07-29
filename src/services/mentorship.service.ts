@@ -47,6 +47,15 @@ export class MentorshipService {
     return this.http.put<IApiResponse<IMentorshipTemplate>>(`${this.apiUrl}/templates/save.php?id=${id}`, template);
   }
 
+  deleteTemplate(id: number): Observable<IApiResponse<any>> {
+    return this.http.delete<IApiResponse<any>>(`${this.apiUrl}/templates/delete.php?id=${id}`);
+  }
+
+  getTemplateDetails(id: number): Observable<IApiResponse<{template: IMentorshipTemplate, categories: IMentorshipCategory[], questions: IMentorshipQuestion[]}>> {
+    const params = new HttpParams().set('id', id.toString()).set('details', 'true');
+    return this.http.get<IApiResponse<{template: IMentorshipTemplate, categories: IMentorshipCategory[], questions: IMentorshipQuestion[]}>>(`${this.apiUrl}/templates/details.php`, { params });
+  }
+
   searchTemplates(searchTerm: string): Observable<IApiResponse<IMentorshipTemplate[]>> {
     const params = new HttpParams().set('search', searchTerm);
     return this.http.get<IApiResponse<IMentorshipTemplate[]>>(`${this.apiUrl}/templates/list.php`, { params });

@@ -36,6 +36,10 @@ export interface IMentorshipQuestion {
   sort_order: number;
 }
 
+export interface IExtendedMentorshipQuestion extends IMentorshipQuestion {
+  optionsText?: string;
+}
+
 export interface IMentorshipSession {
   id?: number;
   company_id: number;

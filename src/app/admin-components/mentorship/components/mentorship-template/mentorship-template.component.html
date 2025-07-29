@@ -1,174 +1,93 @@
-<div class="bg-gray-800 rounded-lg shadow-lg">
-  <!-- Header -->
-  <div class="flex items-center justify-between p-6 border-b border-gray-700">
-    <h2 class="text-xl font-semibold text-white">Mentorship Templates</h2>
-    <div class="flex items-center space-x-4">
-      <button
-        (click)="createNewTemplate()"
-        [disabled]="isLoading()"
-        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-        </svg>
-        New Template
-      </button>
-      <input
-        type="text"
-        placeholder="Search templates..."
-        [(ngModel)]="templateSearch"
-        (input)="searchTemplates()"
-        class="block w-64 px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-      />
-    </div>
-  </div>
+<!-- Template Management Container -->
+<div class="bg-gray-900 min-h-screen">
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading()" class="loading-state">
-    <div class="spinner"></div>
-    <p>Loading templates...</p>
-  </div>
-
-  <!-- Data Grid -->
-  <div *ngIf="!isLoading()" class="data-grid">
-    <table class="excel-table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Category</th>
-          <th>Questions</th>
-          <th>Sessions</th>
-          <th>Status</th>
-          <th>Created</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let template of templates(); trackBy: trackByTemplateId"
-            class="data-row"
-            [class.editing]="editingTemplate?.id === template.id">
-          <td>
-            <div *ngIf="editingTemplate?.id !== template.id" class="cell-content">
-              {{ template.title || template.name }}
-            </div>
-            <input
-              *ngIf="editingTemplate?.id === template.id"
-              [(ngModel)]="editingTemplate!.title"
-              class="cell-input"
-              (keyup.enter)="saveTemplate()"
-              (keyup.escape)="cancelEdit()"
-              placeholder="Template name"
-            />
-          </td>
-          <td>
-            <div *ngIf="editingTemplate?.id !== template.id">
-              {{ template.category_name || template.category || '-' }}
-            </div>
-            <input
-              *ngIf="editingTemplate?.id === template.id"
-              [(ngModel)]="editingTemplate!.category"
-              class="cell-input"
-              placeholder="Category"
-            />
-          </td>
-          <td class="numeric">{{ template.question_count || 0 }}</td>
-          <td class="numeric">{{ template.session_count || 0 }}</td>
-          <td>
-            <div *ngIf="editingTemplate?.id !== template.id">
-              <span class="status-badge" [class]="(template.is_active ?? true) ? 'active' : 'inactive'">
-                {{ (template.is_active ?? true) ? 'Active' : 'Inactive' }}
-              </span>
-            </div>
-            <select
-              *ngIf="editingTemplate?.id === template.id"
-              [(ngModel)]="editingTemplate!.is_active"
-              class="status-select">
-              <option [value]="true">Active</option>
-              <option [value]="false">Inactive</option>
-            </select>
-          </td>
-          <td>{{ formatDate(template.created_at) }}</td>
-          <td>
-            <div class="action-buttons">
-              <!-- Edit Mode Actions -->
-              <ng-container *ngIf="editingTemplate?.id === template.id">
-                <button
-                  class="btn-icon success"
-                  title="Save"
-                  (click)="saveTemplate()">
-                  <i class="icon-check"></i>
-                </button>
-                <button
-                  class="btn-icon"
-                  title="Cancel"
-                  (click)="cancelEdit()">
-                  <i class="icon-x"></i>
-                </button>
-              </ng-container>
-
-              <!-- View Mode Actions -->
-              <ng-container *ngIf="editingTemplate?.id !== template.id">
-                <button
-                  class="btn-icon"
-                  title="Edit"
-                  (click)="editTemplate(template)">
-                  <i class="icon-edit"></i>
-                </button>
-                <button
-                  class="btn-icon"
-                  title="View Details"
-                  (click)="viewTemplate(template.id!)">
-                  <i class="icon-eye"></i>
-                </button>
-                <button
-                  class="btn-icon"
-                  title="Duplicate"
-                  (click)="duplicateTemplate(template)">
-                  <i class="icon-copy"></i>
-                </button>
-                <button
-                  class="btn-icon danger"
-                  title="Delete"
-                  (click)="deleteTemplate(template)">
-                  <i class="icon-trash"></i>
-                </button>
-              </ng-container>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Empty State -->
-        <tr *ngIf="templates().length === 0" class="no-data">
-          <td colspan="7" class="text-center">
-            <div class="empty-state">
-              <i class="icon-folder-open"></i>
-              <p>No templates found</p>
-              <button class="btn btn-primary" (click)="createNewTemplate()">
-                Create your first template
+  <!-- Header with Navigation -->
+  <div class="border-b border-gray-700 bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="py-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <h1 class="text-3xl font-bold text-white">
+              @if (currentView() === 'list') {
+                <i class="fas fa-list mr-3"></i>Template Management
+              } @else if (currentView() === 'create') {
+                <i class="fas fa-plus mr-3"></i>Create New Template
+              } @else if (currentView() === 'edit') {
+                <i class="fas fa-edit mr-3"></i>Edit Template
+              } @else if (currentView() === 'view') {
+                <i class="fas fa-eye mr-3"></i>Template Details
+              }
+            </h1>
+            @if (currentView() !== 'list') {
+              <button
+                (click)="setView('list')"
+                class="text-blue-400 hover:text-blue-300 font-medium">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Templates
               </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            }
+          </div>
+          @if (currentView() === 'list') {
+            <button
+              (click)="createNewTemplate()"
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              <i class="fas fa-plus mr-2"></i>
+              Create Template
+            </button>
+          }
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Template Statistics -->
-  <div class="template-stats" *ngIf="templates().length > 0">
-    <div class="stat-item">
-      <span class="stat-value">{{ templates().length }}</span>
-      <span class="stat-label">Total Templates</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-value">{{ activeTemplatesCount }}</span>
-      <span class="stat-label">Active Templates</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-value">{{ totalQuestionsCount }}</span>
-      <span class="stat-label">Total Questions</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-value">{{ totalSessionsCount }}</span>
-      <span class="stat-label">Total Sessions</span>
-    </div>
+  <!-- Main Content Area -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Template List View -->
+    @if (currentView() === 'list') {
+      <app-template-list
+        [templates]="templates()"
+        [filteredTemplates]="filteredTemplates()"
+        [isLoading]="isLoading()"
+
+        (onCreate)="createNewTemplate()"
+        (onView)="viewTemplate($event)"
+        (onEdit)="editTemplate($event)"
+        (onDuplicate)="duplicateTemplate($event)"
+        (onDelete)="deleteTemplate($event)">
+      </app-template-list>
+    }
+
+    <!-- Create/Edit Template View -->
+    @if (currentView() === 'create' || currentView() === 'edit') {
+      <app-template-form
+        [mode]="getFormMode()"
+        [template]="currentTemplate"
+        [categories]="templateCategories()"
+        [questions]="templateQuestions()"
+        [isValid]="isTemplateValid()"
+        (onTemplateChange)="updateCurrentTemplate($event)"
+        (onAddCategory)="addCategory()"
+        (onRemoveCategory)="removeCategory($event)"
+        (onCategoriesChange)="updateCategories($event)"
+        (onAddQuestion)="addQuestion()"
+        (onRemoveQuestion)="removeQuestion($event)"
+        (onQuestionsChange)="updateQuestions($event)"
+        (onQuestionOptionsChange)="updateQuestionOptions($event.question, $event.optionsText)"
+        (onSave)="saveTemplate()"
+        (onCancel)="setView('list')"
+        (onPreview)="previewTemplate()">
+      </app-template-form>
+    }
+
+    <!-- View Template Details -->
+    @if (currentView() === 'view') {
+      <app-template-view
+        [template]="currentTemplate"
+        [categories]="templateCategories()"
+        [questions]="templateQuestions()"
+        (onEdit)="editTemplate($event)"
+        (onDuplicate)="duplicateTemplate($event)">
+      </app-template-view>
+    }
   </div>
 </div>
