@@ -27,10 +27,10 @@ class StageTemplatesAPI {
     }
 
     public function createTemplate($data) {
-        $query = "INSERT INTO " . $this->table . " 
-                 (name, description, template_data, category, is_public, created_by) 
+        $query = "INSERT INTO " . $this->table . "
+                 (name, description, template_data, category, is_public, created_by)
                  VALUES (?, ?, ?, ?, ?, ?)";
-        
+
         $stmt = $this->conn->prepare($query);
         return $stmt->execute([
             $data['name'],
@@ -53,12 +53,12 @@ class StageTemplatesAPI {
         $stages = $templateData['stages'] ?? [];
 
         // Create stages for the program
-        $stageQuery = "INSERT INTO program_stages 
-                      (program_id, title, description, stage_order, expected_duration_days, stage_color, is_milestone) 
+        $stageQuery = "INSERT INTO program_stages
+                      (program_id, title, description, stage_order, expected_duration_days, stage_color, is_milestone)
                       VALUES (?, ?, ?, ?, ?, ?, ?)";
-        
+
         $stageStmt = $this->conn->prepare($stageQuery);
-        
+
         foreach ($stages as $index => $stage) {
             $stageStmt->execute([
                 $programId,
@@ -87,17 +87,17 @@ switch ($method) {
             $result = $api->getTemplates();
         }
         break;
-        
+
     case 'POST':
         $input = json_decode(file_get_contents('php://input'), true);
-        
+
         if (isset($input['action']) && $input['action'] === 'apply_template') {
             $result = $api->applyTemplate($input['template_id'], $input['program_id']);
         } else {
             $result = $api->createTemplate($input);
         }
         break;
-        
+
     default:
         http_response_code(405);
         echo json_encode(['error' => 'Method not allowed']);

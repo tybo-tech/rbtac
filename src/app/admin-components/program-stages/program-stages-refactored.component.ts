@@ -32,7 +32,7 @@ import { CompanyDetailsModalComponent } from './components/company-details-modal
   template: `
     <!-- Enhanced Program Stages Management with Beautiful Dark Theme -->
     <div class="min-h-screen bg-gray-900 text-white">
-      
+
       <!-- Program Header -->
       <app-program-header
         [program]="program"
@@ -63,7 +63,7 @@ import { CompanyDetailsModalComponent } from './components/company-details-modal
 
         <!-- Main Content -->
         <div *ngIf="!loading && !error">
-          
+
           <!-- Program Overview Cards -->
           <app-program-overview-cards
             [stages]="stages"

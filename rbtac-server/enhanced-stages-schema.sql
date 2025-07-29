@@ -2,7 +2,7 @@
 -- Run these modifications to improve the user experience
 
 -- 1. Enhanced program_stages table
-ALTER TABLE `program_stages` 
+ALTER TABLE `program_stages`
 ADD COLUMN `requirements` JSON NULL COMMENT 'Stage requirements and criteria',
 ADD COLUMN `expected_duration_days` INT DEFAULT 30 COMMENT 'Expected days to complete this stage',
 ADD COLUMN `min_duration_days` INT DEFAULT 7 COMMENT 'Minimum days before advancement allowed',
@@ -82,7 +82,7 @@ CREATE TABLE `stage_analytics` (
 
 -- 6. Add sample stage templates
 INSERT INTO `stage_templates` (`name`, `description`, `template_data`, `category`) VALUES
-('Basic Incubator Stages', 'Standard 5-stage incubator program', 
+('Basic Incubator Stages', 'Standard 5-stage incubator program',
  '{"stages": [
    {"title": "Application Review", "duration": 14, "requirements": ["Complete application", "Business plan"], "color": "#EF4444"},
    {"title": "Due Diligence", "duration": 21, "requirements": ["Financial docs", "Market analysis"], "color": "#F97316"},
@@ -98,7 +98,7 @@ INSERT INTO `stage_templates` (`name`, `description`, `template_data`, `category
  ]}', 'accelerator');
 
 -- 7. Add indexes for performance
-ALTER TABLE `company_program_stages` 
+ALTER TABLE `company_program_stages`
 ADD INDEX `idx_current_stage` (`current_stage_id`),
 ADD INDEX `idx_stage_entered_at` (`stage_entered_at`),
 ADD INDEX `idx_priority_level` (`priority_level`),

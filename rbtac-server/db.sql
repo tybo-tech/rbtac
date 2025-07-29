@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: Jul 29, 2025 at 12:50 AM
+-- Generation Time: Jul 29, 2025 at 01:46 AM
 -- Server version: 8.0.43
 -- PHP Version: 8.2.27
 
@@ -57,7 +57,7 @@ CREATE TABLE `collection_data` (
 
 INSERT INTO `collection_data` (`id`, `collection_id`, `parent_id`, `data`, `created_at`, `updated_at`) VALUES
 (1, 'products', NULL, '{\"name\": \"Wireless Mouse\", \"price\": 299.99, \"category\": \"Electronics\", \"in_stock\": true}', '2025-07-28 02:35:12', '2025-07-28 02:35:12'),
-(3, 'views', 'COMPANIES', '{\"user_id\": 1, \"view_type\": \"TableView\", \"is_default\": true, \"table_name\": \"COMPANIES\", \"table_columns\": [{\"key\": \"name\", \"label\": \"Name\", \"visible\": true, \"minWidth\": \"200px\", \"truncate\": true}, {\"key\": \"registration_no\", \"class\": \"font-mono\", \"label\": \"Registration No\", \"visible\": false, \"minWidth\": \"150px\"}, {\"key\": \"sector\", \"type\": \"badge\", \"label\": \"Sector\", \"visible\": true, \"maxWidth\": \"180px\", \"minWidth\": \"120px\", \"cellClass\": \"capitalize\"}, {\"key\": \"city\", \"label\": \"City\", \"visible\": true, \"minWidth\": \"120px\", \"sortable\": true}, {\"key\": \"bbbee_level\", \"type\": \"badge\", \"label\": \"BBBEE Level\", \"visible\": true}, {\"key\": \"bbbee_expiry_date\", \"type\": \"date\", \"label\": \"BBBEE Expiry\", \"visible\": true}, {\"key\": \"annual_turnover\", \"type\": \"number\", \"label\": \"Annual Turnover\", \"visible\": false}, {\"key\": \"turnover_verified\", \"type\": \"badge\", \"label\": \"Turnover Verified\", \"visible\": false}, {\"key\": \"address_line1\", \"wrap\": true, \"label\": \"Address\", \"visible\": false}, {\"key\": \"suburb\", \"label\": \"Suburb\", \"visible\": false}, {\"key\": \"postal_code\", \"label\": \"Postal Code\", \"visible\": false}, {\"key\": \"types_of_address\", \"label\": \"Address Type\", \"visible\": false}, {\"key\": \"description\", \"wrap\": true, \"label\": \"Description\", \"visible\": false}, {\"key\": \"no_perm_employees\", \"type\": \"number\", \"label\": \"Perm Employees\", \"visible\": false}, {\"key\": \"no_temp_employees\", \"type\": \"number\", \"label\": \"Temp Employees\", \"visible\": false}, {\"key\": \"visit_date\", \"type\": \"date\", \"label\": \"Visit Date\", \"visible\": false}, {\"key\": \"created_at\", \"type\": \"date\", \"label\": \"Created At\", \"visible\": false}, {\"key\": \"updated_at\", \"type\": \"date\", \"label\": \"Updated At\", \"visible\": false}, {\"key\": \"created_by\", \"label\": \"Created By\", \"visible\": false}, {\"key\": \"updated_by\", \"label\": \"Updated By\", \"visible\": false}, {\"key\": \"status_id\", \"type\": \"badge\", \"label\": \"Status\", \"visible\": false}, {\"key\": \"trading_name\", \"label\": \"Trading Name\", \"visible\": false}, {\"key\": \"cipc_status\", \"type\": \"badge\", \"label\": \"CIPC Status\", \"visible\": false}, {\"key\": \"is_black_owned\", \"type\": \"badge\", \"label\": \"Black Owned\", \"visible\": false}, {\"key\": \"is_black_women_owned\", \"type\": \"badge\", \"label\": \"Black Women Owned\", \"visible\": false}, {\"key\": \"is_youth_owned\", \"type\": \"badge\", \"label\": \"Youth Owned\", \"visible\": false}, {\"key\": \"company_size\", \"label\": \"Company Size\", \"visible\": false}, {\"key\": \"tax_pin_expiry_date\", \"type\": \"date\", \"label\": \"Tax PIN Expiry\", \"visible\": false}, {\"key\": \"tax_pin_status\", \"type\": \"badge\", \"label\": \"Tax PIN Status\", \"visible\": false}, {\"key\": \"bbbee_status\", \"type\": \"badge\", \"label\": \"BBBEE Status\", \"visible\": false}, {\"key\": \"\", \"type\": \"actions\", \"label\": \"Actions\", \"width\": \"120px\", \"visible\": false, \"cellClass\": \"text-right\", \"headerClass\": \"text-right\"}, {\"key\": \"director_name\", \"type\": \"text\", \"class\": \"\", \"label\": \"Director\", \"visible\": true, \"minWidth\": \"\"}]}', '2025-07-28 02:38:25', '2025-07-28 07:17:10');
+(3, 'views', 'COMPANIES', '{\"user_id\": 1, \"view_type\": \"TableView\", \"is_default\": true, \"table_name\": \"COMPANIES\", \"table_columns\": [{\"key\": \"name\", \"label\": \"Name\", \"visible\": true, \"minWidth\": \"200px\", \"truncate\": true}, {\"key\": \"registration_no\", \"class\": \"font-mono\", \"label\": \"Registration No\", \"visible\": false, \"minWidth\": \"150px\"}, {\"key\": \"sector\", \"type\": \"badge\", \"label\": \"Sector\", \"visible\": true, \"maxWidth\": \"180px\", \"minWidth\": \"120px\", \"cellClass\": \"capitalize\"}, {\"key\": \"city\", \"label\": \"City\", \"visible\": true, \"minWidth\": \"120px\", \"sortable\": true}, {\"key\": \"bbbee_level\", \"type\": \"badge\", \"label\": \"BBBEE Level\", \"visible\": true}, {\"key\": \"bbbee_expiry_date\", \"type\": \"date\", \"label\": \"BBBEE Expiry\", \"visible\": true}, {\"key\": \"annual_turnover\", \"type\": \"number\", \"label\": \"Annual Turnover\", \"visible\": false}, {\"key\": \"turnover_verified\", \"type\": \"badge\", \"label\": \"Turnover Verified\", \"visible\": false}, {\"key\": \"address_line1\", \"wrap\": true, \"label\": \"Address\", \"visible\": false}, {\"key\": \"suburb\", \"label\": \"Suburb\", \"visible\": false}, {\"key\": \"postal_code\", \"label\": \"Postal Code\", \"visible\": false}, {\"key\": \"types_of_address\", \"label\": \"Address Type\", \"visible\": false}, {\"key\": \"description\", \"wrap\": true, \"label\": \"Description\", \"visible\": false}, {\"key\": \"no_perm_employees\", \"type\": \"number\", \"label\": \"Perm Employees\", \"visible\": false}, {\"key\": \"no_temp_employees\", \"type\": \"number\", \"label\": \"Temp Employees\", \"visible\": false}, {\"key\": \"visit_date\", \"type\": \"date\", \"label\": \"Visit Date\", \"visible\": false}, {\"key\": \"created_at\", \"type\": \"date\", \"label\": \"Created At\", \"visible\": false}, {\"key\": \"updated_at\", \"type\": \"date\", \"label\": \"Updated At\", \"visible\": false}, {\"key\": \"created_by\", \"label\": \"Created By\", \"visible\": false}, {\"key\": \"updated_by\", \"label\": \"Updated By\", \"visible\": false}, {\"key\": \"status_id\", \"type\": \"badge\", \"label\": \"Status\", \"visible\": false}, {\"key\": \"trading_name\", \"label\": \"Trading Name\", \"visible\": false}, {\"key\": \"cipc_status\", \"type\": \"badge\", \"label\": \"CIPC Status\", \"visible\": false}, {\"key\": \"is_black_owned\", \"type\": \"badge\", \"label\": \"Black Owned\", \"visible\": false}, {\"key\": \"is_black_women_owned\", \"type\": \"badge\", \"label\": \"Black Women Owned\", \"visible\": false}, {\"key\": \"is_youth_owned\", \"type\": \"badge\", \"label\": \"Youth Owned\", \"visible\": false}, {\"key\": \"company_size\", \"label\": \"Company Size\", \"visible\": false}, {\"key\": \"tax_pin_expiry_date\", \"type\": \"date\", \"label\": \"Tax PIN Expiry\", \"visible\": false}, {\"key\": \"tax_pin_status\", \"type\": \"badge\", \"label\": \"Tax PIN Status\", \"visible\": false}, {\"key\": \"bbbee_status\", \"type\": \"badge\", \"label\": \"BBBEE Status\", \"visible\": false}, {\"key\": \"\", \"type\": \"actions\", \"label\": \"Actions\", \"width\": \"120px\", \"visible\": true, \"cellClass\": \"text-right\", \"headerClass\": \"text-right\"}, {\"key\": \"director_name\", \"type\": \"text\", \"class\": \"\", \"label\": \"Director\", \"visible\": false, \"minWidth\": \"\"}]}', '2025-07-28 02:38:25', '2025-07-29 00:56:09');
 
 -- --------------------------------------------------------
 
@@ -2025,7 +2025,20 @@ CREATE TABLE `company_program_stages` (
   `completed_at` datetime DEFAULT NULL,
   `is_current` tinyint(1) DEFAULT '1',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `current_stage_id` int DEFAULT NULL COMMENT 'Reference to current stage',
+  `stage_entered_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `expected_completion_date` datetime DEFAULT NULL,
+  `actual_completion_date` datetime DEFAULT NULL,
+  `stage_progress_percentage` decimal(5,2) DEFAULT '0.00',
+  `notes` text COMMENT 'Stage-specific notes and comments',
+  `assigned_mentor_id` int DEFAULT NULL COMMENT 'Assigned mentor for this stage',
+  `priority_level` enum('low','medium','high','urgent') DEFAULT 'medium',
+  `stage_data` json DEFAULT NULL COMMENT 'Custom data for this stage',
+  `completion_criteria_met` json DEFAULT NULL COMMENT 'Which criteria have been met',
+  `blocked_reason` text COMMENT 'Why progression is blocked (if any)',
+  `created_by` int DEFAULT NULL,
+  `updated_by` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -3727,8 +3740,30 @@ CREATE TABLE `program_stages` (
   `description` text,
   `stage_order` int DEFAULT '1',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `requirements` json DEFAULT NULL COMMENT 'Stage requirements and criteria',
+  `expected_duration_days` int DEFAULT '30' COMMENT 'Expected days to complete this stage',
+  `min_duration_days` int DEFAULT '7' COMMENT 'Minimum days before advancement allowed',
+  `max_duration_days` int DEFAULT '90' COMMENT 'Maximum days before escalation needed',
+  `auto_advance_criteria` json DEFAULT NULL COMMENT 'Criteria for automatic advancement',
+  `stage_color` varchar(7) DEFAULT '#3B82F6' COMMENT 'UI color for this stage',
+  `stage_icon` varchar(50) DEFAULT 'document' COMMENT 'Icon identifier for UI',
+  `is_milestone` tinyint(1) DEFAULT '0' COMMENT 'Whether this stage is a major milestone',
+  `approval_required` tinyint(1) DEFAULT '0' COMMENT 'Whether manual approval is needed',
+  `notification_settings` json DEFAULT NULL COMMENT 'When to send notifications',
+  `status` enum('active','inactive','archived') DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `program_stages`
+--
+
+INSERT INTO `program_stages` (`id`, `program_id`, `title`, `description`, `stage_order`, `created_at`, `updated_at`, `requirements`, `expected_duration_days`, `min_duration_days`, `max_duration_days`, `auto_advance_criteria`, `stage_color`, `stage_icon`, `is_milestone`, `approval_required`, `notification_settings`, `status`) VALUES
+(1, 1, 'Application Review', '', 1, '2025-07-29 01:43:47', '2025-07-29 01:43:47', NULL, 14, 7, 90, NULL, '#EF4444', 'document', 0, 0, NULL, 'active'),
+(2, 1, 'Due Diligence', '', 2, '2025-07-29 01:43:47', '2025-07-29 01:43:47', NULL, 21, 7, 90, NULL, '#F97316', 'document', 0, 0, NULL, 'active'),
+(3, 1, 'Program Entry', '', 3, '2025-07-29 01:43:47', '2025-07-29 01:43:47', NULL, 7, 7, 90, NULL, '#EAB308', 'document', 0, 0, NULL, 'active'),
+(4, 1, 'Development', '', 4, '2025-07-29 01:43:47', '2025-07-29 01:43:47', NULL, 90, 7, 90, NULL, '#3B82F6', 'document', 0, 0, NULL, 'active'),
+(5, 1, 'Graduation', '', 5, '2025-07-29 01:43:47', '2025-07-29 01:43:47', NULL, 30, 7, 90, NULL, '#10B981', 'document', 0, 0, NULL, 'active');
 
 -- --------------------------------------------------------
 
@@ -4447,6 +4482,74 @@ INSERT INTO `reasons` (`id`, `reason`, `created_at`, `updated_at`, `created_by`,
 (691, 'Owns a small company that specializes with drywall installation, TV Mounting, Coffee tables as well as Kitchen Cardboards installation. He came to the center looking for business development.', '2025-07-26 10:13:39', '2025-07-26 10:13:39', NULL, NULL, 1),
 (692, 'Own a small business that deals with a supply of goods and services, specification is on his business profile, he visited the center looking for business development.', '2025-07-26 10:13:39', '2025-07-26 10:13:39', NULL, NULL, 1),
 (693, 'Owns a small company that specializes on greening communities through eliminating the waste in communities by encouraging community members to participate in recycling programs. Visited the center looking for business development.', '2025-07-26 10:13:39', '2025-07-26 10:13:39', NULL, NULL, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `stage_analytics`
+--
+
+CREATE TABLE `stage_analytics` (
+  `id` int NOT NULL,
+  `stage_id` int NOT NULL,
+  `program_id` int NOT NULL,
+  `metric_date` date NOT NULL,
+  `companies_entered` int DEFAULT '0',
+  `companies_completed` int DEFAULT '0',
+  `companies_in_progress` int DEFAULT '0',
+  `companies_blocked` int DEFAULT '0',
+  `avg_duration_days` decimal(8,2) DEFAULT '0.00',
+  `completion_rate` decimal(5,2) DEFAULT '0.00',
+  `bottleneck_score` decimal(5,2) DEFAULT '0.00' COMMENT 'Higher = more bottlenecked',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `stage_templates`
+--
+
+CREATE TABLE `stage_templates` (
+  `id` int NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text,
+  `template_data` json NOT NULL COMMENT 'Template configuration',
+  `category` varchar(100) DEFAULT 'general',
+  `is_public` tinyint(1) DEFAULT '1',
+  `created_by` int DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `stage_templates`
+--
+
+INSERT INTO `stage_templates` (`id`, `name`, `description`, `template_data`, `category`, `is_public`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 'Basic Incubator Stages', 'Standard 5-stage incubator program', '{\"stages\": [{\"color\": \"#EF4444\", \"title\": \"Application Review\", \"duration\": 14, \"requirements\": [\"Complete application\", \"Business plan\"]}, {\"color\": \"#F97316\", \"title\": \"Due Diligence\", \"duration\": 21, \"requirements\": [\"Financial docs\", \"Market analysis\"]}, {\"color\": \"#EAB308\", \"title\": \"Program Entry\", \"duration\": 7, \"requirements\": [\"Legal docs\", \"Agreement signing\"]}, {\"color\": \"#3B82F6\", \"title\": \"Development\", \"duration\": 90, \"requirements\": [\"Milestone meetings\", \"Progress reports\"]}, {\"color\": \"#10B981\", \"title\": \"Graduation\", \"duration\": 30, \"requirements\": [\"Final presentation\", \"Exit plan\"]}]}', 'incubator', 1, NULL, '2025-07-29 01:41:58', '2025-07-29 01:41:58'),
+(2, 'Accelerator Track', 'Fast-track 3-month accelerator program', '{\"stages\": [{\"color\": \"#8B5CF6\", \"title\": \"Bootcamp\", \"duration\": 30, \"requirements\": [\"Workshop attendance\"]}, {\"color\": \"#3B82F6\", \"title\": \"Mentorship\", \"duration\": 60, \"requirements\": [\"Weekly mentor meetings\"]}, {\"color\": \"#10B981\", \"title\": \"Demo Day\", \"duration\": 30, \"requirements\": [\"Pitch preparation\", \"Investor readiness\"]}]}', 'accelerator', 1, NULL, '2025-07-29 01:41:58', '2025-07-29 01:41:58');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `stage_transitions`
+--
+
+CREATE TABLE `stage_transitions` (
+  `id` int NOT NULL,
+  `company_id` int NOT NULL,
+  `program_id` int NOT NULL,
+  `from_stage_id` int DEFAULT NULL,
+  `to_stage_id` int NOT NULL,
+  `transition_type` enum('manual','automatic','bulk','rollback') DEFAULT 'manual',
+  `transition_reason` text,
+  `approved_by` int DEFAULT NULL,
+  `approval_notes` text,
+  `transition_data` json DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `created_by` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -5416,9 +5519,12 @@ ALTER TABLE `company_programs`
 --
 ALTER TABLE `company_program_stages`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `company_id` (`company_id`),
   ADD KEY `program_id` (`program_id`),
-  ADD KEY `program_stage_id` (`program_stage_id`);
+  ADD KEY `program_stage_id` (`program_stage_id`),
+  ADD KEY `idx_current_stage` (`current_stage_id`),
+  ADD KEY `idx_stage_entered_at` (`stage_entered_at`),
+  ADD KEY `idx_priority_level` (`priority_level`),
+  ADD KEY `idx_company_program_current` (`company_id`,`program_id`,`current_stage_id`);
 
 --
 -- Indexes for table `company_reasons`
@@ -5474,13 +5580,36 @@ ALTER TABLE `programs`
 --
 ALTER TABLE `program_stages`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `program_id` (`program_id`);
+  ADD KEY `idx_program_order` (`program_id`,`stage_order`),
+  ADD KEY `idx_status` (`status`);
 
 --
 -- Indexes for table `reasons`
 --
 ALTER TABLE `reasons`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `stage_analytics`
+--
+ALTER TABLE `stage_analytics`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_stage_date` (`stage_id`,`metric_date`);
+
+--
+-- Indexes for table `stage_templates`
+--
+ALTER TABLE `stage_templates`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `stage_transitions`
+--
+ALTER TABLE `stage_transitions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_company_program` (`company_id`,`program_id`),
+  ADD KEY `idx_stages` (`from_stage_id`,`to_stage_id`),
+  ADD KEY `idx_created_at` (`created_at`);
 
 --
 -- Indexes for table `suppliers`
@@ -5586,13 +5715,31 @@ ALTER TABLE `programs`
 -- AUTO_INCREMENT for table `program_stages`
 --
 ALTER TABLE `program_stages`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `reasons`
 --
 ALTER TABLE `reasons`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=694;
+
+--
+-- AUTO_INCREMENT for table `stage_analytics`
+--
+ALTER TABLE `stage_analytics`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `stage_templates`
+--
+ALTER TABLE `stage_templates`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `stage_transitions`
+--
+ALTER TABLE `stage_transitions`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
