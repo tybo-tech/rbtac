@@ -12,7 +12,7 @@ import { CompaniesComponent } from './admin-components/companies/companies/compa
 import { UsersComponent } from './admin-components/users/users/users.component';
 import { ProgramsComponent } from './admin-components/programs/programs/programs.component';
 import { ProgramStagesComponent } from './admin-components/program-stages/program-stages.component';
-// import { ProgramStagesComponent } from './admin-components/program-stages/program-stages.component';
+import { MentorshipComponent } from './admin-components/mentorship/mentorship.component';
 
 export const routes: Routes = [
   {
@@ -65,6 +65,10 @@ export const routes: Routes = [
       {
         path: 'programs/:id/stages',
        component: ProgramStagesComponent
+      },
+      {
+        path: 'mentorship',
+        component: MentorshipComponent,
       },
       {
         path: 'collections',

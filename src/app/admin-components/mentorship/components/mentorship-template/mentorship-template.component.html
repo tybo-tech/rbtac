@@ -1,0 +1,168 @@
+<div class="mentorship-template-container">
+  <!-- Header -->
+  <div class="panel-header">
+    <h2>Mentorship Templates</h2>
+    <div class="panel-actions">
+      <button class="btn btn-primary" (click)="createNewTemplate()" [disabled]="isLoading()">
+        <i class="icon-plus"></i> New Template
+      </button>
+      <input
+        type="text"
+        placeholder="Search templates..."
+        class="search-input"
+        [(ngModel)]="templateSearch"
+        (input)="searchTemplates()"
+      />
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading templates...</p>
+  </div>
+
+  <!-- Data Grid -->
+  <div *ngIf="!isLoading()" class="data-grid">
+    <table class="excel-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Questions</th>
+          <th>Sessions</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let template of templates(); trackBy: trackByTemplateId"
+            class="data-row"
+            [class.editing]="editingTemplate?.id === template.id">
+          <td>
+            <div *ngIf="editingTemplate?.id !== template.id" class="cell-content">
+              {{ template.title || template.name }}
+            </div>
+            <input
+              *ngIf="editingTemplate?.id === template.id"
+              [(ngModel)]="editingTemplate!.title"
+              class="cell-input"
+              (keyup.enter)="saveTemplate()"
+              (keyup.escape)="cancelEdit()"
+              placeholder="Template name"
+            />
+          </td>
+          <td>
+            <div *ngIf="editingTemplate?.id !== template.id">
+              {{ template.category_name || template.category || '-' }}
+            </div>
+            <input
+              *ngIf="editingTemplate?.id === template.id"
+              [(ngModel)]="editingTemplate!.category"
+              class="cell-input"
+              placeholder="Category"
+            />
+          </td>
+          <td class="numeric">{{ template.question_count || 0 }}</td>
+          <td class="numeric">{{ template.session_count || 0 }}</td>
+          <td>
+            <div *ngIf="editingTemplate?.id !== template.id">
+              <span class="status-badge" [class]="(template.is_active ?? true) ? 'active' : 'inactive'">
+                {{ (template.is_active ?? true) ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+            <select
+              *ngIf="editingTemplate?.id === template.id"
+              [(ngModel)]="editingTemplate!.is_active"
+              class="status-select">
+              <option [value]="true">Active</option>
+              <option [value]="false">Inactive</option>
+            </select>
+          </td>
+          <td>{{ formatDate(template.created_at) }}</td>
+          <td>
+            <div class="action-buttons">
+              <!-- Edit Mode Actions -->
+              <ng-container *ngIf="editingTemplate?.id === template.id">
+                <button
+                  class="btn-icon success"
+                  title="Save"
+                  (click)="saveTemplate()">
+                  <i class="icon-check"></i>
+                </button>
+                <button
+                  class="btn-icon"
+                  title="Cancel"
+                  (click)="cancelEdit()">
+                  <i class="icon-x"></i>
+                </button>
+              </ng-container>
+
+              <!-- View Mode Actions -->
+              <ng-container *ngIf="editingTemplate?.id !== template.id">
+                <button
+                  class="btn-icon"
+                  title="Edit"
+                  (click)="editTemplate(template)">
+                  <i class="icon-edit"></i>
+                </button>
+                <button
+                  class="btn-icon"
+                  title="View Details"
+                  (click)="viewTemplate(template.id!)">
+                  <i class="icon-eye"></i>
+                </button>
+                <button
+                  class="btn-icon"
+                  title="Duplicate"
+                  (click)="duplicateTemplate(template)">
+                  <i class="icon-copy"></i>
+                </button>
+                <button
+                  class="btn-icon danger"
+                  title="Delete"
+                  (click)="deleteTemplate(template)">
+                  <i class="icon-trash"></i>
+                </button>
+              </ng-container>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Empty State -->
+        <tr *ngIf="templates().length === 0" class="no-data">
+          <td colspan="7" class="text-center">
+            <div class="empty-state">
+              <i class="icon-folder-open"></i>
+              <p>No templates found</p>
+              <button class="btn btn-primary" (click)="createNewTemplate()">
+                Create your first template
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Template Statistics -->
+  <div class="template-stats" *ngIf="templates().length > 0">
+    <div class="stat-item">
+      <span class="stat-value">{{ templates().length }}</span>
+      <span class="stat-label">Total Templates</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ activeTemplatesCount }}</span>
+      <span class="stat-label">Active Templates</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ totalQuestionsCount }}</span>
+      <span class="stat-label">Total Questions</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ totalSessionsCount }}</span>
+      <span class="stat-label">Total Sessions</span>
+    </div>
+  </div>
+</div>

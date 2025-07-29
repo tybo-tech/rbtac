@@ -1,0 +1,174 @@
+<div class="mentorship-task-container">
+  <!-- Header -->
+  <div class="panel-header">
+    <h2>Mentorship Tasks</h2>
+    <div class="panel-actions">
+      <button class="btn btn-primary" (click)="createNewTask()" [disabled]="isLoading()">
+        <i class="icon-plus"></i> New Task
+      </button>
+      <select class="filter-select" [(ngModel)]="taskFilter" (change)="filterTasks()">
+        <option value="">All Tasks</option>
+        <option value="pending">Pending</option>
+        <option value="in_progress">In Progress</option>
+        <option value="done">Completed</option>
+        <option value="overdue">Overdue</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading tasks...</p>
+  </div>
+
+  <!-- Data Grid -->
+  <div *ngIf="!isLoading()" class="data-grid">
+    <table class="excel-table">
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Company</th>
+          <th>Session</th>
+          <th>Assigned To</th>
+          <th>Status</th>
+          <th>Due Date</th>
+          <th>Priority</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of tasks(); trackBy: trackByTaskId"
+            class="data-row"
+            [class.overdue]="isOverdue(task.due_date)"
+            [class.completed]="task.status === 'done'">
+          <td class="task-cell">
+            <div class="task-content">
+              <strong class="task-title">{{ task.title || task.task_title }}</strong>
+              <div class="task-description" *ngIf="task.description || task.task_description">
+                {{ task.description || task.task_description }}
+              </div>
+              <div class="task-meta">
+                <span class="task-id">ID: {{ task.id }}</span>
+                <span class="session-link" *ngIf="task.session_id">
+                  Session: {{ task.session_id }}
+                </span>
+              </div>
+            </div>
+          </td>
+          <td class="company-cell">
+            <div class="company-info">
+              <strong>{{ task.company_name || 'No Company' }}</strong>
+              <div class="company-id" *ngIf="task.company_id">
+                ID: {{ task.company_id }}
+              </div>
+            </div>
+          </td>
+          <td class="numeric">
+            <span class="session-badge" *ngIf="task.session_id">
+              {{ task.session_id }}
+            </span>
+            <span *ngIf="!task.session_id" class="no-session">-</span>
+          </td>
+          <td>
+            <div class="assigned-to">
+              {{ task.assigned_to_name || 'Unassigned' }}
+              <div class="user-id" *ngIf="task.assigned_to">
+                ID: {{ task.assigned_to }}
+              </div>
+            </div>
+          </td>
+          <td>
+            <select
+              class="status-select"
+              [(ngModel)]="task.status"
+              (change)="updateTaskStatus(task)"
+              [class]="getStatusColor(task.status)">
+              <option value="pending">Pending</option>
+              <option value="in_progress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+          </td>
+          <td class="due-date-cell" [class.text-danger]="isOverdue(task.due_date)">
+            <div class="due-date">
+              {{ formatDate(task.due_date) }}
+            </div>
+            <div class="days-until" *ngIf="task.due_date" [class]="isOverdue(task.due_date) ? 'overdue' : 'upcoming'">
+              <span *ngIf="!isOverdue(task.due_date)">{{ getDaysUntilDue(task.due_date) }} days left</span>
+              <span *ngIf="isOverdue(task.due_date)">{{ getDaysOverdue(task.due_date) }} days overdue</span>
+            </div>
+          </td>
+          <td>
+            <span class="priority-badge" [class]="getPriorityColor(task.priority)">
+              {{ (task.priority || 'medium') | titlecase }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-icon" title="View Task" (click)="viewTask(task.id!)">
+                <i class="icon-eye"></i>
+              </button>
+              <button class="btn-icon" title="Edit Task" (click)="editTask(task)">
+                <i class="icon-edit"></i>
+              </button>
+              <button
+                class="btn-icon success"
+                title="Mark as Done"
+                *ngIf="task.status !== 'done'"
+                (click)="task.status = 'done'; updateTaskStatus(task)">
+                <i class="icon-check"></i>
+              </button>
+              <button
+                class="btn-icon danger"
+                title="Delete Task"
+                (click)="deleteTask(task)">
+                <i class="icon-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Empty State -->
+        <tr *ngIf="tasks().length === 0" class="no-data">
+          <td colspan="8" class="text-center">
+            <div class="empty-state">
+              <i class="icon-check-square"></i>
+              <p>No tasks found</p>
+              <button class="btn btn-primary" (click)="createNewTask()">
+                Create your first task
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Task Statistics -->
+  <div class="task-stats" *ngIf="tasks().length > 0">
+    <div class="stat-item">
+      <span class="stat-value">{{ tasks().length }}</span>
+      <span class="stat-label">Total Tasks</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ pendingTasksCount }}</span>
+      <span class="stat-label">Pending</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ inProgressTasksCount }}</span>
+      <span class="stat-label">In Progress</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ completedTasksCount }}</span>
+      <span class="stat-label">Completed</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ overdueTasksCount }}</span>
+      <span class="stat-label">Overdue</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ completionPercentage }}%</span>
+      <span class="stat-label">Completion Rate</span>
+    </div>
+  </div>
+</div>

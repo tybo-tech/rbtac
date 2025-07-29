@@ -46,6 +46,12 @@ export class AdminComponent implements OnInit {
       type: 'fixed',
     },
     {
+      icon: 'fas fa-user-graduate',
+      label: 'Mentorship',
+      route: '/admin/mentorship',
+      type: 'fixed',
+    },
+    {
       icon: 'fas fa-cog',
       label: 'Settings',
       route: '/admin/settings',

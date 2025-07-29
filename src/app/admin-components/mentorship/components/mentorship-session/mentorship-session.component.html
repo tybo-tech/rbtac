@@ -1,0 +1,146 @@
+<div class="mentorship-session-container">
+  <!-- Header -->
+  <div class="panel-header">
+    <h2>Mentorship Sessions</h2>
+    <div class="panel-actions">
+      <button class="btn btn-primary" (click)="createNewSession()" [disabled]="isLoading()">
+        <i class="icon-plus"></i> New Session
+      </button>
+      <button class="btn btn-secondary" (click)="getRecentSessions()" [disabled]="isLoading()">
+        <i class="icon-clock"></i> Recent
+      </button>
+      <select class="filter-select" [(ngModel)]="sessionFilter" (change)="filterSessions()">
+        <option value="">All Sessions</option>
+        <option value="scheduled">Scheduled</option>
+        <option value="in_progress">In Progress</option>
+        <option value="completed">Completed</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading sessions...</p>
+  </div>
+
+  <!-- Data Grid -->
+  <div *ngIf="!isLoading()" class="data-grid">
+    <table class="excel-table">
+      <thead>
+        <tr>
+          <th>Company</th>
+          <th>Template</th>
+          <th>Mentor</th>
+          <th>Status</th>
+          <th>Scheduled</th>
+          <th>Progress</th>
+          <th>Tasks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let session of sessions(); trackBy: trackBySessionId" class="data-row">
+          <td class="company-cell">
+            <div class="company-info">
+              <strong>{{ session.company_name || 'Unknown Company' }}</strong>
+              <div class="company-id" *ngIf="session.company_id">
+                ID: {{ session.company_id }}
+              </div>
+            </div>
+          </td>
+          <td>{{ session.template_name || 'No Template' }}</td>
+          <td>{{ session.mentor_name || 'Unassigned' }}</td>
+          <td>
+            <select
+              class="status-select"
+              [value]="session.status || 'scheduled'"
+              (change)="updateSessionStatus(session, $any($event.target).value)">
+              <option value="scheduled">Scheduled</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </td>
+          <td>{{ formatDate(session.scheduled_at || session.session_date) }}</td>
+          <td>
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="getProgressPercentage(session)"></div>
+                <span class="progress-text">{{ getProgressPercentage(session) }}%</span>
+              </div>
+            </div>
+          </td>
+          <td class="numeric">
+            <span class="task-count" [class.has-tasks]="(session.task_count || 0) > 0">
+              {{ session.task_count || 0 }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-icon" title="View Session" (click)="viewSession(session.id!)">
+                <i class="icon-eye"></i>
+              </button>
+              <button class="btn-icon" title="Edit Session" (click)="editSession(session)">
+                <i class="icon-edit"></i>
+              </button>
+              <button class="btn-icon" title="Session Tasks" (click)="viewSessionTasks(session.id!)">
+                <i class="icon-list"></i>
+              </button>
+              <button
+                class="btn-icon"
+                title="Start Session"
+                *ngIf="session.status === 'scheduled'"
+                (click)="updateSessionStatus(session, 'in_progress')">
+                <i class="icon-play"></i>
+              </button>
+              <button
+                class="btn-icon success"
+                title="Complete Session"
+                *ngIf="session.status === 'in_progress'"
+                (click)="updateSessionStatus(session, 'completed')">
+                <i class="icon-check"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Empty State -->
+        <tr *ngIf="sessions().length === 0" class="no-data">
+          <td colspan="8" class="text-center">
+            <div class="empty-state">
+              <i class="icon-calendar"></i>
+              <p>No sessions found</p>
+              <button class="btn btn-primary" (click)="createNewSession()">
+                Schedule your first session
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Session Statistics -->
+  <div class="session-stats" *ngIf="sessions().length > 0">
+    <div class="stat-item">
+      <span class="stat-value">{{ sessions().length }}</span>
+      <span class="stat-label">Total Sessions</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ scheduledSessionsCount }}</span>
+      <span class="stat-label">Scheduled</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ inProgressSessionsCount }}</span>
+      <span class="stat-label">In Progress</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ completedSessionsCount }}</span>
+      <span class="stat-label">Completed</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ averageProgress }}%</span>
+      <span class="stat-label">Avg Progress</span>
+    </div>
+  </div>
+</div>

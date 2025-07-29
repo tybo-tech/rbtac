@@ -1,0 +1,273 @@
+<div class="mentorship-analytics-container">
+  <!-- Header -->
+  <div class="panel-header">
+    <h2>Mentorship Analytics</h2>
+    <div class="panel-actions">
+      <button class="btn btn-secondary" (click)="refreshAnalytics()" [disabled]="isLoading()">
+        <i class="icon-refresh"></i> Refresh
+      </button>
+      <button class="btn btn-outline" (click)="exportAnalytics()">
+        <i class="icon-download"></i> Export
+      </button>
+      <select class="filter-select" [(ngModel)]="analyticsFilter" (change)="updateAnalytics()">
+        <option value="all">All Time</option>
+        <option value="month">This Month</option>
+        <option value="quarter">This Quarter</option>
+        <option value="year">This Year</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading analytics...</p>
+  </div>
+
+  <!-- Analytics Content -->
+  <div *ngIf="!isLoading()" class="analytics-content">
+
+    <!-- Key Performance Indicators -->
+    <div class="kpi-section">
+      <h3>Key Performance Indicators</h3>
+      <div class="kpi-grid">
+        <div class="kpi-card sessions">
+          <div class="kpi-header">
+            <i class="icon-calendar"></i>
+            <span>Sessions</span>
+          </div>
+          <div class="kpi-value">{{ sessionStats.total }}</div>
+          <div class="kpi-details">
+            <div class="detail-item">
+              <span class="label">Completed:</span>
+              <span class="value">{{ sessionStats.completed }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Completion Rate:</span>
+              <span class="value" [class]="getStatusColor('completion', sessionStats.completionRate)">
+                {{ sessionStats.completionRate }}%
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-card tasks">
+          <div class="kpi-header">
+            <i class="icon-check-square"></i>
+            <span>Tasks</span>
+          </div>
+          <div class="kpi-value">{{ taskStats.total }}</div>
+          <div class="kpi-details">
+            <div class="detail-item">
+              <span class="label">Pending:</span>
+              <span class="value">{{ taskStats.pending }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Overdue:</span>
+              <span class="value danger" *ngIf="taskStats.overdue > 0">{{ taskStats.overdue }}</span>
+              <span class="value success" *ngIf="taskStats.overdue === 0">{{ taskStats.overdue }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-card completion">
+          <div class="kpi-header">
+            <i class="icon-target"></i>
+            <span>Task Completion</span>
+          </div>
+          <div class="kpi-value">{{ getTaskCompletionRate() }}%</div>
+          <div class="kpi-progress">
+            <div class="progress-bar">
+              <div class="progress-fill"
+                   [style.width.%]="getTaskCompletionRate()"
+                   [class]="getStatusColor('completion', getTaskCompletionRate())"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-card overdue">
+          <div class="kpi-header">
+            <i class="icon-alert"></i>
+            <span>Overdue Rate</span>
+          </div>
+          <div class="kpi-value" [class]="getStatusColor('overdue', getOverdueRate())">
+            {{ getOverdueRate() }}%
+          </div>
+          <div class="kpi-progress">
+            <div class="progress-bar">
+              <div class="progress-fill"
+                   [style.width.%]="getOverdueRate()"
+                   [class]="getStatusColor('overdue', getOverdueRate())"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session Analytics -->
+    <div class="section session-analytics">
+      <h3>Session Analytics</h3>
+      <div class="analytics-grid">
+        <div class="chart-card">
+          <h4>Session Status Distribution</h4>
+          <div class="status-distribution">
+            <div class="status-item">
+              <div class="status-bar">
+                <div class="bar scheduled"
+                     [style.width.%]="getProgressBarWidth(sessionStats.total - sessionStats.completed, sessionStats.total)"></div>
+              </div>
+              <div class="status-info">
+                <span class="label">Scheduled/In Progress</span>
+                <span class="value">{{ sessionStats.total - sessionStats.completed }}</span>
+              </div>
+            </div>
+            <div class="status-item">
+              <div class="status-bar">
+                <div class="bar completed"
+                     [style.width.%]="getProgressBarWidth(sessionStats.completed, sessionStats.total)"></div>
+              </div>
+              <div class="status-info">
+                <span class="label">Completed</span>
+                <span class="value">{{ sessionStats.completed }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h4>Session Metrics</h4>
+          <div class="metrics-list">
+            <div class="metric-item">
+              <span class="metric-label">Total Sessions</span>
+              <span class="metric-value">{{ sessionStats.total }}</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Active Sessions</span>
+              <span class="metric-value">{{ sessionStats.active }}</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Unique Companies</span>
+              <span class="metric-value">{{ analytics().unique_companies || 0 }}</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Templates Used</span>
+              <span class="metric-value">{{ analytics().templates_used || 0 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task Analytics -->
+    <div class="section task-analytics">
+      <h3>Task Analytics</h3>
+      <div class="analytics-grid">
+        <div class="chart-card">
+          <h4>Task Status Breakdown</h4>
+          <div class="task-breakdown">
+            <div class="breakdown-item">
+              <div class="item-header">
+                <span class="status-dot pending"></span>
+                <span class="label">Pending</span>
+              </div>
+              <div class="item-bar">
+                <div class="bar-fill" [style.width.%]="getProgressBarWidth(taskStats.pending, taskStats.total)"></div>
+              </div>
+              <span class="value">{{ taskStats.pending }}</span>
+            </div>
+            <div class="breakdown-item">
+              <div class="item-header">
+                <span class="status-dot in-progress"></span>
+                <span class="label">In Progress</span>
+              </div>
+              <div class="item-bar">
+                <div class="bar-fill" [style.width.%]="getProgressBarWidth(taskStats.inProgress, taskStats.total)"></div>
+              </div>
+              <span class="value">{{ taskStats.inProgress }}</span>
+            </div>
+            <div class="breakdown-item">
+              <div class="item-header">
+                <span class="status-dot completed"></span>
+                <span class="label">Completed</span>
+              </div>
+              <div class="item-bar">
+                <div class="bar-fill" [style.width.%]="getProgressBarWidth(taskStats.completed, taskStats.total)"></div>
+              </div>
+              <span class="value">{{ taskStats.completed }}</span>
+            </div>
+            <div class="breakdown-item overdue" *ngIf="taskStats.overdue > 0">
+              <div class="item-header">
+                <span class="status-dot overdue"></span>
+                <span class="label">Overdue</span>
+              </div>
+              <div class="item-bar">
+                <div class="bar-fill overdue" [style.width.%]="getProgressBarWidth(taskStats.overdue, taskStats.total)"></div>
+              </div>
+              <span class="value">{{ taskStats.overdue }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h4>Task Performance</h4>
+          <div class="performance-metrics">
+            <div class="perf-item">
+              <div class="perf-label">Total Tasks</div>
+              <div class="perf-value large">{{ taskStats.total }}</div>
+            </div>
+            <div class="perf-item">
+              <div class="perf-label">Completion Rate</div>
+              <div class="perf-value" [class]="getStatusColor('completion', getTaskCompletionRate())">
+                {{ getTaskCompletionRate() }}%
+              </div>
+            </div>
+            <div class="perf-item">
+              <div class="perf-label">On Time Rate</div>
+              <div class="perf-value" [class]="getStatusColor('overdue', 100 - getOverdueRate())">
+                {{ 100 - getOverdueRate() }}%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="section filter-controls" *ngIf="sessionStats.total > 0 || taskStats.total > 0">
+      <h3>Filters</h3>
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label>Company Filter</label>
+          <input type="number"
+                 placeholder="Company ID"
+                 [(ngModel)]="selectedCompanyId"
+                 (change)="filterByCompany(selectedCompanyId!)">
+        </div>
+        <div class="filter-group">
+          <label>Template Filter</label>
+          <input type="number"
+                 placeholder="Template ID"
+                 [(ngModel)]="selectedTemplateId"
+                 (change)="filterByTemplate(selectedTemplateId!)">
+        </div>
+        <div class="filter-actions">
+          <button class="btn btn-outline" (click)="clearFilters()">
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="sessionStats.total === 0 && taskStats.total === 0">
+      <i class="icon-bar-chart"></i>
+      <h3>No Data Available</h3>
+      <p>Analytics will appear here once you have sessions and tasks</p>
+      <div class="empty-actions">
+        <button class="btn btn-primary" (click)="refreshAnalytics()">
+          Refresh Data
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
