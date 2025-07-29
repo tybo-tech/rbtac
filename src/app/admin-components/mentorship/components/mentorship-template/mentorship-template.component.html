@@ -1,17 +1,23 @@
-<div class="mentorship-template-container">
+<div class="bg-gray-800 rounded-lg shadow-lg">
   <!-- Header -->
-  <div class="panel-header">
-    <h2>Mentorship Templates</h2>
-    <div class="panel-actions">
-      <button class="btn btn-primary" (click)="createNewTemplate()" [disabled]="isLoading()">
-        <i class="icon-plus"></i> New Template
+  <div class="flex items-center justify-between p-6 border-b border-gray-700">
+    <h2 class="text-xl font-semibold text-white">Mentorship Templates</h2>
+    <div class="flex items-center space-x-4">
+      <button
+        (click)="createNewTemplate()"
+        [disabled]="isLoading()"
+        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        New Template
       </button>
       <input
         type="text"
         placeholder="Search templates..."
-        class="search-input"
         [(ngModel)]="templateSearch"
         (input)="searchTemplates()"
+        class="block w-64 px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
       />
     </div>
   </div>

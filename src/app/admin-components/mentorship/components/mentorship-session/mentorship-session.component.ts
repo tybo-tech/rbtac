@@ -40,7 +40,7 @@ export class MentorshipSessionComponent implements OnInit {
   get averageProgress(): number {
     const sessions = this.sessions();
     if (sessions.length === 0) return 0;
-    
+
     const totalProgress = sessions.reduce((sum, s) => sum + (s.completion_percentage || 0), 0);
     return Math.round(totalProgress / sessions.length);
   }

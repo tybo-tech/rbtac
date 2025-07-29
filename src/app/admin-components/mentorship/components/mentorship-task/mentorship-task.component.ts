@@ -44,7 +44,7 @@ export class MentorshipTaskComponent implements OnInit {
   get completionPercentage(): number {
     const totalTasks = this.tasks().length;
     if (totalTasks === 0) return 0;
-    
+
     const completedTasks = this.completedTasksCount;
     return Math.round((completedTasks / totalTasks) * 100);
   }
