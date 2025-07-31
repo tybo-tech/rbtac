@@ -64,10 +64,15 @@ export class FormSessionService {
   }
 
   // Update session values with sync
-  updateSessionValues(sessionId: number, values: any): Observable<ApiResponse<FormSession>> {
+  updateSessionValues(sessionId: number, values: any, syncAnswers: boolean = true, updatedBy?: number): Observable<ApiResponse<any>> {
     const url = `${this.apiUrl}/update-values.php`;
-    const body = { session_id: sessionId, values: values };
-    return this.http.post<ApiResponse<FormSession>>(url, body);
+    const body = {
+      id: sessionId,
+      values: values,
+      sync_answers: syncAnswers,
+      updated_by: updatedBy
+    };
+    return this.http.put<ApiResponse<any>>(url, body);
   }
 
   // Save helper (auto decides add/update)

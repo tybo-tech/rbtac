@@ -6,7 +6,10 @@ include_once '../../models/FormTemplate.php';
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (!$data || empty($data['id']) || !isset($data['values'])) {
-    echo json_encode(["message" => "Session ID and values are required."]);
+    echo json_encode([
+        "success" => false,
+        "message" => "Session ID and values are required."
+    ]);
     exit;
 }
 
@@ -23,13 +26,19 @@ try {
         $session = $sessionService->getFormSessionById($data['id']);
 
         if (!$session) {
-            echo json_encode(["message" => "Session not found."]);
+            echo json_encode([
+                "success" => false,
+                "message" => "Session not found."
+            ]);
             exit;
         }
 
         $template = $templateService->getFormTemplateById($session['form_template_id']);
         if (!$template) {
-            echo json_encode(["message" => "Template not found."]);
+            echo json_encode([
+                "success" => false,
+                "message" => "Template not found."
+            ]);
             exit;
         }
 
@@ -41,13 +50,22 @@ try {
             $data['updated_by'] ?? null
         );
 
-        echo json_encode(["message" => "Session values updated and answers synced"]);
+        echo json_encode([
+            "success" => true,
+            "message" => "Session values updated and answers synced"
+        ]);
     } else {
         // Update values only (no sync)
         $sessionService->updateSessionValues($data['id'], $data['values'], $data['updated_by'] ?? null);
-        echo json_encode(["message" => "Session values updated"]);
+        echo json_encode([
+            "success" => true,
+            "message" => "Session values updated"
+        ]);
     }
 
 } catch (Exception $e) {
-    echo json_encode(["message" => "Error: " . $e->getMessage()]);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error: " . $e->getMessage()
+    ]);
 }

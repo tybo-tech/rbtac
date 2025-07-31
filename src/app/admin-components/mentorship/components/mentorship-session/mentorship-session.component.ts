@@ -17,6 +17,7 @@ import {
 import { FormTemplateService } from '../../../../../services/form-template.service';
 import { FormStateService } from '../../../../../services/form-state.service';
 import { FormValidationService } from '../../../../../services/form-validation.service';
+import { FormSessionService } from '../../../../../services/form-session.service';
 
 @Component({
   selector: 'app-mentorship-session',
@@ -64,7 +65,8 @@ export class MentorshipSessionComponent implements OnInit, OnDestroy {
     public router: Router, // Make public for template access
     private formTemplateService: FormTemplateService,
     private formStateService: FormStateService,
-    private formValidationService: FormValidationService
+    private formValidationService: FormValidationService,
+    private formSessionService: FormSessionService
   ) {
     this.initializeAutoSave();
   }
@@ -167,17 +169,30 @@ export class MentorshipSessionComponent implements OnInit, OnDestroy {
   createSession(): void {
     if (!this.template || !this.templateId) return;
 
-    const newSession: FormSession = {
+    const newSession: Omit<FormSession, 'id'> = {
       form_template_id: this.templateId,
-      company_id: 1, // TODO: Get from user context
-      user_id: 1, // TODO: Get from user context
+      company_id: 1, // TODO: Get from user context/auth service
+      user_id: 1, // TODO: Get from user context/auth service
       values: this.formValues
     };
 
-    // For now, create session locally - later integrate with backend
-    this.session = { ...newSession, id: Date.now() }; // Temporary ID
-    this.formState.session = this.session;
-    this.loading = false;
+    this.formSessionService.addFormSession(newSession).subscribe({
+      next: (response: ApiResponse<FormSession>) => {
+        if (response.success && response.data) {
+          this.session = response.data;
+          this.formState.session = this.session;
+          console.log('Session created:', this.session);
+        } else {
+          this.error = response.message || 'Failed to create session';
+        }
+        this.loading = false;
+      },
+      error: (error: any) => {
+        console.error('Failed to create session:', error);
+        this.error = 'Failed to create session. Please try again.';
+        this.loading = false;
+      }
+    });
   }
 
   /**
@@ -189,13 +204,24 @@ export class MentorshipSessionComponent implements OnInit, OnDestroy {
     this.saving = true;
     this.session.values = this.formValues;
 
-    // TODO: Integrate with backend API for auto-save
-    // For now, simulate saving
-    setTimeout(() => {
-      this.saving = false;
-      this.isDirty = false;
-      this.lastSaved = new Date();
-    }, 500);
+    // Update session values with API
+    this.formSessionService.updateSessionValues(this.session.id!, this.formValues).subscribe({
+      next: (response: ApiResponse<any>) => {
+        if (response.success) {
+          this.isDirty = false;
+          this.lastSaved = new Date();
+          console.log('Auto-save successful');
+        } else {
+          console.warn('Auto-save failed:', response.message);
+        }
+        this.saving = false;
+      },
+      error: (error: any) => {
+        console.error('Auto-save error:', error);
+        this.saving = false;
+        // Don't show error to user for auto-save failures
+      }
+    });
   }
 
   /**
@@ -354,15 +380,23 @@ export class MentorshipSessionComponent implements OnInit, OnDestroy {
     this.formState.isSubmitting = true;
     this.session.values = this.formValues;
 
-    // TODO: Integrate with backend API
-    console.log('Submitting session:', this.session);
-
-    // Simulate submission
-    setTimeout(() => {
-      this.formState.isSubmitting = false;
-      alert('Session submitted successfully!');
-      this.router.navigate(['/admin/mentorship/sessions']);
-    }, 1000);
+    // Submit session via API
+    this.formSessionService.submitSession(this.session.id!).subscribe({
+      next: (response: ApiResponse<any>) => {
+        if (response.success) {
+          alert('Session submitted successfully!');
+          this.router.navigate(['/admin/mentorship/sessions']);
+        } else {
+          this.error = response.message || 'Failed to submit session';
+        }
+        this.formState.isSubmitting = false;
+      },
+      error: (error: any) => {
+        console.error('Submit error:', error);
+        this.error = 'Failed to submit session. Please try again.';
+        this.formState.isSubmitting = false;
+      }
+    });
   }
 
   /**

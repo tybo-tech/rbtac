@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PickSessionTempleComponent } from './pick-session-temple.component';
+import { PickSessionTemplateComponent } from './pick-session-temple.component';
 
-describe('PickSessionTempleComponent', () => {
-  let component: PickSessionTempleComponent;
-  let fixture: ComponentFixture<PickSessionTempleComponent>;
+describe('PickSessionTemplateComponent', () => {
+  let component: PickSessionTemplateComponent;
+  let fixture: ComponentFixture<PickSessionTemplateComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PickSessionTempleComponent]
+      imports: [PickSessionTemplateComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PickSessionTempleComponent);
+    fixture = TestBed.createComponent(PickSessionTemplateComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
