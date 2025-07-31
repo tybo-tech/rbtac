@@ -3,7 +3,7 @@ import { IFormTemplate } from "../../../../../../models/mentorship-form.interfac
 export const SIMPLE_FORM_TEMPLATE: IFormTemplate ={
   title: 'Take On Baseline - Entrepreneur Information',
   description: 'Initial mentorship intake form for entrepreneurs',
-  groups: [
+  structure: [
     {
       key: 'entrepreneur_info',
       title: 'Entrepreneur Information',

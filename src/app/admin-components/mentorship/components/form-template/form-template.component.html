@@ -1,113 +1,408 @@
 <div class="min-h-screen bg-gray-900 text-gray-100 px-6 py-10">
+  <!-- Loading Overlay -->
+  <div *ngIf="loading" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-xl">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto"></div>
+      <p class="text-white mt-2">Loading...</p>
+    </div>
+  </div>
+
   <!-- Header -->
   <div class="mb-10 text-center">
-    <h1 class="text-4xl font-bold text-white">Edit Form Template</h1>
+    <h1 class="text-4xl font-bold text-white">
+      {{ templateId === 'create' ? 'Create' : 'Edit' }} Form Template
+    </h1>
     <p class="text-indigo-300 mt-2">
-      Customize the structure and sections of your mentorship form
+      {{ templateId === 'create' ? 'Design a new mentorship form' : 'Customize your mentorship form structure' }}
     </p>
+  </div>
+
+  <!-- Error/Success Messages -->
+  <div *ngIf="error" class="max-w-5xl mx-auto mb-6">
+    <div class="bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded-lg flex items-center justify-between">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+        {{ error }}
+      </div>
+      <button (click)="clearMessages()" class="text-red-300 hover:text-red-100">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="success" class="max-w-5xl mx-auto mb-6">
+    <div class="bg-green-900 border border-green-700 text-green-100 px-4 py-3 rounded-lg flex items-center justify-between">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        {{ success }}
+      </div>
+      <button (click)="clearMessages()" class="text-green-300 hover:text-green-100">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
   </div>
 
   <!-- Form Container -->
   <div class="max-w-5xl mx-auto bg-gray-800 rounded-xl shadow-xl border border-gray-700 p-8 space-y-8">
-    <!-- Title -->
-    <div>
-      <label class="block text-sm font-semibold text-indigo-300 mb-1">Template Title</label>
-      <input [(ngModel)]="template.data.title" type="text"
-        class="w-full px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-600" />
+
+    <!-- Template Header Section -->
+    <div class="border-b border-gray-700 pb-6">
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Title -->
+        <div>
+          <label class="block text-sm font-semibold text-indigo-300 mb-2">
+            Template Title *
+          </label>
+          <input
+            [(ngModel)]="template.title"
+            type="text"
+            placeholder="Enter template title..."
+            class="w-full px-4 py-3 bg-gray-900 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+            [class.border-red-500]="!template.title || template.title.trim() === ''" />
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-end gap-3">
+          <button
+            *ngIf="template.id"
+            (click)="previewTemplate()"
+            class="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+              <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+            </svg>
+            Preview
+          </button>
+
+          <button
+            *ngIf="template.id"
+            (click)="cloneTemplate()"
+            class="px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/>
+              <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/>
+            </svg>
+            Clone
+          </button>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="mt-4">
+        <label class="block text-sm font-semibold text-indigo-300 mb-2">Description</label>
+        <textarea
+          [(ngModel)]="template.description"
+          rows="3"
+          placeholder="Describe the purpose of this form..."
+          class="w-full px-4 py-3 bg-gray-900 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all">
+        </textarea>
+      </div>
     </div>
 
-    <!-- Description -->
-    <div>
-      <label class="block text-sm font-semibold text-indigo-300 mb-1">Description</label>
-      <textarea [(ngModel)]="template.data.description" rows="3"
-        class="w-full px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-600"></textarea>
-    </div>
-
-    <!-- Group List -->
-    <div *ngFor="let group of template.data.groups; let gi = index" class="border-t border-gray-700 pt-8">
-      <div class="flex justify-between items-center mb-4">
-        <input [(ngModel)]="group.title" (ngModelChange)="group.key = generateKey(group.title)"
-          placeholder="Group Title"
-          class="text-lg font-bold text-purple-300 bg-transparent border-b border-purple-700 focus:outline-none focus:border-purple-400 w-full" />
-        <button class="text-red-400 hover:text-red-300 text-sm" (click)="template.data.groups.splice(gi, 1)">
-          Remove Group
+    <!-- Groups Section -->
+    <div class="space-y-6">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-bold text-purple-300">Form Groups</h2>
+        <button
+          (click)="addGroup()"
+          class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all flex items-center gap-2">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+          </svg>
+          Add Group
         </button>
       </div>
 
-      <!-- Fields per group -->
-      <div *ngFor="let field of group.fields; let fi = index"
-        class="border-l-4 border-purple-700 pl-6 py-4 mb-6 bg-gray-900 rounded-lg">
-        <div class="flex justify-between items-center mb-2">
-          <h3 class="text-sm font-bold text-purple-200">Field {{ fi + 1 }}</h3>
-          <button class="text-red-400 hover:text-red-300 text-xs" (click)="group.fields.splice(fi, 1)">
-            Remove Field
+      <!-- Group List -->
+      <div *ngFor="let group of template.structure; let gi = index"
+           class="border border-gray-700 rounded-lg p-6 bg-gray-900 space-y-4">
+
+        <!-- Group Header -->
+        <div class="flex items-center justify-between">
+          <div class="flex-1 grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-indigo-300 mb-1">Group Title *</label>
+              <input
+                [(ngModel)]="group.title"
+                (ngModelChange)="updateGroupKey(group)"
+                placeholder="Enter group title..."
+                class="w-full px-3 py-2 bg-gray-800 text-white border border-gray-600 rounded-md focus:ring-2 focus:ring-purple-500 transition-all"
+                [class.border-red-500]="!group.title || group.title.trim() === ''" />
+            </div>
+            <div>
+              <label class="block text-xs text-indigo-300 mb-1">Group Key</label>
+              <input
+                [(ngModel)]="group.key"
+                placeholder="auto-generated..."
+                class="w-full px-3 py-2 bg-gray-700 text-gray-300 border border-gray-600 rounded-md"
+                readonly />
+            </div>
+          </div>
+          <button
+            (click)="removeGroup(gi)"
+            class="ml-4 p-2 text-red-400 hover:text-red-300 hover:bg-red-900 rounded-md transition-all">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clip-rule="evenodd"/>
+              <path fill-rule="evenodd" d="M4 5a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM6 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"/>
+            </svg>
           </button>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs text-indigo-300 mb-1">Label</label>
-            <input [(ngModel)]="field.label" (ngModelChange)="field.key = generateKey(field.label)"
-              class="w-full px-3 py-2 bg-gray-800 text-white border border-gray-700 rounded-md" />
-          </div>
-          <div>
-            <label class="block text-xs text-indigo-300 mb-1">Type</label>
-            <select [(ngModel)]="field.type"
-              class="w-full px-3 py-2 bg-gray-800 text-white border border-gray-700 rounded-md">
-              <option value="text">Text</option>
-              <option value="number">Number</option>
-              <option value="textarea">Textarea</option>
-              <option value="date">Date</option>
-              <option value="select">Select</option>
-              <option value="rating">Rating</option>
-            </select>
-          </div>
+        <!-- Group Description -->
+        <div>
+          <label class="block text-xs text-indigo-300 mb-1">Description (optional)</label>
+          <textarea
+            [(ngModel)]="group.description"
+            rows="2"
+            placeholder="Describe this group..."
+            class="w-full px-3 py-2 bg-gray-800 text-white border border-gray-600 rounded-md focus:ring-2 focus:ring-purple-500 transition-all">
+          </textarea>
         </div>
 
-        <!-- Only for 'select' field types -->
-        <div *ngIf="field.type === 'select'" class="mt-4">
-          <label class="block text-xs text-indigo-300 mb-1">Available Options</label>
-          <select multiple [(ngModel)]="field.value"
-            class="w-full px-3 py-2 bg-gray-800 text-white border border-gray-700 rounded-md h-32">
-            <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
-          </select>
+        <!-- Fields Section -->
+        <div class="border-t border-gray-700 pt-4">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-yellow-300">Fields ({{ group.fields.length }})</h3>
+            <button
+              (click)="addField(gi)"
+              class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-all flex items-center gap-1">
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+              </svg>
+              Add Field
+            </button>
+          </div>
 
-          <div class="mt-2">
-            <label class="block text-xs text-indigo-300 mb-1">Add Option</label>
-            <div class="flex items-center gap-2">
-              <input [(ngModel)]="optionDrafts[field.key]"
-                class="flex-1 px-3 py-2 bg-gray-900 text-white border border-gray-700 rounded-md"
-                placeholder="New option..." />
-              <button (click)="addOption(field)"
-                class="px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-md shadow-md transition">
-                Add
+          <!-- Fields List -->
+          <div *ngFor="let field of group.fields; let fi = index"
+               class="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-3">
+
+            <!-- Field Header -->
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold text-purple-200">Field {{ fi + 1 }}</span>
+              <button
+                (click)="removeField(gi, fi)"
+                class="text-red-400 hover:text-red-300 text-xs p-1 hover:bg-red-900 rounded transition-all">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
               </button>
+            </div>
+
+            <!-- Field Configuration -->
+            <div class="grid md:grid-cols-3 gap-3 mb-3">
+              <div>
+                <label class="block text-xs text-indigo-300 mb-1">Label *</label>
+                <input
+                  [(ngModel)]="field.label"
+                  (ngModelChange)="updateFieldKey(field)"
+                  placeholder="Field label..."
+                  class="w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md text-sm focus:ring-1 focus:ring-purple-500 transition-all"
+                  [class.border-red-500]="!field.label || field.label.trim() === ''" />
+              </div>
+
+              <div>
+                <label class="block text-xs text-indigo-300 mb-1">Type *</label>
+                <select
+                  [(ngModel)]="field.type"
+                  (ngModelChange)="onFieldTypeChange(field)"
+                  class="w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md text-sm focus:ring-1 focus:ring-purple-500 transition-all">
+                  <option *ngFor="let type of fieldTypes" [value]="type">
+                    {{ type | titlecase }}
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs text-indigo-300 mb-1">Key</label>
+                <input
+                  [(ngModel)]="field.key"
+                  placeholder="auto-generated..."
+                  class="w-full px-3 py-2 bg-gray-600 text-gray-300 border border-gray-600 rounded-md text-sm"
+                  readonly />
+              </div>
+            </div>
+
+            <!-- Field Options -->
+            <div class="grid md:grid-cols-2 gap-3 mb-3">
+              <div>
+                <label class="block text-xs text-indigo-300 mb-1">Placeholder</label>
+                <input
+                  [(ngModel)]="field.placeholder"
+                  placeholder="Enter placeholder text..."
+                  class="w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md text-sm focus:ring-1 focus:ring-purple-500 transition-all" />
+              </div>
+
+              <div>
+                <label class="block text-xs text-indigo-300 mb-1">Help Text</label>
+                <input
+                  [(ngModel)]="field.helpText"
+                  placeholder="Additional help..."
+                  class="w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md text-sm focus:ring-1 focus:ring-purple-500 transition-all" />
+              </div>
+            </div>
+
+            <!-- Required Checkbox -->
+            <div class="flex items-center gap-2 mb-3">
+              <input
+                type="checkbox"
+                [(ngModel)]="field.required"
+                id="required_{{gi}}_{{fi}}"
+                class="rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500" />
+              <label for="required_{{gi}}_{{fi}}" class="text-sm text-indigo-300">Required field</label>
+            </div>
+
+            <!-- Type-Specific Configurations -->
+
+            <!-- Select Field Options -->
+            <div *ngIf="field.type === 'select'" class="border-t border-gray-600 pt-3">
+              <label class="block text-xs text-indigo-300 mb-2">Select Options</label>
+
+              <!-- Existing Options -->
+              <div *ngIf="field.options && field.options.length > 0" class="mb-3">
+                <div *ngFor="let option of field.options; let oi = index"
+                     class="flex items-center gap-2 mb-1">
+                  <span class="flex-1 px-2 py-1 bg-gray-600 text-white text-sm rounded">{{ option }}</span>
+                  <button
+                    (click)="removeOption(field, oi)"
+                    class="text-red-400 hover:text-red-300 p-1">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Add New Option -->
+              <div class="flex items-center gap-2">
+                <input
+                  [(ngModel)]="optionDrafts[field.key]"
+                  placeholder="New option..."
+                  class="flex-1 px-3 py-2 bg-gray-600 text-white border border-gray-500 rounded-md text-sm focus:ring-1 focus:ring-purple-500 transition-all"
+                  (keyup.enter)="addOption(field)" />
+                <button
+                  (click)="addOption(field)"
+                  class="px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-md transition-all">
+                  Add
+                </button>
+              </div>
+            </div>
+
+            <!-- Table Field Columns -->
+            <div *ngIf="field.type === 'table'" class="border-t border-gray-600 pt-3">
+              <div class="flex items-center justify-between mb-2">
+                <label class="block text-xs text-indigo-300">Table Columns</label>
+                <button
+                  (click)="addTableColumn(field)"
+                  class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs rounded transition-all">
+                  Add Column
+                </button>
+              </div>
+
+              <div *ngFor="let column of field.columns; let ci = index"
+                   class="flex items-center gap-2 mb-2 p-2 bg-gray-700 rounded">
+                <input
+                  [(ngModel)]="column.label"
+                  (ngModelChange)="column.key = generateKey(column.label)"
+                  placeholder="Column label..."
+                  class="flex-1 px-2 py-1 bg-gray-600 text-white border border-gray-500 rounded text-sm" />
+
+                <select
+                  [(ngModel)]="column.type"
+                  class="px-2 py-1 bg-gray-600 text-white border border-gray-500 rounded text-sm">
+                  <option value="text">Text</option>
+                  <option value="number">Number</option>
+                  <option value="date">Date</option>
+                  <option value="select">Select</option>
+                </select>
+
+                <label class="flex items-center gap-1 text-xs text-indigo-300">
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="column.required"
+                    class="rounded bg-gray-600 border-gray-500 text-purple-600" />
+                  Req.
+                </label>
+
+                <button
+                  (click)="removeTableColumn(field, ci)"
+                  class="text-red-400 hover:text-red-300 p-1">
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Add Field Button -->
-      <button (click)="group.fields.push({ key: '', label: '', type: 'text' })"
-        class="text-sm text-green-400 hover:text-green-300">
-        + Add Field
+    <!-- Empty State -->
+    <div *ngIf="template.structure.length === 0" class="text-center py-12 border-2 border-dashed border-gray-600 rounded-lg">
+      <svg class="w-12 h-12 text-gray-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      <h3 class="text-lg font-medium text-gray-400 mb-2">No groups yet</h3>
+      <p class="text-gray-500 mb-4">Start building your form by adding the first group</p>
+      <button
+        (click)="addGroup()"
+        class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all">
+        Add First Group
       </button>
     </div>
 
-    <!-- Add Group Button -->
-    <div>
-      <button (click)="template.data.groups.push({ title: '', key: '', fields: [] })"
-        class="text-sm text-blue-400 hover:text-blue-300">
-        + Add Group
-      </button>
-    </div>
+    <!-- Footer Actions -->
+    <div class="border-t border-gray-700 pt-6 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <button
+          *ngIf="template.id"
+          (click)="deleteTemplate()"
+          class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all flex items-center gap-2">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clip-rule="evenodd"/>
+            <path fill-rule="evenodd" d="M4 5a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM6 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"/>
+          </svg>
+          Delete Template
+        </button>
 
-    <!-- Save Button -->
-    <div class="pt-6 border-t border-gray-700 text-right">
-      <button (click)="saveTemplate()"
-        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200">
-        Save Template
-      </button>
+        <span class="text-sm text-gray-400">
+          {{ template.structure.length }} groups,
+          {{ getTotalFieldCount() }} fields total
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all">
+          Cancel
+        </button>
+
+        <button
+          (click)="saveTemplate()"
+          [disabled]="saving || !isValid()"
+          class="px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2">
+
+          <svg *ngIf="saving" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+
+          <svg *ngIf="!saving" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+
+          {{ saving ? 'Saving...' : (templateId === 'create' ? 'Create Template' : 'Save Changes') }}
+        </button>
+      </div>
     </div>
   </div>
 </div>
