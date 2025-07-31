@@ -1,4 +1,7 @@
 <?php
+
+include_once 'Database.php';
+
 class FormAnswer extends QueryExecutor
 {
   public function addFormAnswer($formAnswer)

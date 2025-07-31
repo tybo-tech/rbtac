@@ -1,4 +1,7 @@
 <?php
+
+include_once 'Database.php';
+
 class FormTemplate extends QueryExecutor
 {
   public function addFormTemplate($formTemplate)
@@ -78,6 +81,106 @@ class FormTemplate extends QueryExecutor
     }
 
     return $templates;
+  }
+
+  /**
+   * Optimized list for UI display - returns only essential fields with summary data
+   */
+  public function listSummary($statusId = null)
+  {
+    $query = "SELECT
+                id, title, description, status_id,
+                created_at, updated_at, created_by, updated_by,
+                structure
+              FROM form_templates";
+    $params = [];
+
+    if ($statusId !== null) {
+      $query .= " WHERE status_id = :status_id";
+      $params[':status_id'] = $statusId;
+    }
+
+    $query .= " ORDER BY created_at DESC";
+
+    $result = $this->executeQuery($query, $params);
+    $templates = $result->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($templates as &$template) {
+      $structure = json_decode($template['structure'], true);
+
+      // Calculate summary stats from structure
+      $template['summary'] = $this->calculateTemplateSummary($structure);
+
+      // Remove the heavy structure data for list view
+      unset($template['structure']);
+    }
+
+    return $templates;
+  }
+
+  /**
+   * Calculate template summary statistics
+   */
+  private function calculateTemplateSummary($structure)
+  {
+    $summary = [
+      'group_count' => 0,
+      'field_count' => 0,
+      'field_types' => [],
+      'estimated_time' => 0, // minutes
+      'complexity' => 'Simple'
+    ];
+
+    if (!is_array($structure) || empty($structure)) {
+      return $summary;
+    }
+
+    foreach ($structure as $group) {
+      if (isset($group['fields']) && is_array($group['fields'])) {
+        $summary['group_count']++;
+
+        foreach ($group['fields'] as $field) {
+          $summary['field_count']++;
+
+          // Track field types for variety analysis
+          $fieldType = $field['type'] ?? 'text';
+          if (!isset($summary['field_types'][$fieldType])) {
+            $summary['field_types'][$fieldType] = 0;
+          }
+          $summary['field_types'][$fieldType]++;
+
+          // Estimate time based on field complexity
+          switch ($fieldType) {
+            case 'textarea':
+            case 'file':
+              $summary['estimated_time'] += 2;
+              break;
+            case 'select':
+            case 'radio':
+            case 'checkbox':
+              $summary['estimated_time'] += 1;
+              break;
+            case 'table':
+              $summary['estimated_time'] += 5;
+              break;
+            default:
+              $summary['estimated_time'] += 0.5;
+          }
+        }
+      }
+    }
+
+    // Determine complexity
+    if ($summary['field_count'] > 20 || $summary['group_count'] > 5) {
+      $summary['complexity'] = 'Complex';
+    } elseif ($summary['field_count'] > 10 || $summary['group_count'] > 3) {
+      $summary['complexity'] = 'Moderate';
+    }
+
+    // Round estimated time
+    $summary['estimated_time'] = ceil($summary['estimated_time']);
+
+    return $summary;
   }
 
   public function deleteFormTemplate($templateId)

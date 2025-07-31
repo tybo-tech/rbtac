@@ -1,4 +1,7 @@
 <?php
+
+include_once 'Database.php';
+
 class FormSession extends QueryExecutor
 {
   public function addFormSession($formSession, $syncAnswers = true)

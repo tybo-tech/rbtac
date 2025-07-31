@@ -293,11 +293,31 @@ export class FormTemplateListComponent implements OnInit {
   }
 
   getFieldCount(template: IFormTemplate): number {
-    return template.structure.reduce((total, group) => total + group.fields.length, 0);
+    // Use summary data if available (optimized list), otherwise calculate from structure
+    if (template.summary?.field_count !== undefined) {
+      return template.summary.field_count;
+    }
+
+    // Fallback for templates with full structure
+    if (template.structure?.length) {
+      return template.structure.reduce((total, group) => total + group.fields.length, 0);
+    }
+
+    return 0;
   }
 
   getGroupCount(template: IFormTemplate): number {
-    return template.structure.length;
+    // Use summary data if available (optimized list), otherwise calculate from structure
+    if (template.summary?.group_count !== undefined) {
+      return template.summary.group_count;
+    }
+
+    // Fallback for templates with full structure
+    if (template.structure?.length) {
+      return template.structure.length;
+    }
+
+    return 0;
   }
 
   formatDate(dateString: string | undefined): string {
@@ -324,5 +344,27 @@ export class FormTemplateListComponent implements OnInit {
 
   refreshTemplates(): void {
     this.loadTemplates();
+  }
+
+  // New helper methods for summary data
+  getEstimatedTime(template: IFormTemplate): number {
+    return template.summary?.estimated_time || 0;
+  }
+
+  getComplexity(template: IFormTemplate): string {
+    return template.summary?.complexity || 'Unknown';
+  }
+
+  getFieldTypeBreakdown(template: IFormTemplate): { [type: string]: number } {
+    return template.summary?.field_types || {};
+  }
+
+  hasTableFields(template: IFormTemplate): boolean {
+    return (template.summary?.field_types?.['table'] || 0) > 0;
+  }
+
+  hasAdvancedFields(template: IFormTemplate): boolean {
+    const types = template.summary?.field_types || {};
+    return (types['table'] || 0) > 0 || (types['rating'] || 0) > 0 || (types['boolean'] || 0) > 0;
   }
 }

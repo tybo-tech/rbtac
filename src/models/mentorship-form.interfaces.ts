@@ -44,14 +44,27 @@ export interface IFormGroup {
   fields: IFormField[];
 }
 
-// 📐 Full form template definition (stored in `form_templates`)
+// � Template summary for optimized list view
+export interface ITemplateSummary {
+  group_count: number;
+  field_count: number;
+  field_types: { [type: string]: number };
+  estimated_time: number; // minutes
+  complexity: 'Simple' | 'Moderate' | 'Complex';
+}
+
+// �📐 Full form template definition (stored in `form_templates`)
 export interface IFormTemplate {
   id?: number;
   title: string;
   description?: string;
-  structure: IFormGroup[]; // replaces the old `groups`
+  structure?: IFormGroup[]; // Optional for list view, required for editing
+  summary?: ITemplateSummary; // Available in optimized list view
+  status_id?: number;
   created_at?: string;
+  updated_at?: string;
   created_by?: number;
+  updated_by?: number;
 }
 
 // 📦 Captured session data (stored in `form_sessions`)

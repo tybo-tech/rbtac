@@ -44,7 +44,7 @@ export class FormTemplateComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
+    public router: Router, // Make public for template access
     private formTemplateService: FormTemplateService
   ) {}
 
