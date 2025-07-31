@@ -5,7 +5,10 @@ include_once '../../models/FormTemplate.php';
 $templateId = $_GET['id'] ?? null;
 
 if (!$templateId) {
-    echo json_encode(["message" => "Template ID is required."]);
+    echo json_encode([
+        "success" => false,
+        "message" => "Template ID is required."
+    ]);
     exit;
 }
 
@@ -17,10 +20,20 @@ try {
     $template = $service->getFormTemplateById($templateId);
 
     if ($template) {
-        echo json_encode($template);
+        echo json_encode([
+            "success" => true,
+            "data" => $template,
+            "message" => "Template retrieved successfully"
+        ]);
     } else {
-        echo json_encode(["message" => "Template not found"]);
+        echo json_encode([
+            "success" => false,
+            "message" => "Template not found"
+        ]);
     }
 } catch (Exception $e) {
-    echo json_encode(["message" => "Error: " . $e->getMessage()]);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error: " . $e->getMessage()
+    ]);
 }

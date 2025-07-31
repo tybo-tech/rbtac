@@ -58,7 +58,7 @@ export interface IFormTemplate {
   id?: number;
   title: string;
   description?: string;
-  structure?: IFormGroup[]; // Optional for list view, required for editing
+  structure: IFormGroup[]; // Optional for list view, required for editing
   summary?: ITemplateSummary; // Available in optimized list view
   status_id?: number;
   created_at?: string;

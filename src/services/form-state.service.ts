@@ -97,7 +97,7 @@ export class FormStateService {
   // Navigate to specific group
   navigateToGroup(groupIndex: number): boolean {
     const currentState = this.formStateSubject.value;
-    if (!currentState.template) return false;
+    if (!currentState.template || !currentState.template.structure) return false;
 
     const maxIndex = currentState.template.structure.length - 1;
     if (groupIndex < 0 || groupIndex > maxIndex) return false;
@@ -127,7 +127,7 @@ export class FormStateService {
   // Validate current group
   private validateCurrentGroup(): void {
     const currentState = this.formStateSubject.value;
-    if (!currentState.template || !currentState.session) return;
+    if (!currentState.template || !currentState.template.structure || !currentState.session) return;
 
     const currentGroup = currentState.template.structure[currentState.currentGroup];
     const groupValues = currentState.session.values[currentGroup.key] || {};
@@ -146,7 +146,7 @@ export class FormStateService {
   // Update navigation state
   private updateNavigation(): void {
     const currentState = this.formStateSubject.value;
-    if (!currentState.template) return;
+    if (!currentState.template || !currentState.template.structure) return;
 
     const totalGroups = currentState.template.structure.length;
     const currentIndex = currentState.currentGroup;

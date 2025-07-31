@@ -62,6 +62,10 @@ export class FormTemplateComponent implements OnInit {
   loadDefaultTemplate(): void {
     // Load the simple template structure
     this.template = { ...SIMPLE_FORM_TEMPLATE };
+    // Ensure structure exists
+    if (!this.template.structure) {
+      this.template.structure = [];
+    }
     this.clearMessages();
   }
 
@@ -153,6 +157,10 @@ export class FormTemplateComponent implements OnInit {
 
   // Group management methods
   addGroup(): void {
+    if (!this.template.structure) {
+      this.template.structure = [];
+    }
+
     const newGroup: IFormGroup = {
       key: `group_${this.template.structure.length + 1}`,
       title: 'New Group',
@@ -163,6 +171,8 @@ export class FormTemplateComponent implements OnInit {
   }
 
   removeGroup(index: number): void {
+    if (!this.template.structure) return;
+
     if (confirm('Are you sure you want to remove this group?')) {
       this.template.structure.splice(index, 1);
     }
@@ -170,6 +180,8 @@ export class FormTemplateComponent implements OnInit {
 
   // Field management methods
   addField(groupIndex: number): void {
+    if (!this.template.structure) return;
+
     const newField: IFormField = {
       key: `field_${Date.now()}`,
       label: 'New Field',
@@ -180,6 +192,8 @@ export class FormTemplateComponent implements OnInit {
   }
 
   removeField(groupIndex: number, fieldIndex: number): void {
+    if (!this.template.structure) return;
+
     if (confirm('Are you sure you want to remove this field?')) {
       this.template.structure[groupIndex].fields.splice(fieldIndex, 1);
     }
@@ -252,7 +266,7 @@ export class FormTemplateComponent implements OnInit {
 
   isValid(): boolean {
     if (!this.template.title?.trim()) return false;
-    if (this.template.structure.length === 0) return false;
+    if (!this.template.structure || this.template.structure.length === 0) return false;
 
     // Check each group has at least one field
     for (const group of this.template.structure) {
@@ -315,6 +329,7 @@ export class FormTemplateComponent implements OnInit {
 
   // Helper method for template display
   getTotalFieldCount(): number {
+    if (!this.template.structure) return 0;
     return this.template.structure.reduce((total, group) => total + group.fields.length, 0);
   }
 }

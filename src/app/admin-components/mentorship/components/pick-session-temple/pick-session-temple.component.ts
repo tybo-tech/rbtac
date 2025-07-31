@@ -55,7 +55,8 @@ export class PickSessionTemplateComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    this.formTemplateService.getFormTemplates().subscribe({
+    // Load active templates only with summary data (optimized for picking)
+    this.formTemplateService.getFormTemplates(1).subscribe({
       next: (response: ApiResponse<IFormTemplate[]>) => {
         if (response.success && response.data) {
           this.templates = response.data;
@@ -146,6 +147,69 @@ export class PickSessionTemplateComponent implements OnInit {
    * Get total number of fields in a template
    */
   getTotalFields(template: IFormTemplate): number {
-    return template.structure.reduce((total, group) => total + group.fields.length, 0);
+    // Use summary data if available (optimized list), otherwise calculate from structure
+    if (template.summary?.field_count !== undefined) {
+      return template.summary.field_count;
+    }
+
+    // Fallback for templates with full structure
+    if (template.structure?.length) {
+      return template.structure.reduce((total, group) => total + group.fields.length, 0);
+    }
+
+    return 0;
+  }
+
+  /**
+   * Get total number of groups in a template
+   */
+  getTotalGroups(template: IFormTemplate): number {
+    // Use summary data if available (optimized list), otherwise calculate from structure
+    if (template.summary?.group_count !== undefined) {
+      return template.summary.group_count;
+    }
+
+    // Fallback for templates with full structure
+    if (template.structure?.length) {
+      return template.structure.length;
+    }
+
+    return 0;
+  }
+
+  /**
+   * Get estimated completion time for a template
+   */
+  getEstimatedTime(template: IFormTemplate): number {
+    return template.summary?.estimated_time || 0;
+  }
+
+  /**
+   * Get complexity level for a template
+   */
+  getComplexity(template: IFormTemplate): string {
+    return template.summary?.complexity || 'Unknown';
+  }
+
+  /**
+   * Get field types breakdown for a template
+   */
+  getFieldTypeBreakdown(template: IFormTemplate): { [type: string]: number } {
+    return template.summary?.field_types || {};
+  }
+
+  /**
+   * Check if template has advanced field types
+   */
+  hasAdvancedFields(template: IFormTemplate): boolean {
+    const types = template.summary?.field_types || {};
+    return (types['table'] || 0) > 0 || (types['rating'] || 0) > 0 || (types['boolean'] || 0) > 0;
+  }
+
+  /**
+   * Get field type count for display
+   */
+  getFieldTypeCount(template: IFormTemplate, fieldType: string): number {
+    return template.summary?.field_types?.[fieldType] || 0;
   }
 }

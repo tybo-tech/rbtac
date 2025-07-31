@@ -135,7 +135,7 @@ export class MentorshipSessionComponent implements OnInit, OnDestroy {
    * Initialize form values based on template structure
    */
   initializeFormValues(): void {
-    if (!this.template) return;
+    if (!this.template || !this.template.structure) return;
 
     this.formValues = {};
 
@@ -281,6 +281,8 @@ export class MentorshipSessionComponent implements OnInit, OnDestroy {
     this.validationErrors = {};
     this.isFormValid = true;
 
+    if (!this.template.structure) return;
+
     for (const group of this.template.structure) {
       for (const field of group.fields) {
         const value = this.formValues[group.key]?.[field.key];
@@ -301,14 +303,14 @@ export class MentorshipSessionComponent implements OnInit, OnDestroy {
    * Navigate between form groups/sections
    */
   goToGroup(index: number): void {
-    if (this.template && index >= 0 && index < this.template.structure.length) {
+    if (this.template && this.template.structure && index >= 0 && index < this.template.structure.length) {
       this.currentGroupIndex = index;
       this.formState.currentGroup = index;
     }
   }
 
   nextGroup(): void {
-    if (this.template && this.currentGroupIndex < this.template.structure.length - 1) {
+    if (this.template && this.template.structure && this.currentGroupIndex < this.template.structure.length - 1) {
       this.goToGroup(this.currentGroupIndex + 1);
     }
   }
@@ -378,6 +380,8 @@ export class MentorshipSessionComponent implements OnInit, OnDestroy {
 
     let totalFields = 0;
     let filledFields = 0;
+
+    if (!this.template.structure) return 0;
 
     for (const group of this.template.structure) {
       for (const field of group.fields) {
