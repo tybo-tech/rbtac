@@ -2,6 +2,7 @@
 class FormAnswerSync extends QueryExecutor
 {
     private $formAnswer;
+    private $lastSyncStats = null;
 
     public function __construct($db)
     {
@@ -10,17 +11,28 @@ class FormAnswerSync extends QueryExecutor
     }
 
     /**
+     * Get statistics from the last sync operation
+     */
+    public function getLastSyncStats()
+    {
+        return $this->lastSyncStats;
+    }
+
+    /**
      * Sync form answers from session values
      * This is the main method called after session save/update
      */
-    public function syncSessionAnswers($sessionId, $templateId, $values, $structure, $createdBy = null)
+    public function syncSessionAnswers($sessionId, $templateId, $values, $structure, $createdBy = null, $logSync = false)
     {
         try {
             // Start transaction for atomic operation
             $this->_conn->beginTransaction();
 
             // Step 1: Delete existing answers for this session
-            $this->formAnswer->deleteAnswersBySession($sessionId);
+            $deletedCount = $this->formAnswer->deleteAnswersBySession($sessionId);
+            if ($logSync) {
+                error_log("FormAnswerSync: Deleted $deletedCount answers for session $sessionId");
+            }
 
             // Step 2: Flatten values into answer format
             $flattenedAnswers = $this->flattenFormValues($sessionId, $templateId, $values, $structure, $createdBy);
@@ -28,13 +40,38 @@ class FormAnswerSync extends QueryExecutor
             // Step 3: Bulk insert new answers
             if (!empty($flattenedAnswers)) {
                 $this->formAnswer->bulkInsertAnswers($flattenedAnswers);
+                if ($logSync) {
+                    $insertedCount = count($flattenedAnswers);
+                    error_log("FormAnswerSync: Inserted $insertedCount answers for session $sessionId");
+                }
             }
 
             $this->_conn->commit();
-            return true;
+
+            if ($logSync) {
+                error_log("FormAnswerSync: Successfully synced session $sessionId");
+            }
+
+            $syncStats = [
+                'success' => true,
+                'session_id' => $sessionId,
+                'template_id' => $templateId,
+                'deleted_count' => $deletedCount ?? 0,
+                'inserted_count' => count($flattenedAnswers),
+                'sync_time' => date('Y-m-d H:i:s'),
+                'created_by' => $createdBy
+            ];
+
+            // Store for getLastSyncStats()
+            $this->lastSyncStats = $syncStats;
+
+            return $syncStats;
 
         } catch (Exception $e) {
             $this->_conn->rollBack();
+            if ($logSync) {
+                error_log("FormAnswerSync: Error syncing session $sessionId - " . $e->getMessage());
+            }
             throw $e;
         }
     }

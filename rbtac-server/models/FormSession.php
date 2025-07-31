@@ -25,8 +25,7 @@ class FormSession extends QueryExecutor
 
     // Auto-sync answers if enabled and values exist
     if ($syncAnswers && !empty($formSession->values) && !empty($formSession->template_structure)) {
-      include_once 'FormAnswerSync.php';
-      $sync = new FormAnswerSync($this->_conn);
+      $sync = $this->getFormAnswerSync();
       $sync->syncSessionAnswers(
         $sessionId,
         $formSession->form_template_id,
@@ -77,8 +76,7 @@ class FormSession extends QueryExecutor
 
     // Auto-sync answers if enabled and values exist
     if ($syncAnswers && !empty($formSession->values) && !empty($formSession->template_structure)) {
-      include_once 'FormAnswerSync.php';
-      $sync = new FormAnswerSync($this->_conn);
+      $sync = $this->getFormAnswerSync();
       $sync->syncSessionAnswers(
         $formSession->id,
         $formSession->form_template_id,
@@ -131,6 +129,29 @@ class FormSession extends QueryExecutor
     $query = "DELETE FROM form_sessions WHERE id = :id";
     $params = [':id' => $sessionId];
     $this->executeQuery($query, $params);
+  }
+
+  public function deleteFormSessionWithAnswers($sessionId)
+  {
+    try {
+      $this->_conn->beginTransaction();
+
+      // Explicitly delete answers first (safety net even with CASCADE)
+      include_once 'FormAnswerSync.php';
+      include_once 'FormAnswer.php';
+      $answerService = new FormAnswer($this->_conn);
+      $answerService->deleteAnswersBySession($sessionId);
+
+      // Then delete the session
+      $this->deleteFormSession($sessionId);
+
+      $this->_conn->commit();
+      return true;
+
+    } catch (Exception $e) {
+      $this->_conn->rollBack();
+      throw $e;
+    }
   }
 
   public function getSessionsByTemplate($templateId)
@@ -190,5 +211,49 @@ class FormSession extends QueryExecutor
       ':id' => $sessionId
     ];
     $this->executeQuery($query, $params);
+  }
+
+  /**
+   * Centralized method to ensure FormAnswerSync is available
+   */
+  private function getFormAnswerSync()
+  {
+    include_once 'FormAnswerSync.php';
+    return new FormAnswerSync($this->_conn);
+  }
+
+  /**
+   * Sync answers for a session (can be called independently)
+   */
+  public function syncSessionAnswers($sessionId, $templateId, $values, $structure, $userId = null)
+  {
+    $sync = $this->getFormAnswerSync();
+    return $sync->syncSessionAnswers($sessionId, $templateId, $values, $structure, $userId);
+  }
+
+  /**
+   * Update session values and sync answers in one operation
+   */
+  public function updateSessionValuesWithSync($sessionId, $values, $templateStructure, $updatedBy = null)
+  {
+    try {
+      $this->_conn->beginTransaction();
+
+      // Update session values
+      $this->updateSessionValues($sessionId, $values, $updatedBy);
+
+      // Get template ID for sync
+      $session = $this->getFormSessionById($sessionId);
+      if ($session) {
+        $this->syncSessionAnswers($sessionId, $session['form_template_id'], $values, $templateStructure, $updatedBy);
+      }
+
+      $this->_conn->commit();
+      return true;
+
+    } catch (Exception $e) {
+      $this->_conn->rollBack();
+      throw $e;
+    }
   }
 }

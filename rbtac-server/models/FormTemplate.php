@@ -114,4 +114,60 @@ class FormTemplate extends QueryExecutor
   {
     return $this->list(1);
   }
+
+  /**
+   * Get template usage statistics
+   */
+  public function getTemplateStats($templateId)
+  {
+    include_once 'FormSession.php';
+    $formSession = new FormSession($this->_conn);
+
+    $query = "SELECT
+                COUNT(*) as total_sessions,
+                COUNT(CASE WHEN status_id = 1 THEN 1 END) as active_sessions,
+                MIN(created_at) as first_session,
+                MAX(updated_at) as last_activity
+              FROM form_sessions
+              WHERE form_template_id = :template_id";
+
+    $params = [':template_id' => $templateId];
+    $result = $this->executeQuery($query, $params);
+    $stats = $result->fetch(PDO::FETCH_ASSOC);
+
+    // Get answer count
+    $answerQuery = "SELECT COUNT(*) as total_answers
+                   FROM form_answers
+                   WHERE form_template_id = :template_id";
+    $answerResult = $this->executeQuery($answerQuery, $params);
+    $answerStats = $answerResult->fetch(PDO::FETCH_ASSOC);
+
+    return array_merge($stats, $answerStats);
+  }
+
+  /**
+   * Safe template deletion with impact check
+   */
+  public function deleteFormTemplateWithCheck($templateId, $force = false)
+  {
+    $stats = $this->getTemplateStats($templateId);
+
+    if ($stats['total_sessions'] > 0 && !$force) {
+      throw new Exception("Cannot delete template: {$stats['total_sessions']} sessions exist. Use force=true to override.");
+    }
+
+    if ($force) {
+      // Delete associated sessions and answers first
+      include_once 'FormSession.php';
+      $formSession = new FormSession($this->_conn);
+      $sessions = $formSession->getSessionsByTemplate($templateId);
+
+      foreach ($sessions as $session) {
+        $formSession->deleteFormSessionWithAnswers($session['id']);
+      }
+    }
+
+    $this->deleteFormTemplate($templateId);
+    return true;
+  }
 }

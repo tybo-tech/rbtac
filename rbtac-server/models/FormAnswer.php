@@ -80,6 +80,40 @@ class FormAnswer extends QueryExecutor
     return $result->fetchAll(PDO::FETCH_ASSOC);
   }
 
+  /**
+   * Get formatted answers for session (grouped by field for easy display)
+   */
+  public function getFormattedAnswersForSession($sessionId)
+  {
+    $answers = $this->getAnswersBySession($sessionId);
+    $formatted = [];
+
+    foreach ($answers as $answer) {
+      $groupKey = $answer['group_key'];
+      $fieldKey = $answer['field_key'];
+
+      if (!isset($formatted[$groupKey])) {
+        $formatted[$groupKey] = [];
+      }
+
+      if ($answer['row_index'] !== null) {
+        // Table field
+        if (!isset($formatted[$groupKey][$fieldKey])) {
+          $formatted[$groupKey][$fieldKey] = [];
+        }
+        if (!isset($formatted[$groupKey][$fieldKey][$answer['row_index']])) {
+          $formatted[$groupKey][$fieldKey][$answer['row_index']] = [];
+        }
+        $formatted[$groupKey][$fieldKey][$answer['row_index']][$answer['column_key']] = $answer['value'];
+      } else {
+        // Simple field
+        $formatted[$groupKey][$fieldKey] = $answer['value'];
+      }
+    }
+
+    return $formatted;
+  }
+
   public function getAnswersByTemplate($templateId)
   {
     $query = "SELECT * FROM form_answers WHERE form_template_id = :template_id ORDER BY form_session_id, group_key, field_key";
