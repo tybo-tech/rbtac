@@ -1,17 +1,6 @@
-export interface IFormTemplate {
-  title: string;
-  description?: string;
-  groups: IFormGroup[];
-}
+// ifoam.models.ts
 
-export interface IFormGroup {
-  title: string;
-  key: string;
-  description?: string;
-  type?: 'group' | 'table'; // default is 'group'
-  fields: IFormField[];
-}
-
+// 🎯 Field types allowed in forms
 export type FormFieldType =
   | 'text'
   | 'textarea'
@@ -22,40 +11,77 @@ export type FormFieldType =
   | 'boolean'
   | 'table';
 
+// 📋 Table column definition (for smart table rendering)
+export interface ITableColumn {
+  key: string;
+  label: string;
+  type: FormFieldType;
+  required?: boolean;
+  placeholder?: string;
+  helpText?: string;
+}
+
+// 🧩 Field definition
 export interface IFormField {
   key: string;
   label: string;
   type: FormFieldType;
-  value?: any; // optional default value
-  options?: string[]; // for 'select', 'radio'
-  columns?: IFormField[]; // for table fields (type === 'table')
+  value?: any;
+  options?: string[]; // for select fields
+  columns?: ITableColumn[]; // for type === 'table'
+  repeatable?: boolean;
+  required?: boolean;
+  placeholder?: string;
+  helpText?: string;
 }
 
-// The main session data stored in your collection_data.data
+// 🧱 Grouping fields under logical sections
+export interface IFormGroup {
+  key: string;
+  title: string;
+  description?: string;
+  type?: 'group' | 'table'; // default is 'group'
+  fields: IFormField[];
+}
+
+// 📐 Full form template definition (stored in `form_templates`)
+export interface IFormTemplate {
+  id?: number;
+  title: string;
+  description?: string;
+  structure: IFormGroup[]; // replaces the old `groups`
+  created_at?: string;
+  created_by?: number;
+}
+
+// 📦 Captured session data (stored in `form_sessions`)
 export interface FormSession {
-  form_template_id: string;
-  company_id: string;
-  user_id: string;
+  id?: number;
+  form_template_id: number;
+  company_id: number;
+  user_id: number;
   created_at?: string;
   updated_at?: string;
   values: IFormValues;
 }
 
-// Values captured per session based on the form template
+// 🧠 Nested key-value data for each form session
 export interface IFormValues {
   [groupKey: string]: {
     [fieldKey: string]: any;
   };
 }
 
-
-export const COLLECTION_NAMES = {
-  FORM_TEMPLATES: 'form_templates',
-  FORM_SESSIONS: 'form_sessions',
-  FORM_VALUES: 'form_values',
-  FORM_GROUPS: 'form_groups',
-  FORM_FIELDS: 'form_fields',
-  FORM_RESPONSES: 'form_responses',
-  FORM_QUESTIONS: 'form_questions',
-  FORM_ANSWERS: 'form_answers',
+// 📊 Flattened answer entries for reporting (stored in `form_answers`)
+export interface IFormAnswer {
+  id?: number;
+  form_session_id: number;
+  form_template_id: number;
+  group_key: string;
+  field_key: string;
+  row_index?: number;
+  column_key?: string;
+  value: any;
+  value_type: FormFieldType;
+  created_at?: string;
 }

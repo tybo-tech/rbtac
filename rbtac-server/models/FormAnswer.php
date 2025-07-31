@@ -152,7 +152,8 @@ class FormAnswer extends QueryExecutor
   {
     $query = "DELETE FROM form_answers WHERE form_session_id = :session_id";
     $params = [':session_id' => $sessionId];
-    $this->executeQuery($query, $params);
+    $stmt = $this->executeQuery($query, $params);
+    return $stmt->rowCount(); // Return number of deleted records for logging
   }
 
   public function upsertFormAnswer($formAnswer)
