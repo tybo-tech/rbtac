@@ -48,7 +48,7 @@ export interface ColumnOption {
 
 export interface ICollectionData<T = any> {
   id: number;
-  collection_id: number;
+  collection_id: number | string; // Collection ID or name
   data: T;
   created_at?: string;
   updated_at?: string;

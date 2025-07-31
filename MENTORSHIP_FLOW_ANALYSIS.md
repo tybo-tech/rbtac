@@ -212,43 +212,149 @@ interface IMentorshipResponse {
 
 ## 🎯 **6. ANGULAR COMPONENT LAYER**
 
+### **Component Routing Flow:**
+
+**Main Route Structure:**
+```typescript
+/admin/mentorship → MentorshipComponent (parent shell)
+├── /admin/mentorship/overview → MentorshipOverviewComponent
+├── /admin/mentorship/templates → MentorshipTemplateComponent  
+├── /admin/mentorship/sessions → MentorshipSessionComponent
+├── /admin/mentorship/tasks → MentorshipTaskComponent
+└── /admin/mentorship/analytics → MentorshipAnalyticsComponent
+```
+
+**Route Configuration in app.routes.ts:**
+```typescript
+{
+  path: 'mentorship',
+  component: MentorshipComponent,        // Parent shell component
+  children: [
+    {
+      path: '',
+      redirectTo: 'overview',             // Default route
+      pathMatch: 'full'
+    },
+    {
+      path: 'overview',
+      loadComponent: () => import('./admin-components/mentorship/components/mentorship-overview/mentorship-overview.component').then(m => m.MentorshipOverviewComponent)
+    },
+    {
+      path: 'templates',  
+      loadComponent: () => import('./admin-components/mentorship/components/mentorship-template/mentorship-template.component').then(m => m.MentorshipTemplateComponent)
+    },
+    {
+      path: 'sessions',
+      loadComponent: () => import('./admin-components/mentorship/components/mentorship-session/mentorship-session.component').then(m => m.MentorshipSessionComponent)
+    },
+    // ... additional routes
+  ]
+}
+```
+
 ### **Core Components:**
 
-| Component | Service Used | Purpose |
-|-----------|--------------|---------|
-| `mentorship-session-manager.component.ts` | `MentorshipService` | Complete workflow: Company search → Template selection → Form execution |
-| `template-manager.component.ts` | `MentorshipService` | Template creation and editing |
-| `mentorship.component.ts` | Router service | Navigation shell with child routes |
+| Component | Route | Service Used | Purpose |
+|-----------|-------|--------------|---------|
+| `MentorshipComponent` | `/admin/mentorship` | Router | **Parent Shell** - Navigation tabs with RouterOutlet |
+| `MentorshipOverviewComponent` | `/admin/mentorship/overview` | `MentorshipService` | Dashboard with statistics and recent activity |
+| `MentorshipTemplateComponent` | `/admin/mentorship/templates` | `MentorshipService` | Template management and Excel conversion |
+| `MentorshipSessionComponent` | `/admin/mentorship/sessions` | `MentorshipService` | Session workflow (Company → Template → Form) |
+| `MentorshipSessionManagerComponent` | Embedded in sessions | `MentorshipService` | Complete session execution workflow |
+| `MentorshipTaskComponent` | `/admin/mentorship/tasks` | `MentorshipService` | Task tracking and completion |
+| `MentorshipAnalyticsComponent` | `/admin/mentorship/analytics` | `MentorshipService` | Progress reports and analytics |
+
+### **MentorshipComponent (Parent Shell):**
+
+**Purpose:** Acts as a navigation wrapper following the AdminComponent pattern
+```typescript
+@Component({
+  template: `
+    <!-- Header with title -->
+    <div class="border-b border-gray-700 bg-gray-800">
+      <h1>Mentorship Management</h1>
+    </div>
+    
+    <!-- Tab Navigation -->
+    <nav class="flex space-x-8">
+      <a *ngFor="let tab of tabs"
+         [routerLink]="['/admin/mentorship', tab.id]"
+         routerLinkActive="border-blue-500 text-blue-400">
+        {{ tab.label }}
+      </a>
+    </nav>
+    
+    <!-- Child Component Outlet -->
+    <router-outlet></router-outlet>
+  `
+})
+export class MentorshipComponent {
+  tabs = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'templates', label: 'Templates' },  
+    { id: 'sessions', label: 'Sessions' },
+    { id: 'tasks', label: 'Tasks' },
+    { id: 'analytics', label: 'Analytics' }
+  ];
+}
+```
 
 ### **Component → Service → API Flow:**
 
-**Example: Session Manager Complete Workflow**
+**Navigation Flow:**
 ```typescript
-// 1. COMPANY SEARCH
+// 1. USER NAVIGATES TO MENTORSHIP
+/admin/mentorship → Loads MentorshipComponent shell
+                 → Redirects to /admin/mentorship/overview
+                 → Lazy loads MentorshipOverviewComponent
+
+// 2. TAB NAVIGATION  
+User clicks "Templates" tab
+→ Router navigates to /admin/mentorship/templates
+→ Lazy loads MentorshipTemplateComponent
+→ Component calls mentorshipService.getTemplates()
+→ Service calls GET /api/mentorship/templates.php
+
+// 3. CHILD COMPONENT INITIALIZATION
+MentorshipTemplateComponent.ngOnInit()
+→ mentorshipService.getTemplates()
+→ GET /api/mentorship/templates.php
+→ MentorshipTemplate::getAll()
+→ Returns template list for display
+```
+
+**Session Workflow Example:**
+```typescript
+// 1. NAVIGATE TO SESSIONS
+/admin/mentorship/sessions → MentorshipSessionComponent loads
+→ Embeds MentorshipSessionManagerComponent
+→ Component initializes with company search
+
+// 2. COMPANY SEARCH
 searchCompanies() 
 → mentorshipService.searchCompanies(term)
 → GET /api/companies/list.php?search={term}
 → Company[] results displayed
 
-// 2. TEMPLATE LOADING  
+// 3. TEMPLATE LOADING  
 loadTemplates()
 → mentorshipService.getTemplates()
 → GET /api/mentorship/templates.php
 → IMentorshipTemplate[] displayed as cards
 
-// 3. SESSION CREATION
+// 4. SESSION CREATION
 startSession()
 → mentorshipService.createSession(sessionData)  
 → POST /api/mentorship/sessions.php
 → Session created, form built dynamically
 
-// 4. FORM BUILDING
+// 5. FORM BUILDING
 buildSessionForm()
 → Uses selectedTemplate.categories[].questions[]
 → Creates FormControl for each question.key
 → Applies validation rules from question.validation
 
-// 5. RESPONSE SAVING
+// 6. RESPONSE SAVING
 saveSession()
 → mentorshipService.saveSessionResponses(sessionId, formData)
 → POST /api/mentorship/sessions.php?action=save_responses
@@ -301,9 +407,117 @@ System triggers tasks based on responses:
 
 ---
 
-## 🔧 **8. KEY INTEGRATION POINTS**
+## 🔧 **8. ROUTING ARCHITECTURE & FLOW**
 
-### **Critical Configurations:**
+### **Complete Navigation Structure:**
+
+**1. Main Application Entry:**
+```
+User navigates to: /admin/mentorship
+↓
+app.routes.ts processes route
+↓
+Loads: MentorshipComponent (parent shell)
+↓
+Default redirect to: /admin/mentorship/overview
+↓
+Lazy loads: MentorshipOverviewComponent
+```
+
+**2. Parent-Child Route Relationship:**
+```typescript
+// Parent Shell Component
+MentorshipComponent {
+  // Provides navigation UI
+  tabs: [overview, templates, sessions, tasks, analytics]
+  
+  // Template includes:
+  <nav>...</nav>           // Tab navigation
+  <router-outlet></router-outlet>  // Child component placeholder
+}
+
+// Child Components (lazy loaded)
+/overview  → MentorshipOverviewComponent
+/templates → MentorshipTemplateComponent  
+/sessions  → MentorshipSessionComponent
+/tasks     → MentorshipTaskComponent
+/analytics → MentorshipAnalyticsComponent
+```
+
+**3. Component Loading Sequence:**
+```
+1. User clicks "Templates" tab
+   ↓ 
+2. RouterLink navigates to: /admin/mentorship/templates
+   ↓
+3. Angular Router:
+   - Keeps MentorshipComponent loaded (parent shell)
+   - Destroys previous child component
+   - Lazy loads MentorshipTemplateComponent
+   ↓
+4. MentorshipTemplateComponent.ngOnInit()
+   ↓
+5. Component calls: mentorshipService.getTemplates()
+   ↓
+6. Service calls: GET /api/mentorship/templates.php
+   ↓
+7. PHP processes: MentorshipTemplate::getAll()
+   ↓
+8. Database query: SELECT * FROM mentorship_templates
+   ↓
+9. Response flows back: Database → PHP → API → Service → Component
+   ↓
+10. Component renders template list
+```
+
+**4. RouterLinkActive Configuration:**
+```typescript
+// Navigation highlights active tab
+<a [routerLink]="['/admin/mentorship', tab.id]"
+   [routerLinkActiveOptions]="{ exact: true }"
+   routerLinkActive="border-blue-500 text-blue-400">
+   {{ tab.label }}
+</a>
+
+// Routes:
+/admin/mentorship/overview   → "Overview" tab active
+/admin/mentorship/templates  → "Templates" tab active  
+/admin/mentorship/sessions   → "Sessions" tab active
+```
+
+**5. Lazy Loading Benefits:**
+```typescript
+// Only load components when needed
+loadComponent: () => import('./mentorship-template.component')
+  .then(m => m.MentorshipTemplateComponent)
+
+// Benefits:
+- Smaller initial bundle size
+- Faster application startup
+- Components loaded on demand
+- Better performance for large applications
+```
+
+**6. Component Communication Flow:**
+```
+MentorshipComponent (Shell)
+├── Provides navigation
+├── Manages active tab state  
+├── Contains <router-outlet>
+└── Child components handle own data:
+    ├── MentorshipOverviewComponent
+    │   ├── Calls mentorshipService.getStatistics()
+    │   └── Displays dashboard data
+    ├── MentorshipTemplateComponent  
+    │   ├── Calls mentorshipService.getTemplates()
+    │   └── Manages template CRUD operations
+    └── MentorshipSessionComponent
+        ├── Embeds MentorshipSessionManagerComponent
+        ├── Calls mentorshipService.getSessions()
+        └── Handles session workflow
+```
+
+### **Critical Configuration Points:**
 
 **API Base URL Configuration:**
 ```typescript

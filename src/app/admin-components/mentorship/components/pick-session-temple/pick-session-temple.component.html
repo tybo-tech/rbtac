@@ -1,0 +1,58 @@
+<div class="min-h-screen bg-gray-900 text-gray-100">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-blue-900 shadow-xl">
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+        <div>
+          <h1 class="text-4xl font-bold text-white">Start a Mentorship Session</h1>
+          <p class="text-indigo-200 text-lg">Pick a template to begin a new session</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template Grid -->
+  <div class="max-w-7xl mx-auto px-6 py-8">
+    <div *ngIf="templates.length > 0; else emptyState" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div
+        *ngFor="let template of templates"
+        class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/10 transform hover:-translate-y-1"
+      >
+        <div class="p-6">
+          <h3 class="text-xl font-bold text-white mb-3">{{ template.data.title }}</h3>
+          <p class="text-gray-300 text-sm leading-relaxed mb-4">
+            {{ template.data.description || 'No description provided.' }}
+          </p>
+
+          <div class="text-xs text-gray-500">
+            <span class="block">Sections: {{ template.data.groups.length }}</span>
+            <span class="block">Updated: {{ template.updated_at | date: 'shortDate' }}</span>
+          </div>
+        </div>
+
+        <div class="px-6 pb-6">
+          <button
+            (click)="startSession(template)"
+            class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-3 rounded-lg hover:from-green-600 hover:to-emerald-700 transition duration-200 transform hover:scale-[1.02]"
+          >
+            Start Session
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <ng-template #emptyState>
+      <div class="flex flex-col items-center justify-center py-20 text-center max-w-xl mx-auto">
+        <svg class="w-20 h-20 text-gray-600 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 class="text-2xl font-bold text-gray-300 mb-3">No Templates Available</h3>
+        <p class="text-gray-500 mb-6">
+          Please create a mentorship template before starting a session.
+        </p>
+      </div>
+    </ng-template>
+  </div>
+</div>

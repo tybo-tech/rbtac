@@ -12,7 +12,11 @@ import { CompaniesComponent } from './admin-components/companies/companies/compa
 import { UsersComponent } from './admin-components/users/users/users.component';
 import { ProgramsComponent } from './admin-components/programs/programs/programs.component';
 import { ProgramStagesComponent } from './admin-components/program-stages/program-stages.component';
-import { MentorshipComponent } from './admin-components/mentorship/mentorship.component';
+import { MentorshipComponent } from './admin-components/mentorship/components/mentorship/mentorship.component';
+import { FormTemplateListComponent } from './admin-components/mentorship/components/form-template-list/form-template-list.component';
+import { FormTemplateComponent } from './admin-components/mentorship/components/form-template/form-template.component';
+import { PickSessionTempleComponent } from './admin-components/mentorship/components/pick-session-temple/pick-session-temple.component';
+import { MentorshipSessionComponent } from './admin-components/mentorship/components/mentorship-session/mentorship-session.component';
 
 export const routes: Routes = [
   {
@@ -64,38 +68,27 @@ export const routes: Routes = [
       },
       {
         path: 'programs/:id/stages',
-       component: ProgramStagesComponent
+        component: ProgramStagesComponent,
       },
       {
         path: 'mentorship',
         component: MentorshipComponent,
-        children: [
-          {
-            path: '',
-            redirectTo: 'overview',
-            pathMatch: 'full'
-          },
-          {
-            path: 'overview',
-            loadComponent: () => import('./admin-components/mentorship/components/mentorship-overview/mentorship-overview.component').then(m => m.MentorshipOverviewComponent)
-          },
-          {
-            path: 'templates',
-            loadComponent: () => import('./admin-components/mentorship/components/mentorship-template/mentorship-template.component').then(m => m.MentorshipTemplateComponent)
-          },
-          {
-            path: 'sessions',
-            loadComponent: () => import('./admin-components/mentorship/components/mentorship-session/mentorship-session.component').then(m => m.MentorshipSessionComponent)
-          },
-          {
-            path: 'tasks',
-            loadComponent: () => import('./admin-components/mentorship/components/mentorship-task/mentorship-task.component').then(m => m.MentorshipTaskComponent)
-          },
-          {
-            path: 'analytics',
-            loadComponent: () => import('./admin-components/mentorship/components/mentorship-analytics/mentorship-analytics.component').then(m => m.MentorshipAnalyticsComponent)
-          }
-        ]
+      },
+      {
+        path: 'mentorship/templates',
+        component: FormTemplateListComponent,
+      },
+      {
+        path: 'mentorship/templates/:id',
+        component: FormTemplateComponent,
+      },
+      {
+        path: 'mentorship/sessions/:id',
+        component: MentorshipSessionComponent,
+      },
+      {
+        path: 'mentorship/pick-session-template',
+        component: PickSessionTempleComponent,
       },
       {
         path: 'collections',

@@ -19,11 +19,16 @@ export interface IMentorshipCategory {
   template_id: number;
   name: string;
   description?: string;
+  parent_id?: number;
   order: number;
   questions: IMentorshipQuestion[];
 }
 
 export interface IMentorshipQuestion {
+question_text: any;
+is_required: any;
+trigger_task: any;
+question_type: any;
   id?: number;
   category_id: number;
   key: string;

@@ -70,7 +70,20 @@ export class MentorshipService {
   // CATEGORY METHODS
   // ===========================================
 
-  getCategories(templateId: number, hierarchical = false): Observable<IApiResponse<IMentorshipCategory[]>> {
+  // Get all categories across all templates (for category management)
+  getCategories(templateId?: number, hierarchical = false): Observable<IApiResponse<IMentorshipCategory[]>> {
+    let params = new HttpParams();
+    if (templateId) {
+      params = params.set('template_id', templateId.toString());
+    }
+    if (hierarchical) {
+      params = params.set('hierarchical', 'true');
+    }
+    return this.http.get<IApiResponse<IMentorshipCategory[]>>(`${this.apiUrl}/categories/read.php`, { params });
+  }
+
+  // Get categories for a specific template
+  getCategoriesForTemplate(templateId: number, hierarchical = false): Observable<IApiResponse<IMentorshipCategory[]>> {
     let params = new HttpParams().set('template_id', templateId.toString());
     if (hierarchical) {
       params = params.set('hierarchical', 'true');
@@ -89,6 +102,10 @@ export class MentorshipService {
 
   updateCategory(id: number, category: Partial<IMentorshipCategory>): Observable<IApiResponse<IMentorshipCategory>> {
     return this.http.put<IApiResponse<IMentorshipCategory>>(`${this.apiUrl}/categories/update.php?id=${id}`, category);
+  }
+
+  deleteCategory(id: number): Observable<IApiResponse<any>> {
+    return this.http.delete<IApiResponse<any>>(`${this.apiUrl}/categories/delete.php?id=${id}`);
   }
 
   reorderCategories(templateId: number, orderData: {id: number, sort_order: number}[]): Observable<IApiResponse<any>> {

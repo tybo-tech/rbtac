@@ -1,0 +1,60 @@
+<div class="min-h-screen bg-gray-900 text-gray-100 py-12 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-10 text-center">
+      <h1 class="text-4xl font-bold text-white mb-2">Mentorship Overview</h1>
+      <p class="text-gray-400 text-lg">Track sessions, manage templates, and launch new mentorship workflows</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div class="bg-gradient-to-br from-purple-700 to-indigo-800 p-6 rounded-xl shadow-lg text-center">
+        <div class="text-3xl font-bold text-white">{{ totalTemplates }}</div>
+        <div class="text-sm text-gray-300 uppercase tracking-wide mt-1">Templates</div>
+      </div>
+
+      <div class="bg-gradient-to-br from-blue-700 to-cyan-800 p-6 rounded-xl shadow-lg text-center">
+        <div class="text-3xl font-bold text-white">{{ totalSessions }}</div>
+        <div class="text-sm text-gray-300 uppercase tracking-wide mt-1">Sessions Captured</div>
+      </div>
+
+      <div class="bg-gradient-to-br from-green-700 to-emerald-800 p-6 rounded-xl shadow-lg text-center">
+        <div class="text-3xl font-bold text-white">{{ activePrograms }}</div>
+        <div class="text-sm text-gray-300 uppercase tracking-wide mt-1">Programs Active</div>
+      </div>
+
+      <div class="bg-gradient-to-br from-red-700 to-pink-800 p-6 rounded-xl shadow-lg text-center">
+        <div class="text-3xl font-bold text-white">Coming Soon</div>
+        <div class="text-sm text-gray-300 uppercase tracking-wide mt-1">Analytics</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <button
+        (click)="createNewSession()"
+        class="w-full bg-gradient-to-r from-blue-600 to-purple-700 text-white font-semibold py-4 rounded-xl shadow-lg hover:from-blue-700 hover:to-purple-800 transition-all duration-200"
+      >
+        Start New Session
+      </button>
+
+      <button
+        (click)="createNewTemplate()"
+        class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-4 rounded-xl shadow-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200"
+      >
+        Create New Template
+      </button>
+
+      <button
+        (click)="goToSessions()"
+        class="w-full bg-gray-800 border border-gray-700 text-gray-100 py-4 rounded-xl shadow hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-200"
+      >
+        View All Sessions
+      </button>
+
+      <button
+        (click)="goToTemplates()"
+        class="w-full bg-gray-800 border border-gray-700 text-gray-100 py-4 rounded-xl shadow hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-200"
+      >
+        View All Templates
+      </button>
+    </div>
+  </div>
+</div>
