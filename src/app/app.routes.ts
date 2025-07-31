@@ -15,8 +15,8 @@ import { ProgramStagesComponent } from './admin-components/program-stages/progra
 import { MentorshipComponent } from './admin-components/mentorship/components/mentorship/mentorship.component';
 import { FormTemplateListComponent } from './admin-components/mentorship/components/form-template-list/form-template-list.component';
 import { FormTemplateComponent } from './admin-components/mentorship/components/form-template/form-template.component';
-import { PickSessionTempleComponent } from './admin-components/mentorship/components/pick-session-temple/pick-session-temple.component';
 import { MentorshipSessionComponent } from './admin-components/mentorship/components/mentorship-session/mentorship-session.component';
+import { PickSessionTemplateComponent } from './admin-components/mentorship/components/pick-session-temple/pick-session-temple.component';
 
 export const routes: Routes = [
   {
@@ -88,7 +88,7 @@ export const routes: Routes = [
       },
       {
         path: 'mentorship/pick-session-template',
-        component: PickSessionTempleComponent,
+        component: PickSessionTemplateComponent,
       },
       {
         path: 'collections',

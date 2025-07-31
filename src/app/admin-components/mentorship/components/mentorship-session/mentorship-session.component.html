@@ -1,152 +1,402 @@
-<div class="min-h-screen px-6 py-12 max-w-6xl mx-auto bg-gray-900">
+<div class="min-h-screen bg-gray-900 text-gray-100">
   <!-- Loading State -->
   <ng-container *ngIf="loading">
-    <div class="flex flex-col items-center justify-center h-64">
-      <i class="fas fa-spinner fa-spin text-4xl text-indigo-400 mb-4"></i>
-      <p class="text-gray-400">Loading mentorship session...</p>
+    <div class="flex flex-col items-center justify-center h-screen">
+      <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-500 mb-6"></div>
+      <p class="text-gray-400 text-lg">Loading mentorship session...</p>
     </div>
   </ng-container>
 
   <!-- Error State -->
-  <ng-container *ngIf="error">
-    <div class="bg-red-900/30 border-l-4 border-red-500 p-4 mb-8 rounded-lg">
-      <div class="flex items-center">
-        <i class="fas fa-exclamation-circle text-red-400 mr-3 text-xl"></i>
-        <h3 class="text-red-100 font-semibold">Error</h3>
+  <ng-container *ngIf="error && !loading">
+    <div class="max-w-4xl mx-auto px-6 py-12">
+      <div class="bg-red-900/20 border border-red-700 rounded-lg p-6 text-center">
+        <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+        </svg>
+        <h3 class="text-xl font-semibold text-red-400 mb-2">Session Error</h3>
+        <p class="text-red-300 mb-6">{{ error }}</p>
+        <div class="flex justify-center space-x-4">
+          <button
+            (click)="loadTemplate()"
+            class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors duration-200"
+          >
+            Try Again
+          </button>
+          <button
+            (click)="router.navigate(['/admin/mentorship/templates'])"
+            class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition-colors duration-200"
+          >
+            Back to Templates
+          </button>
+        </div>
       </div>
-      <p class="text-red-200 mt-1">{{ error }}</p>
     </div>
   </ng-container>
 
-  <!-- Content -->
+  <!-- Main Content -->
   <div *ngIf="template && !loading && !error" class="animate-fade-in">
-    <div class="flex items-start mb-8">
-      <div class="bg-indigo-600/20 p-3 rounded-lg mr-4">
-        <i class="fas fa-chalkboard-teacher text-indigo-300 text-2xl"></i>
-      </div>
-      <div>
-        <h1 class="text-3xl font-bold text-white mb-1">{{ template.data.title }}</h1>
-        <p class="text-gray-400">{{ template.data.description }}</p>
-      </div>
-    </div>
 
-    <div *ngFor="let group of template.data.groups" class="mb-10 bg-gray-800/50 rounded-xl p-6 border border-gray-700 shadow-lg">
-      <div class="flex items-center mb-4">
-        <i class="fas fa-folder-open text-purple-300 mr-3"></i>
-        <h2 class="text-xl font-semibold text-purple-200">{{ group.title }}</h2>
-      </div>
+    <!-- Header with Progress -->
+    <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-blue-900 shadow-xl">
+      <div class="max-w-6xl mx-auto px-6 py-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+          <!-- Template Info -->
+          <div class="flex items-start">
+            <div class="bg-white/10 p-3 rounded-lg mr-4">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-3xl font-bold text-white mb-1">{{ template.title }}</h1>
+              <p class="text-indigo-200">{{ template.description || 'Mentorship Session Form' }}</p>
 
-      <p class="text-gray-500 mb-6 ml-8" *ngIf="group.description">
-        <i class="fas fa-info-circle mr-2 text-gray-600"></i>{{ group.description }}
-      </p>
+              <!-- Auto-save indicator -->
+              <div class="flex items-center mt-2 text-sm">
+                <div class="flex items-center" *ngIf="saving">
+                  <div class="animate-spin h-4 w-4 border-b-2 border-green-400 rounded-full mr-2"></div>
+                  <span class="text-green-300">Saving...</span>
+                </div>
+                <div class="flex items-center" *ngIf="lastSaved && !saving">
+                  <svg class="w-4 h-4 text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  <span class="text-green-300">Saved {{ lastSaved | date:'short' }}</span>
+                </div>
+                <div class="flex items-center" *ngIf="isDirty && !saving">
+                  <svg class="w-4 h-4 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01"/>
+                  </svg>
+                  <span class="text-yellow-300">Unsaved changes</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-      <div *ngFor="let field of group.fields" class="mb-6 ml-8">
-        <div class="flex items-center mb-2">
-          <label class="block text-sm text-indigo-300 font-medium">
-            <i class="far fa-circle-question mr-2 text-indigo-400/70"></i>{{ field.label }}
-          </label>
+          <!-- Progress Bar -->
+          <div class="max-w-md w-full lg:w-auto">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm text-indigo-200">Progress</span>
+              <span class="text-sm text-indigo-200">{{ getProgressPercentage() }}%</span>
+            </div>
+            <div class="w-full bg-gray-700 rounded-full h-2">
+              <div
+                class="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full transition-all duration-500"
+                [style.width.%]="getProgressPercentage()">
+              </div>
+            </div>
+          </div>
         </div>
 
-        <ng-container [ngSwitch]="field.type">
-          <!-- Text Input -->
-          <div *ngSwitchCase="'text'" class="relative">
-            <i class="fas fa-font absolute left-3 top-3 text-gray-500"></i>
-            <input [(ngModel)]="formValues[group.key][field.key]"
-              class="w-full pl-10 pr-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition placeholder-gray-500" />
+        <!-- Section Navigation -->
+        <div class="mt-6" *ngIf="template.structure.length > 1">
+          <div class="flex space-x-2 overflow-x-auto pb-2">
+            <button
+              *ngFor="let group of template.structure; let i = index"
+              (click)="goToGroup(i)"
+              class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-200"
+              [class]="i === currentGroupIndex
+                ? 'bg-white text-purple-600'
+                : 'bg-white/10 text-white hover:bg-white/20'"
+            >
+              {{ i + 1 }}. {{ group.title }}
+            </button>
           </div>
-
-          <!-- Number Input -->
-          <div *ngSwitchCase="'number'" class="relative">
-            <i class="fas fa-hashtag absolute left-3 top-3 text-gray-500"></i>
-            <input type="number" [(ngModel)]="formValues[group.key][field.key]"
-              class="w-full pl-10 pr-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition placeholder-gray-500" />
-          </div>
-
-          <!-- Textarea -->
-          <div *ngSwitchCase="'textarea'" class="relative">
-            <i class="fas fa-align-left absolute left-3 top-3 text-gray-500"></i>
-            <textarea [(ngModel)]="formValues[group.key][field.key]" rows="4"
-              class="w-full pl-10 pr-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition placeholder-gray-500"></textarea>
-          </div>
-
-          <!-- Select -->
-          <div *ngSwitchCase="'select'" class="relative">
-            <i class="fas fa-caret-down absolute right-3 top-3 text-gray-500 pointer-events-none"></i>
-            <select [(ngModel)]="formValues[group.key][field.key]"
-              class="w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md appearance-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition pr-8">
-              <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
-            </select>
-          </div>
-
-          <!-- Date -->
-          <div *ngSwitchCase="'date'" class="relative">
-            <i class="far fa-calendar absolute left-3 top-3 text-gray-500"></i>
-            <input type="date" [(ngModel)]="formValues[group.key][field.key]"
-              class="w-full pl-10 pr-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition [color-scheme:dark]" />
-          </div>
-
-          <!-- Boolean -->
-          <div *ngSwitchCase="'boolean'" class="relative">
-            <i class="far fa-question-circle absolute left-3 top-3 text-gray-500"></i>
-            <select [(ngModel)]="formValues[group.key][field.key]"
-              class="w-full pl-10 pr-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
-              <option [value]="true">Yes</option>
-              <option [value]="false">No</option>
-            </select>
-          </div>
-
-          <!-- Rating -->
-          <div *ngSwitchCase="'rating'" class="pt-2">
-            <div class="flex justify-between mb-2">
-              <span class="text-xs text-gray-400">1 (Poor)</span>
-              <span class="text-xs text-gray-400">5 (Excellent)</span>
-            </div>
-            <div class="flex items-center">
-              <i class="fas fa-star text-yellow-400 mr-2"></i>
-              <input type="range" min="1" max="5" [(ngModel)]="formValues[group.key][field.key]"
-                class="w-full accent-indigo-500" />
-            </div>
-          </div>
-
-          <!-- Table Field -->
-          <div *ngSwitchCase="'table'" class="overflow-x-auto border border-gray-700 rounded-lg">
-            <table class="min-w-full divide-y divide-gray-700 text-sm">
-              <thead class="bg-gray-800">
-                <tr>
-                  <th *ngFor="let col of field.columns" class="px-4 py-3 font-medium text-indigo-300 text-left">{{ col.label }}</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-700">
-                <tr *ngFor="let row of formValues[group.key][field.key]; let rowIndex = index" class="hover:bg-gray-700/50 transition">
-                  <td *ngFor="let col of field.columns; let colIndex = index" class="px-4 py-3">
-                    <input
-                      [(ngModel)]="formValues[group.key][field.key][rowIndex][col.key]"
-                      class="w-full px-3 py-2 bg-gray-800 text-white border border-gray-600 rounded-md focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            <!-- Add Row Button -->
-            <div class="mt-3">
-              <button
-                class="text-sm px-4 py-2 border border-indigo-500/50 text-indigo-300 rounded-md hover:bg-indigo-500/10 transition flex items-center"
-                (click)="addTableRow(group.key, field.key, field.columns)"
-              >
-                <i class="fas fa-plus mr-2"></i>Add Row
-              </button>
-            </div>
-          </div>
-        </ng-container>
+        </div>
       </div>
     </div>
 
-    <div class="flex justify-end mt-8">
-      <button (click)="logValues()"
-        class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:scale-[1.02] transition-all shadow-lg hover:shadow-indigo-500/30 flex items-center">
-        <i class="fas fa-paper-plane mr-2"></i> Submit Session
-      </button>
+    <!-- Form Content -->
+    <div class="max-w-6xl mx-auto px-6 py-8">
+
+      <!-- Single Group View -->
+      <div *ngIf="template.structure[currentGroupIndex] as currentGroup" class="space-y-8">
+
+        <!-- Group Header -->
+        <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+          <div class="flex items-center mb-4">
+            <div class="bg-purple-600/20 p-2 rounded-lg mr-3">
+              <svg class="w-6 h-6 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-bold text-white">{{ currentGroup.title }}</h2>
+              <p class="text-gray-400" *ngIf="currentGroup.description">{{ currentGroup.description }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fields -->
+        <div class="space-y-6">
+          <div *ngFor="let field of currentGroup.fields; trackBy: trackByField"
+               class="bg-gray-800/30 rounded-lg p-6 border border-gray-700 hover:border-gray-600 transition-all duration-200">
+
+            <!-- Field Label -->
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex-1">
+                <label class="block text-lg font-medium text-white mb-1">
+                  {{ field.label }}
+                  <span *ngIf="field.required" class="text-red-400 ml-1">*</span>
+                </label>
+                <p *ngIf="field.helpText" class="text-sm text-gray-400">{{ field.helpText }}</p>
+              </div>
+
+              <!-- Field Type Indicator -->
+              <div class="ml-4">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-600/20 text-indigo-300">
+                  {{ field.type }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Field Input -->
+            <div class="relative" [ngSwitch]="field.type">
+
+              <!-- Text Input -->
+              <div *ngSwitchCase="'text'" class="relative">
+                <input
+                  [(ngModel)]="formValues[currentGroup.key][field.key]"
+                  (input)="onFieldChange()"
+                  [placeholder]="field.placeholder || 'Enter text...'"
+                  class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 placeholder-gray-400"
+                  [class.border-red-500]="hasFieldErrors(currentGroup.key, field.key)"
+                />
+              </div>
+
+              <!-- Number Input -->
+              <div *ngSwitchCase="'number'" class="relative">
+                <input
+                  type="number"
+                  [(ngModel)]="formValues[currentGroup.key][field.key]"
+                  (input)="onFieldChange()"
+                  [placeholder]="field.placeholder || 'Enter number...'"
+                  class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 placeholder-gray-400"
+                  [class.border-red-500]="hasFieldErrors(currentGroup.key, field.key)"
+                />
+              </div>
+
+              <!-- Textarea -->
+              <div *ngSwitchCase="'textarea'" class="relative">
+                <textarea
+                  [(ngModel)]="formValues[currentGroup.key][field.key]"
+                  (input)="onFieldChange()"
+                  [placeholder]="field.placeholder || 'Enter your response...'"
+                  rows="4"
+                  class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 placeholder-gray-400 resize-vertical"
+                  [class.border-red-500]="hasFieldErrors(currentGroup.key, field.key)"
+                ></textarea>
+              </div>
+
+              <!-- Select -->
+              <div *ngSwitchCase="'select'" class="relative">
+                <select
+                  [(ngModel)]="formValues[currentGroup.key][field.key]"
+                  (change)="onFieldChange()"
+                  class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 appearance-none"
+                  [class.border-red-500]="hasFieldErrors(currentGroup.key, field.key)"
+                >
+                  <option value="">Choose an option...</option>
+                  <option *ngFor="let option of field.options" [value]="option">{{ option }}</option>
+                </select>
+                <svg class="absolute right-3 top-3 h-6 w-6 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+
+              <!-- Date -->
+              <div *ngSwitchCase="'date'" class="relative">
+                <input
+                  type="date"
+                  [(ngModel)]="formValues[currentGroup.key][field.key]"
+                  (change)="onFieldChange()"
+                  class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 [color-scheme:dark]"
+                  [class.border-red-500]="hasFieldErrors(currentGroup.key, field.key)"
+                />
+              </div>
+
+              <!-- Boolean -->
+              <div *ngSwitchCase="'boolean'" class="relative">
+                <div class="flex items-center space-x-6">
+                  <label class="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      [value]="true"
+                      [(ngModel)]="formValues[currentGroup.key][field.key]"
+                      (change)="onFieldChange()"
+                      class="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 focus:ring-purple-500"
+                    />
+                    <span class="ml-2 text-green-300">Yes</span>
+                  </label>
+                  <label class="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      [value]="false"
+                      [(ngModel)]="formValues[currentGroup.key][field.key]"
+                      (change)="onFieldChange()"
+                      class="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 focus:ring-purple-500"
+                    />
+                    <span class="ml-2 text-red-300">No</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Rating -->
+              <div *ngSwitchCase="'rating'" class="space-y-4">
+                <div class="flex justify-between text-sm text-gray-400">
+                  <span>1 (Poor)</span>
+                  <span>5 (Excellent)</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                  <span class="text-2xl">{{ formValues[currentGroup.key][field.key] || 1 }}</span>
+                  <input
+                    type="range"
+                    min="1"
+                    max="5"
+                    [(ngModel)]="formValues[currentGroup.key][field.key]"
+                    (input)="onFieldChange()"
+                    class="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                  />
+                  <div class="flex space-x-1">
+                    <svg *ngFor="let star of [1,2,3,4,5]"
+                         class="w-6 h-6"
+                         [class]="(formValues[currentGroup.key][field.key] || 1) >= star ? 'text-yellow-400' : 'text-gray-600'"
+                         fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Table Field -->
+              <div *ngSwitchCase="'table'" class="space-y-4">
+                <div class="overflow-x-auto border border-gray-700 rounded-lg">
+                  <table class="min-w-full divide-y divide-gray-700">
+                    <thead class="bg-gray-800">
+                      <tr>
+                        <th *ngFor="let col of field.columns"
+                            class="px-4 py-3 text-left text-sm font-medium text-gray-300">
+                          {{ col.label }}
+                          <span *ngIf="col.required" class="text-red-400 ml-1">*</span>
+                        </th>
+                        <th class="px-4 py-3 text-right text-sm font-medium text-gray-300 w-20">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-700">
+                      <tr *ngFor="let row of formValues[currentGroup.key][field.key]; let rowIndex = index"
+                          class="hover:bg-gray-700/30 transition-colors">
+                        <td *ngFor="let col of field.columns" class="px-4 py-3">
+                          <input
+                            [(ngModel)]="formValues[currentGroup.key][field.key][rowIndex][col.key]"
+                            (input)="onFieldChange()"
+                            [placeholder]="col.placeholder || ''"
+                            [type]="col.type === 'number' ? 'number' : 'text'"
+                            class="w-full px-3 py-2 bg-gray-800 text-white border border-gray-600 rounded-md focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-sm"
+                          />
+                        </td>
+                        <td class="px-4 py-3 text-right">
+                          <button
+                            *ngIf="formValues[currentGroup.key][field.key].length > 1"
+                            (click)="removeTableRow(currentGroup.key, field.key, rowIndex)"
+                            class="text-red-400 hover:text-red-300 p-1 rounded transition-colors"
+                            title="Remove row"
+                          >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Add Row Button -->
+                <button
+                  (click)="addTableRow(currentGroup.key, field.key, field.columns || [])"
+                  class="inline-flex items-center px-4 py-2 border border-purple-500/50 text-purple-300 rounded-lg hover:bg-purple-500/10 transition-all duration-200"
+                >
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                  </svg>
+                  Add Row
+                </button>
+              </div>
+
+              <!-- Default/Unknown field type -->
+              <div *ngSwitchDefault class="text-gray-400 italic">
+                Unsupported field type: {{ field.type }}
+              </div>
+
+            </div>
+
+            <!-- Field Validation Errors -->
+            <div *ngIf="hasFieldErrors(currentGroup.key, field.key)" class="mt-2">
+              <div *ngFor="let error of getFieldErrors(currentGroup.key, field.key)"
+                   class="flex items-center text-red-400 text-sm">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01"/>
+                </svg>
+                {{ error }}
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex justify-between items-center pt-8 border-t border-gray-700">
+          <button
+            *ngIf="currentGroupIndex > 0"
+            (click)="previousGroup()"
+            class="inline-flex items-center px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700 transition-all duration-200"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Previous Section
+          </button>
+
+          <div class="flex space-x-4">
+            <button
+              (click)="saveAsDraft()"
+              class="px-6 py-3 border border-indigo-500 text-indigo-300 rounded-lg hover:bg-indigo-500/10 transition-all duration-200"
+            >
+              Save Draft
+            </button>
+
+            <button
+              *ngIf="currentGroupIndex < template.structure.length - 1"
+              (click)="nextGroup()"
+              class="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all duration-200"
+            >
+              Next Section
+              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+
+            <button
+              *ngIf="currentGroupIndex === template.structure.length - 1"
+              (click)="submitSession()"
+              [disabled]="formState.isSubmitting"
+              class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <div *ngIf="formState.isSubmitting" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+              </div>
+              {{ formState.isSubmitting ? 'Submitting...' : 'Submit Session' }}
+              <svg *ngIf="!formState.isSubmitting" class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 </div>
