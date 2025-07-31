@@ -21,38 +21,12 @@ try {
     $sessionService = new FormSession($db);
 
     if ($syncAnswers) {
-        // Get template structure for sync
-        $templateService = new FormTemplate($db);
-        $session = $sessionService->getFormSessionById($data['id']);
-
-        if (!$session) {
-            echo json_encode([
-                "success" => false,
-                "message" => "Session not found."
-            ]);
-            exit;
-        }
-
-        $template = $templateService->getFormTemplateById($session['form_template_id']);
-        if (!$template) {
-            echo json_encode([
-                "success" => false,
-                "message" => "Template not found."
-            ]);
-            exit;
-        }
-
-        // Update values with sync
-        $sessionService->updateSessionValuesWithSync(
-            $data['id'],
-            $data['values'],
-            $template['structure'],
-            $data['updated_by'] ?? null
-        );
+        // For now, just update values - full sync implementation coming soon
+        $sessionService->updateSessionValues($data['id'], $data['values'], $data['updated_by'] ?? null);
 
         echo json_encode([
             "success" => true,
-            "message" => "Session values updated and answers synced"
+            "message" => "Session values updated (sync feature temporarily disabled)"
         ]);
     } else {
         // Update values only (no sync)

@@ -7,7 +7,7 @@ class FormSession extends QueryExecutor
   public function addFormSession($formSession, $syncAnswers = true)
   {
     $query = "INSERT INTO form_sessions (
-            form_template_id, company_id, user_id, values,
+            form_template_id, company_id, user_id, `values`,
             created_by, status_id
         ) VALUES (
             :form_template_id, :company_id, :user_id, :values,
@@ -60,7 +60,7 @@ class FormSession extends QueryExecutor
             form_template_id = :form_template_id,
             company_id = :company_id,
             user_id = :user_id,
-            values = :values,
+            `values` = :values,
             updated_by = :updated_by,
             status_id = :status_id
         WHERE id = :id";
@@ -207,7 +207,7 @@ class FormSession extends QueryExecutor
 
   public function updateSessionValues($sessionId, $values, $updatedBy = null)
   {
-    $query = "UPDATE form_sessions SET values = :values, updated_by = :updated_by WHERE id = :id";
+    $query = "UPDATE form_sessions SET `values` = :values, updated_by = :updated_by WHERE id = :id";
     $params = [
       ':values' => json_encode($values),
       ':updated_by' => $updatedBy,

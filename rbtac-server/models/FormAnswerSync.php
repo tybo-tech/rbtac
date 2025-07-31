@@ -1,4 +1,7 @@
 <?php
+
+include_once 'FormAnswer.php';
+
 class FormAnswerSync extends QueryExecutor
 {
     private $formAnswer;
