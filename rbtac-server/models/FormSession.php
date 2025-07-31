@@ -1,7 +1,7 @@
 <?php
 class FormSession extends QueryExecutor
 {
-  public function addFormSession($formSession)
+  public function addFormSession($formSession, $syncAnswers = true)
   {
     $query = "INSERT INTO form_sessions (
             form_template_id, company_id, user_id, values,
@@ -21,7 +21,22 @@ class FormSession extends QueryExecutor
     ];
 
     $this->executeQuery($query, $params);
-    return $this->_conn->lastInsertId();
+    $sessionId = $this->_conn->lastInsertId();
+
+    // Auto-sync answers if enabled and values exist
+    if ($syncAnswers && !empty($formSession->values) && !empty($formSession->template_structure)) {
+      include_once 'FormAnswerSync.php';
+      $sync = new FormAnswerSync($this->_conn);
+      $sync->syncSessionAnswers(
+        $sessionId,
+        $formSession->form_template_id,
+        $formSession->values,
+        $formSession->template_structure,
+        $formSession->created_by
+      );
+    }
+
+    return $sessionId;
   }
 
   public function getFormSessionById($sessionId)
@@ -37,7 +52,7 @@ class FormSession extends QueryExecutor
     return $session;
   }
 
-  public function updateFormSession($formSession)
+  public function updateFormSession($formSession, $syncAnswers = true)
   {
     $query = "UPDATE form_sessions SET
             form_template_id = :form_template_id,
@@ -59,6 +74,19 @@ class FormSession extends QueryExecutor
     ];
 
     $this->executeQuery($query, $params);
+
+    // Auto-sync answers if enabled and values exist
+    if ($syncAnswers && !empty($formSession->values) && !empty($formSession->template_structure)) {
+      include_once 'FormAnswerSync.php';
+      $sync = new FormAnswerSync($this->_conn);
+      $sync->syncSessionAnswers(
+        $formSession->id,
+        $formSession->form_template_id,
+        $formSession->values,
+        $formSession->template_structure,
+        $formSession->updated_by
+      );
+    }
   }
 
   public function list($companyId = null, $templateId = null, $userId = null)
