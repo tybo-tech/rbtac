@@ -49,7 +49,9 @@ class FormSession extends QueryExecutor
     $result = $this->executeQuery($query, $params);
     $session = $result->fetch(PDO::FETCH_ASSOC);
     if ($session) {
-      $session['values'] = json_decode($session['values'], true);
+      $decodedValues = json_decode($session['values'], true);
+      // Ensure values is always an object, not an array
+      $session['values'] = is_array($decodedValues) && empty($decodedValues) ? new stdClass() : $decodedValues;
     }
     return $session;
   }
@@ -198,7 +200,9 @@ class FormSession extends QueryExecutor
     $session = $result->fetch(PDO::FETCH_ASSOC);
 
     if ($session) {
-      $session['values'] = json_decode($session['values'], true);
+      $decodedValues = json_decode($session['values'], true);
+      // Ensure values is always an object, not an array
+      $session['values'] = is_array($decodedValues) && empty($decodedValues) ? new stdClass() : $decodedValues;
       $session['template_structure'] = json_decode($session['template_structure'], true);
     }
 

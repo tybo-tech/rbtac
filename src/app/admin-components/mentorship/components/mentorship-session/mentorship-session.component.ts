@@ -72,13 +72,14 @@ export class MentorshipSessionComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const templateIdParam = this.route.snapshot.queryParamMap.get('template_id');
+    // Get session ID from URL parameter
+    const sessionIdParam = this.route.snapshot.paramMap.get('id');
 
-    if (templateIdParam) {
-      this.templateId = parseInt(templateIdParam, 10);
-      this.loadTemplate();
+    if (sessionIdParam) {
+      const sessionId = parseInt(sessionIdParam, 10);
+      this.loadSession(sessionId);
     } else {
-      this.error = 'No template ID provided.';
+      this.error = 'No session ID provided in URL.';
       this.loading = false;
     }
   }
@@ -105,21 +106,78 @@ export class MentorshipSessionComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Load the session and its associated template
+   */
+  loadSession(sessionId: number): void {
+    this.loading = true;
+    this.error = null;
+
+    // Load session with template data
+    this.formSessionService.getFormSessionById(sessionId, true).subscribe({
+      next: (response: ApiResponse<any>) => {
+        if (response.success && response.data) {
+          const sessionData = response.data;
+
+          // Set session data
+          this.session = {
+            id: sessionData.id,
+            form_template_id: sessionData.form_template_id,
+            company_id: sessionData.company_id,
+            user_id: sessionData.user_id,
+            values: sessionData.values || {},
+            created_at: sessionData.created_at,
+            updated_at: sessionData.updated_at,
+            created_by: sessionData.created_by,
+            updated_by: sessionData.updated_by,
+            status_id: sessionData.status_id
+          };
+
+          // Set template data (from session response)
+          this.template = {
+            id: sessionData.form_template_id,
+            title: sessionData.template_title,
+            description: sessionData.template_description,
+            structure: sessionData.template_structure
+          };
+
+          this.templateId = this.session.form_template_id;
+          this.formValues = this.session.values || {};
+
+          // Initialize form structure and complete loading
+          this.initializeFormStructure();
+          this.formState.template = this.template;
+          this.formState.session = this.session;
+          this.loading = false;
+        } else {
+          this.error = response.message || 'Session not found';
+          this.loading = false;
+        }
+      },
+      error: (error: any) => {
+        console.error('Failed to load session:', error);
+        this.error = 'Failed to load session. Please try again.';
+        this.loading = false;
+      }
+    });
+  }
+
+  /**
    * Load the form template
    */
   loadTemplate(): void {
     if (!this.templateId) return;
-
-    this.loading = true;
-    this.error = null;
 
     this.formTemplateService.getFormTemplateById(this.templateId).subscribe({
       next: (response: ApiResponse<IFormTemplate>) => {
         if (response.success && response.data) {
           this.template = response.data;
           this.formState.template = this.template;
-          this.initializeFormValues();
-          this.createSession();
+          this.formState.session = this.session;
+
+          // Initialize form structure if values are empty
+          this.initializeFormStructure();
+
+          this.loading = false;
         } else {
           this.error = response.message || 'Failed to load template';
           this.loading = false;
@@ -134,65 +192,36 @@ export class MentorshipSessionComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Initialize form values based on template structure
+   * Initialize form structure to prevent undefined access errors
    */
-  initializeFormValues(): void {
-    if (!this.template || !this.template.structure) return;
+  private initializeFormStructure(): void {
+    if (!this.template?.structure) return;
 
-    this.formValues = {};
-
+    // Ensure formValues has the proper structure
     for (const group of this.template.structure) {
-      this.formValues[group.key] = {};
+      if (!this.formValues[group.key]) {
+        this.formValues[group.key] = {};
+      }
+
+      // Initialize each field with default values if not already set
       for (const field of group.fields) {
-        // Initialize field values based on type
-        switch (field.type) {
-          case 'table':
-            this.formValues[group.key][field.key] = [this.createEmptyTableRow(field.columns || [])];
-            break;
-          case 'boolean':
-            this.formValues[group.key][field.key] = false;
-            break;
-          case 'number':
-          case 'rating':
-            this.formValues[group.key][field.key] = 0;
-            break;
-          default:
-            this.formValues[group.key][field.key] = field.value || '';
+        if (this.formValues[group.key][field.key] === undefined) {
+          switch (field.type) {
+            case 'number':
+              this.formValues[group.key][field.key] = 0;
+              break;
+            case 'boolean':
+              this.formValues[group.key][field.key] = false;
+              break;
+            case 'table':
+              this.formValues[group.key][field.key] = [];
+              break;
+            default:
+              this.formValues[group.key][field.key] = '';
+          }
         }
       }
     }
-  }
-
-  /**
-   * Create a new session for this template
-   */
-  createSession(): void {
-    if (!this.template || !this.templateId) return;
-
-    const newSession: Omit<FormSession, 'id'> = {
-      form_template_id: this.templateId,
-      company_id: 1, // TODO: Get from user context/auth service
-      user_id: 1, // TODO: Get from user context/auth service
-      values: this.formValues
-    };
-
-    this.formSessionService.addFormSession(newSession).subscribe({
-      next: (response: ApiResponse<FormSession>) => {
-        if (response.success && response.data) {
-          this.session = response.data;
-          this.formState.session = this.session;
-          console.log('Session created:', this.session);
-        } else {
-          this.error = response.message || 'Failed to create session';
-        }
-        this.loading = false;
-      },
-      error: (error: any) => {
-        console.error('Failed to create session:', error);
-        this.error = 'Failed to create session. Please try again.';
-        this.loading = false;
-      }
-    });
   }
 
   /**

@@ -6,7 +6,10 @@ $sessionId = $_GET['id'] ?? null;
 $withTemplate = $_GET['with_template'] ?? false;
 
 if (!$sessionId) {
-    echo json_encode(["message" => "Session ID is required."]);
+    echo json_encode([
+        "success" => false,
+        "message" => "Session ID is required."
+    ]);
     exit;
 }
 
@@ -22,10 +25,20 @@ try {
     }
 
     if ($session) {
-        echo json_encode($session);
+        echo json_encode([
+            "success" => true,
+            "data" => $session,
+            "message" => "Session loaded successfully"
+        ]);
     } else {
-        echo json_encode(["message" => "Session not found"]);
+        echo json_encode([
+            "success" => false,
+            "message" => "Session not found"
+        ]);
     }
 } catch (Exception $e) {
-    echo json_encode(["message" => "Error: " . $e->getMessage()]);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error: " . $e->getMessage()
+    ]);
 }

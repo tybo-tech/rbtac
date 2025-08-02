@@ -5,10 +5,12 @@ import { FormsModule } from '@angular/forms';
 import {
   IFormTemplate,
   ApiResponse,
-  IFormAnalytics
+  IFormAnalytics,
+  FormSession
 } from '../../../../../models/mentorship-form.interfaces';
 import { FormTemplateService } from '../../../../../services/form-template.service';
 import { FormAnalyticsService } from '../../../../../services/form-analytics.service';
+import { FormSessionService } from '../../../../../services/form-session.service';
 
 @Component({
   selector: 'app-pick-session-template',
@@ -32,7 +34,8 @@ export class PickSessionTemplateComponent implements OnInit {
   constructor(
     private formTemplateService: FormTemplateService,
     private formAnalyticsService: FormAnalyticsService,
-    private router: Router
+    private router: Router,
+    private formSessionService: FormSessionService
   ) {}
 
   ngOnInit(): void {
@@ -43,8 +46,37 @@ export class PickSessionTemplateComponent implements OnInit {
    * Start a new session with the selected template
    */
   startSession(template: IFormTemplate): void {
-    this.router.navigate(['/admin/mentorship/sessions/create'], {
-      queryParams: { template_id: template.id }
+    if (!template.id) {
+      console.error('Template ID is required to start a session');
+      return;
+    }
+
+    this.loading = true;
+    this.error = null;
+
+    // Create a new session with the selected template
+    const newSession: FormSession = {
+      form_template_id: template.id,
+      company_id: 1, // TODO: Get from user context/authentication
+      user_id: 1,     // TODO: Get from user context/authentication
+      values: {}      // Start with empty values
+    };
+
+    this.formSessionService.addFormSession(newSession).subscribe({
+      next: (response: ApiResponse<FormSession>) => {
+        if (response.success && response.data) {
+          // Redirect to the session URL with the new session ID
+          this.router.navigate(['/admin/mentorship/sessions', response.data.id]);
+        } else {
+          this.error = response.message || 'Failed to create session';
+          this.loading = false;
+        }
+      },
+      error: (error: any) => {
+        console.error('Failed to create session:', error);
+        this.error = 'Failed to create session. Please try again.';
+        this.loading = false;
+      }
     });
   }
 

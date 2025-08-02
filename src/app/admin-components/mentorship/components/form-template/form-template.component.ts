@@ -7,7 +7,7 @@ import {
   IFormGroup,
   IFormField,
   FormFieldType,
-  ApiResponse
+  ApiResponse,
 } from '../../../../../models/mentorship-form.interfaces';
 import { FormTemplateService } from '../../../../../services/form-template.service';
 import { SIMPLE_FORM_TEMPLATE } from './templates/simple';
@@ -20,7 +20,6 @@ import { SIMPLE_FORM_TEMPLATE } from './templates/simple';
   styleUrls: ['./form-template.component.scss'],
 })
 export class FormTemplateComponent implements OnInit {
-
   templateId: string = '';
   template: IFormTemplate = {
     title: '',
@@ -38,8 +37,14 @@ export class FormTemplateComponent implements OnInit {
 
   // Available field types for dropdowns
   fieldTypes: FormFieldType[] = [
-    'text', 'textarea', 'number', 'select',
-    'date', 'rating', 'boolean', 'table'
+    'text',
+    'textarea',
+    'number',
+    'select',
+    'date',
+    'rating',
+    'boolean',
+    'table',
   ];
 
   constructor(
@@ -61,7 +66,18 @@ export class FormTemplateComponent implements OnInit {
 
   loadDefaultTemplate(): void {
     // Load the simple template structure
-    this.template = { ...SIMPLE_FORM_TEMPLATE };
+    this.template = {
+      structure: [],
+      title: '',
+      description: '',
+      summary: {
+        complexity: 'Simple',
+        estimated_time: 5,
+        field_count: 0,
+        group_count: 0,
+        field_types: {},
+      },
+    };
     // Ensure structure exists
     if (!this.template.structure) {
       this.template.structure = [];
@@ -104,13 +120,16 @@ export class FormTemplateComponent implements OnInit {
       next: (response: ApiResponse<IFormTemplate>) => {
         if (response.success && response.data) {
           this.template = response.data;
-          this.success = this.templateId === 'create'
-            ? 'Template created successfully!'
-            : 'Template updated successfully!';
+          this.success =
+            this.templateId === 'create'
+              ? 'Template created successfully!'
+              : 'Template updated successfully!';
 
           // If it was a create, navigate to edit mode
           if (this.templateId === 'create' && response.data.id) {
-            this.router.navigate(['../edit', response.data.id], { relativeTo: this.route });
+            this.router.navigate(['../edit', response.data.id], {
+              relativeTo: this.route,
+            });
           }
         } else {
           this.error = response.message || 'Failed to save template';
@@ -128,7 +147,11 @@ export class FormTemplateComponent implements OnInit {
   deleteTemplate(): void {
     if (!this.template.id) return;
 
-    if (!confirm('Are you sure you want to delete this template? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'Are you sure you want to delete this template? This action cannot be undone.'
+      )
+    ) {
       return;
     }
 
@@ -165,7 +188,7 @@ export class FormTemplateComponent implements OnInit {
       key: `group_${this.template.structure.length + 1}`,
       title: 'New Group',
       description: '',
-      fields: []
+      fields: [],
     };
     this.template.structure.push(newGroup);
   }
@@ -186,7 +209,7 @@ export class FormTemplateComponent implements OnInit {
       key: `field_${Date.now()}`,
       label: 'New Field',
       type: 'text',
-      required: false
+      required: false,
     };
     this.template.structure[groupIndex].fields.push(newField);
   }
@@ -241,19 +264,26 @@ export class FormTemplateComponent implements OnInit {
       key: `col_${field.columns.length + 1}`,
       label: 'New Column',
       type: 'text',
-      required: false
+      required: false,
     });
   }
 
   removeTableColumn(field: IFormField, columnIndex: number): void {
-    if (field.columns && confirm('Are you sure you want to remove this column?')) {
+    if (
+      field.columns &&
+      confirm('Are you sure you want to remove this column?')
+    ) {
       field.columns.splice(columnIndex, 1);
     }
   }
 
   // Utility methods
   generateKey(input: string): string {
-    return (input || '').toLowerCase().trim().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+    return (input || '')
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '_')
+      .replace(/[^a-z0-9_]/g, '');
   }
 
   updateGroupKey(group: IFormGroup): void {
@@ -266,7 +296,8 @@ export class FormTemplateComponent implements OnInit {
 
   isValid(): boolean {
     if (!this.template.title?.trim()) return false;
-    if (!this.template.structure || this.template.structure.length === 0) return false;
+    if (!this.template.structure || this.template.structure.length === 0)
+      return false;
 
     // Check each group has at least one field
     for (const group of this.template.structure) {
@@ -301,35 +332,45 @@ export class FormTemplateComponent implements OnInit {
   cloneTemplate(): void {
     if (!this.template.id) return;
 
-    const newTitle = prompt('Enter title for cloned template:', `${this.template.title} (Copy)`);
+    const newTitle = prompt(
+      'Enter title for cloned template:',
+      `${this.template.title} (Copy)`
+    );
     if (!newTitle) return;
 
     this.loading = true;
     this.clearMessages();
 
-    this.formTemplateService.cloneTemplate(this.template.id, newTitle).subscribe({
-      next: (response: ApiResponse<IFormTemplate>) => {
-        if (response.success && response.data) {
-          this.success = 'Template cloned successfully!';
-          setTimeout(() => {
-            this.router.navigate(['../edit', response.data!.id], { relativeTo: this.route });
-          }, 1500);
-        } else {
-          this.error = response.message || 'Failed to clone template';
-        }
-        this.loading = false;
-      },
-      error: (err: any) => {
-        console.error('Error cloning template:', err);
-        this.error = 'Failed to clone template';
-        this.loading = false;
-      },
-    });
+    this.formTemplateService
+      .cloneTemplate(this.template.id, newTitle)
+      .subscribe({
+        next: (response: ApiResponse<IFormTemplate>) => {
+          if (response.success && response.data) {
+            this.success = 'Template cloned successfully!';
+            setTimeout(() => {
+              this.router.navigate(['../edit', response.data!.id], {
+                relativeTo: this.route,
+              });
+            }, 1500);
+          } else {
+            this.error = response.message || 'Failed to clone template';
+          }
+          this.loading = false;
+        },
+        error: (err: any) => {
+          console.error('Error cloning template:', err);
+          this.error = 'Failed to clone template';
+          this.loading = false;
+        },
+      });
   }
 
   // Helper method for template display
   getTotalFieldCount(): number {
     if (!this.template.structure) return 0;
-    return this.template.structure.reduce((total, group) => total + group.fields.length, 0);
+    return this.template.structure.reduce(
+      (total, group) => total + group.fields.length,
+      0
+    );
   }
 }
